@@ -456,6 +456,187 @@ export default function App() {
     );
   };
 
+  // ===== LEGAL PAGES =====
+  const LegalPage = ({ title, children }) => (
+    <>
+      <button onClick={() => setTab("scan")} style={{ background: "none", border: `1px solid ${T.border}`, color: T.sub, borderRadius: "10px", padding: "8px 18px", cursor: "pointer", fontSize: "13px", marginBottom: "16px" }}>← Back</button>
+      <h2 style={{ fontSize: "22px", fontWeight: 800, marginBottom: "20px" }}>{title}</h2>
+      <div style={{ fontSize: "13px", color: T.sub, lineHeight: 1.8 }}>{children}</div>
+    </>
+  );
+
+  const TermsPage = () => (
+    <LegalPage title="Terms of Use">
+      <p><strong style={{ color: T.text }}>Last updated:</strong> March 2026</p>
+      <p>By accessing or using RentScan (www.rentscan.ae), you agree to be bound by these Terms of Use. If you do not agree, please do not use the platform.</p>
+
+      <h3 style={{ color: T.text, fontSize: "16px", marginTop: "24px", marginBottom: "8px" }}>1. Nature of service</h3>
+      <p>RentScan is an independent informational platform that provides estimated cost calculations and comparisons for car rental services in Dubai, UAE. RentScan is NOT a car rental company, broker, agent, or intermediary. We do not rent, lease, or provide vehicles. We do not enter into rental agreements on behalf of any user or rental company.</p>
+
+      <h3 style={{ color: T.text, fontSize: "16px", marginTop: "24px", marginBottom: "8px" }}>2. Informational purposes only</h3>
+      <p>All information, estimates, calculations, comparisons, and AI-generated analyses provided on this platform are for <strong style={{ color: T.text }}>general informational purposes only</strong>. This includes but is not limited to:</p>
+      <p>• Estimated total rental costs and fee breakdowns<br/>
+      • Company comparisons and pricing data<br/>
+      • AI-powered contract analysis and chat responses<br/>
+      • Dispute guidance and step-by-step suggestions<br/>
+      • Contact information for authorities and services</p>
+      <p>None of the above constitutes legal advice, financial advice, professional advice, or a guarantee of any kind.</p>
+
+      <h3 style={{ color: T.text, fontSize: "16px", marginTop: "24px", marginBottom: "8px" }}>3. No guarantees on accuracy</h3>
+      <p>While we strive to provide accurate and up-to-date information, RentScan makes <strong style={{ color: T.text }}>no warranties or representations</strong> regarding the accuracy, completeness, reliability, or timeliness of any information displayed. Prices, fees, policies, and terms of rental companies may change at any time without notice. Users should always verify all information directly with the rental company before making any booking or financial decision.</p>
+
+      <h3 style={{ color: T.text, fontSize: "16px", marginTop: "24px", marginBottom: "8px" }}>4. AI-generated content disclaimer</h3>
+      <p>RentScan uses artificial intelligence (AI) technology to analyze contracts and answer questions. AI-generated content may contain errors, inaccuracies, or outdated information. AI responses should not be relied upon as a substitute for professional legal, financial, or other expert advice. Users are solely responsible for verifying any AI-generated information before acting upon it.</p>
+
+      <h3 style={{ color: T.text, fontSize: "16px", marginTop: "24px", marginBottom: "8px" }}>5. Third-party services and referrals</h3>
+      <p>RentScan may display information about, or provide links to, third-party car rental companies and services. These are independent businesses over which RentScan has no control. RentScan does not endorse, guarantee, or assume responsibility for any third-party products, services, or business practices. Any transaction between you and a third-party rental company is solely between you and that company. RentScan may receive referral fees or commissions from rental companies when users request quotes or make bookings through our platform.</p>
+
+      <h3 style={{ color: T.text, fontSize: "16px", marginTop: "24px", marginBottom: "8px" }}>6. Dispute guidance disclaimer</h3>
+      <p>The dispute assistance and step-by-step guidance provided on RentScan is for informational purposes only and does <strong style={{ color: T.text }}>not constitute legal advice</strong>. RentScan is not a law firm, legal service, or consumer protection agency. For legal disputes, users should consult a qualified legal professional licensed in the UAE. References to government agencies (DED, RTA, Dubai Police) are provided for convenience only.</p>
+
+      <h3 style={{ color: T.text, fontSize: "16px", marginTop: "24px", marginBottom: "8px" }}>7. Photo dossier and local storage</h3>
+      <p>The "My Rental" dossier feature stores photos and rental information locally on your device. RentScan does not upload, store, or have access to your photos or personal rental details. You are solely responsible for maintaining backups of your data. RentScan is not liable for any data loss. While timestamped photos may support a dispute, RentScan makes no guarantee that any evidence will be accepted by rental companies, insurance providers, courts, or any other party.</p>
+
+      <h3 style={{ color: T.text, fontSize: "16px", marginTop: "24px", marginBottom: "8px" }}>8. Limitation of liability</h3>
+      <p>To the maximum extent permitted by applicable law, RentScan, its owners, operators, employees, and affiliates shall not be liable for any direct, indirect, incidental, special, consequential, or punitive damages arising from or related to:</p>
+      <p>• Your use of or inability to use the platform<br/>
+      • Any inaccuracies in pricing, estimates, or AI-generated content<br/>
+      • Any transactions or disputes with third-party rental companies<br/>
+      • Any decisions made based on information provided by RentScan<br/>
+      • Any loss of data, photos, or documents<br/>
+      • Any unauthorized access to your information</p>
+      <p>Your use of RentScan is entirely at your own risk.</p>
+
+      <h3 style={{ color: T.text, fontSize: "16px", marginTop: "24px", marginBottom: "8px" }}>9. Indemnification</h3>
+      <p>You agree to indemnify, defend, and hold harmless RentScan and its owners, operators, and affiliates from and against any claims, liabilities, damages, losses, and expenses arising from your use of the platform, your violation of these Terms, or your violation of any rights of a third party.</p>
+
+      <h3 style={{ color: T.text, fontSize: "16px", marginTop: "24px", marginBottom: "8px" }}>10. Company information and neutrality</h3>
+      <p>RentScan presents publicly available information about car rental companies in a neutral and factual manner. All data is sourced from public websites, published rates, and user submissions. RentScan does not make qualitative judgments about any company. Rankings and sorting are based on objective criteria (estimated price, publicly available ratings). No company pays for higher organic rankings. Sponsored or featured placements, if any, are clearly labeled.</p>
+
+      <h3 style={{ color: T.text, fontSize: "16px", marginTop: "24px", marginBottom: "8px" }}>11. User conduct</h3>
+      <p>Users agree not to misuse the platform, including but not limited to: submitting false information, attempting to manipulate data, using the platform for any unlawful purpose, or interfering with the platform's operation.</p>
+
+      <h3 style={{ color: T.text, fontSize: "16px", marginTop: "24px", marginBottom: "8px" }}>12. Modifications</h3>
+      <p>RentScan reserves the right to modify these Terms at any time. Continued use of the platform after changes constitutes acceptance of the updated Terms.</p>
+
+      <h3 style={{ color: T.text, fontSize: "16px", marginTop: "24px", marginBottom: "8px" }}>13. Governing law</h3>
+      <p>These Terms shall be governed by and construed in accordance with the laws of the United Arab Emirates. Any disputes arising from these Terms or your use of RentScan shall be subject to the exclusive jurisdiction of the courts of Dubai, UAE.</p>
+
+      <h3 style={{ color: T.text, fontSize: "16px", marginTop: "24px", marginBottom: "8px" }}>14. Contact</h3>
+      <p>For questions about these Terms, contact us at: <strong style={{ color: T.accent }}>info@rentscan.ae</strong></p>
+    </LegalPage>
+  );
+
+  const PrivacyPage = () => (
+    <LegalPage title="Privacy Policy">
+      <p><strong style={{ color: T.text }}>Last updated:</strong> March 2026</p>
+      <p>This Privacy Policy describes how RentScan (www.rentscan.ae) collects, uses, and protects your information. By using our platform, you consent to the practices described in this policy.</p>
+
+      <h3 style={{ color: T.text, fontSize: "16px", marginTop: "24px", marginBottom: "8px" }}>1. Information we collect</h3>
+      <p><strong style={{ color: T.text }}>Information you provide:</strong></p>
+      <p>• Contract text or rental quotes you paste into the scanner<br/>
+      • Questions you type into the AI assistant<br/>
+      • Contact information submitted via "Get Quote" forms (name, phone number)<br/>
+      • Rental details entered in the "My Rental" dossier</p>
+      <p><strong style={{ color: T.text }}>Information collected automatically:</strong></p>
+      <p>• Basic analytics data (page views, device type, country) via cookies or analytics tools<br/>
+      • IP address (anonymized)<br/>
+      • Browser type and operating system</p>
+      <p><strong style={{ color: T.text }}>Information we do NOT collect:</strong></p>
+      <p>• Photos taken in the "My Rental" dossier — these are stored <strong style={{ color: T.text }}>only on your device</strong> and are never uploaded to our servers<br/>
+      • Payment information — we do not process payments<br/>
+      • Precise GPS location</p>
+
+      <h3 style={{ color: T.text, fontSize: "16px", marginTop: "24px", marginBottom: "8px" }}>2. How we use your information</h3>
+      <p>• <strong style={{ color: T.text }}>Contract analysis:</strong> Text you paste is sent to our AI provider (Anthropic) for analysis and is not stored permanently by RentScan<br/>
+      • <strong style={{ color: T.text }}>Lead generation:</strong> If you click "Get Quote", your contact information may be shared with the selected rental company so they can provide you with a quote<br/>
+      • <strong style={{ color: T.text }}>Analytics:</strong> Aggregated, anonymous usage data to improve our service<br/>
+      • <strong style={{ color: T.text }}>Communication:</strong> If you contact us, we may use your information to respond</p>
+
+      <h3 style={{ color: T.text, fontSize: "16px", marginTop: "24px", marginBottom: "8px" }}>3. Third-party data sharing</h3>
+      <p>We may share information with:</p>
+      <p>• <strong style={{ color: T.text }}>Anthropic (AI provider):</strong> Contract text and questions are processed via the Anthropic Claude API. Anthropic's privacy policy governs their handling of this data.<br/>
+      • <strong style={{ color: T.text }}>Rental companies:</strong> Only when you explicitly request a quote by clicking "Get Quote" and submitting your contact information. We never share your data without your action.<br/>
+      • <strong style={{ color: T.text }}>Analytics providers:</strong> Anonymous, aggregated usage data only.<br/>
+      • <strong style={{ color: T.text }}>Law enforcement:</strong> If required by UAE law or valid legal process.</p>
+      <p>We do <strong style={{ color: T.text }}>not</strong> sell your personal information to third parties.</p>
+
+      <h3 style={{ color: T.text, fontSize: "16px", marginTop: "24px", marginBottom: "8px" }}>4. Data retention</h3>
+      <p>• Contract text sent for AI analysis is not permanently stored by RentScan<br/>
+      • Lead information (name, phone) is retained until the quote process is completed or for a maximum of 90 days<br/>
+      • Analytics data is retained in aggregated, anonymous form<br/>
+      • Photos and dossier data exist only on your device — if you clear your browser data, this information is lost</p>
+
+      <h3 style={{ color: T.text, fontSize: "16px", marginTop: "24px", marginBottom: "8px" }}>5. Data security</h3>
+      <p>We implement reasonable technical and organizational measures to protect your information. However, no method of electronic transmission or storage is 100% secure. We cannot guarantee absolute security of your data.</p>
+
+      <h3 style={{ color: T.text, fontSize: "16px", marginTop: "24px", marginBottom: "8px" }}>6. Your rights</h3>
+      <p>You have the right to:</p>
+      <p>• Request access to personal data we hold about you<br/>
+      • Request deletion of your personal data<br/>
+      • Withdraw consent for data processing at any time<br/>
+      • Opt out of any marketing communications</p>
+      <p>To exercise these rights, contact us at: <strong style={{ color: T.accent }}>info@rentscan.ae</strong></p>
+
+      <h3 style={{ color: T.text, fontSize: "16px", marginTop: "24px", marginBottom: "8px" }}>7. Cookies</h3>
+      <p>RentScan may use cookies and similar technologies for analytics and functionality purposes. You can control cookie settings through your browser. Disabling cookies may affect platform functionality.</p>
+
+      <h3 style={{ color: T.text, fontSize: "16px", marginTop: "24px", marginBottom: "8px" }}>8. Children's privacy</h3>
+      <p>RentScan is not intended for use by individuals under the age of 18. We do not knowingly collect information from children.</p>
+
+      <h3 style={{ color: T.text, fontSize: "16px", marginTop: "24px", marginBottom: "8px" }}>9. International data transfers</h3>
+      <p>Your data may be processed outside the UAE (e.g., AI processing via Anthropic's servers). By using RentScan, you consent to such transfers.</p>
+
+      <h3 style={{ color: T.text, fontSize: "16px", marginTop: "24px", marginBottom: "8px" }}>10. Changes to this policy</h3>
+      <p>We may update this Privacy Policy from time to time. We will notify users of significant changes by updating the "Last updated" date. Continued use constitutes acceptance.</p>
+
+      <h3 style={{ color: T.text, fontSize: "16px", marginTop: "24px", marginBottom: "8px" }}>11. Contact</h3>
+      <p>For privacy-related inquiries: <strong style={{ color: T.accent }}>info@rentscan.ae</strong></p>
+    </LegalPage>
+  );
+
+  const DisclaimerPage = () => (
+    <LegalPage title="Disclaimer">
+      <p><strong style={{ color: T.text }}>Last updated:</strong> March 2026</p>
+
+      <h3 style={{ color: T.text, fontSize: "16px", marginTop: "24px", marginBottom: "8px" }}>General disclaimer</h3>
+      <p>RentScan is an independent informational tool. All content on this platform — including prices, estimates, comparisons, AI-generated analyses, dispute guidance, and company information — is provided "as is" and "as available" without warranties of any kind, whether express or implied.</p>
+
+      <h3 style={{ color: T.text, fontSize: "16px", marginTop: "24px", marginBottom: "8px" }}>Not legal advice</h3>
+      <p>Nothing on this platform constitutes legal advice. The dispute assistance feature provides general informational guidance only. For legal matters, consult a qualified attorney licensed in the UAE.</p>
+
+      <h3 style={{ color: T.text, fontSize: "16px", marginTop: "24px", marginBottom: "8px" }}>Not financial advice</h3>
+      <p>Cost estimates and comparisons are approximations based on publicly available data. Actual costs may vary significantly. Do not make financial decisions based solely on RentScan estimates.</p>
+
+      <h3 style={{ color: T.text, fontSize: "16px", marginTop: "24px", marginBottom: "8px" }}>No affiliation</h3>
+      <p>RentScan is not affiliated with, endorsed by, or sponsored by any car rental company listed on the platform, nor by any government entity including but not limited to RTA, DED, Dubai Police, or RERA. All trademarks and company names belong to their respective owners.</p>
+
+      <h3 style={{ color: T.text, fontSize: "16px", marginTop: "24px", marginBottom: "8px" }}>AI limitations</h3>
+      <p>The AI analysis feature uses third-party artificial intelligence technology. AI can make mistakes, misinterpret data, or provide outdated information. Always verify AI-generated content independently. RentScan is not responsible for any actions taken based on AI output.</p>
+
+      <h3 style={{ color: T.text, fontSize: "16px", marginTop: "24px", marginBottom: "8px" }}>Photo evidence</h3>
+      <p>While the photo dossier feature helps document vehicle condition, RentScan makes no representation that such documentation will be accepted as evidence by any rental company, insurance provider, court, or other party. The effectiveness of photographic evidence depends on many factors outside RentScan's control.</p>
+
+      <h3 style={{ color: T.text, fontSize: "16px", marginTop: "24px", marginBottom: "8px" }}>Pricing data</h3>
+      <p>All pricing information is collected from publicly available sources and may not reflect current rates, promotions, or special conditions. Prices can change without notice. Always confirm the final price directly with the rental company before committing to any booking.</p>
+
+      <h3 style={{ color: T.text, fontSize: "16px", marginTop: "24px", marginBottom: "8px" }}>UAE compliance</h3>
+      <p>RentScan operates in compliance with UAE Federal Law and Dubai regulations. Users are responsible for ensuring their own compliance with all applicable laws when renting vehicles in the UAE.</p>
+    </LegalPage>
+  );
+
+  // ===== FOOTER =====
+  const Footer = () => (
+    <div style={{ textAlign: "center", padding: "24px 0 16px", borderTop: `1px solid ${T.border}`, marginTop: "24px" }}>
+      <div style={{ display: "flex", justifyContent: "center", gap: "16px", marginBottom: "12px", flexWrap: "wrap" }}>
+        {[["terms", "Terms of Use"], ["privacy", "Privacy Policy"], ["disclaimer", "Disclaimer"]].map(([k, l]) => (
+          <button key={k} onClick={() => setTab(k)} style={{ background: "none", border: "none", color: T.dim, fontSize: "11px", cursor: "pointer", textDecoration: "underline", padding: "4px" }}>{l}</button>
+        ))}
+      </div>
+      <p style={{ fontSize: "10px", color: T.dim, margin: 0, lineHeight: 1.5 }}>© 2026 RentScan · Dubai, UAE<br/>All information is for general guidance only. Not legal or financial advice.</p>
+    </div>
+  );
+
   return (
     <div style={css.page}>
       <div style={css.wrap}>
@@ -463,6 +644,10 @@ export default function App() {
         {tab === "scan" && ScanTab()}
         {tab === "compare" && CompareTab()}
         {tab === "rental" && RentalTab()}
+        {tab === "terms" && <TermsPage />}
+        {tab === "privacy" && <PrivacyPage />}
+        {tab === "disclaimer" && <DisclaimerPage />}
+        <Footer />
       </div>
       <Nav />
     </div>
