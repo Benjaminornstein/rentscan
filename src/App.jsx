@@ -114,20 +114,26 @@ const COMPANIES = [
 ];
 
 const PHOTO_GUIDES = [
-  { id: "front", label: "Front", tip: "Stand 3 meters back. Capture full front bumper, headlights and license plate.", icon: "⬆️" },
-  { id: "rear", label: "Rear", tip: "Same distance. Get the full rear bumper, tail lights and license plate clearly.", icon: "⬇️" },
-  { id: "left", label: "Left side", tip: "Stand back to capture the full side. Look for dents, scratches along doors.", icon: "⬅️" },
-  { id: "right", label: "Right side", tip: "Same as left. Check wheel arches and lower panels — damage hides there.", icon: "➡️" },
-  { id: "fl", label: "Front-left corner", tip: "Close-up of corner. Bumper edges get hit most in parking — check carefully.", icon: "↖️" },
-  { id: "fr", label: "Front-right corner", tip: "Close-up. Run your finger along the edge — feel for dents you can't see.", icon: "↗️" },
-  { id: "rl", label: "Rear-left corner", tip: "Close-up of corner and tail light. Check for cracks and paint chips.", icon: "↙️" },
-  { id: "rr", label: "Rear-right corner", tip: "Close-up. Rental companies often charge for tiny scratches here.", icon: "↘️" },
-  { id: "dash", label: "Dashboard", tip: "Sit in driver seat. Capture dashboard, warning lights and infotainment screen.", icon: "🎛️" },
-  { id: "odo", label: "Odometer / mileage", tip: "Zoom in on the mileage reading. This is your proof of starting kilometers.", icon: "🔢" },
-  { id: "fuel", label: "Fuel level", tip: "Capture the fuel gauge clearly. You must return at the same level.", icon: "⛽" },
-  { id: "interior", label: "Interior & seats", tip: "Photograph seats, steering wheel and floor mats. Check for stains or tears.", icon: "💺" },
-  { id: "trunk", label: "Trunk / boot", tip: "Open trunk. Photo inside. Check for spare tire, jack and warning triangle.", icon: "🧳" },
-  { id: "damage", label: "Existing damage", tip: "Found a scratch or dent? Take a close-up AND a wide shot showing location.", icon: "📸" },
+  // OVERVIEW SHOTS
+  { id: "front", label: "Front — overview", tip: "Stand 3 meters back. Capture the full front: bumper, hood, headlights and license plate in one shot.", icon: "⬆️" },
+  { id: "front-close", label: "Front — close-up", tip: "Now walk up close. Run your fingers along the bumper edges, around headlights, and hood edges. Photograph ANY scratch, chip or dent you find — even tiny ones.", icon: "🔎" },
+  { id: "right", label: "Right side — overview", tip: "Step back 3 meters. Capture the full right side: all doors, fender, and wheel arches in one shot.", icon: "➡️" },
+  { id: "right-close", label: "Right side — close-up", tip: "Walk along the right side slowly. Check door edges, handles, mirrors, and the area below the doors. Crouch down — scratches from curbs hide low. Photo everything.", icon: "🔎" },
+  { id: "rear", label: "Rear — overview", tip: "Stand 3 meters back. Full rear: bumper, tail lights, trunk, license plate.", icon: "⬇️" },
+  { id: "rear-close", label: "Rear — close-up", tip: "Check bumper corners carefully — this is the #1 spot for parking damage. Feel the surface with your hand. If you feel anything rough, photograph it.", icon: "🔎" },
+  { id: "left", label: "Left side — overview", tip: "Step back. Full left side: all doors, fender, wheel arches.", icon: "⬅️" },
+  { id: "left-close", label: "Left side — close-up", tip: "Same routine: door edges, handles, mirrors, lower panels. Check the fuel cap area for scratches too.", icon: "🔎" },
+  // WHEELS & ROOF
+  { id: "wheels", label: "All 4 wheels", tip: "Photograph each wheel. Curb rash on alloy rims is a common charge — AED 500+ per wheel. Check the rim edges carefully.", icon: "🛞" },
+  { id: "roof", label: "Roof & windshield", tip: "Step back and angle your camera up. Check for dents on roof (from hail/objects) and chips/cracks in the windshield. Even small chips can cost AED 300+.", icon: "🔝" },
+  // INTERIOR
+  { id: "dash", label: "Dashboard & controls", tip: "Sit in driver seat. Photograph the full dashboard, all warning lights (should be off), and infotainment screen. If any warning light is on — photograph it!", icon: "🎛️" },
+  { id: "odo", label: "Odometer / mileage", tip: "Zoom in clearly on the km reading. This is your proof of starting mileage. Make sure the number is sharp and readable.", icon: "🔢" },
+  { id: "fuel", label: "Fuel gauge", tip: "Clear photo of fuel level. You MUST return at this exact level or get charged AED 3-5 per missing liter + service fee.", icon: "⛽" },
+  { id: "seats", label: "Seats & interior", tip: "Photo all seats, especially edges and headrests. Check for stains, tears, or cigarette burns. Photo the floor mats too.", icon: "💺" },
+  { id: "trunk", label: "Trunk / boot", tip: "Open trunk. Photo inside. Check for spare tire, jack and triangle. Note any existing stains or damage.", icon: "🧳" },
+  // FINAL
+  { id: "damage", label: "Existing damage", tip: "Final check! Walk around one more time. Any scratch, dent, or mark you found — take a CLOSE-UP photo with your finger pointing at it, plus a WIDE shot showing where on the car it is.", icon: "⚠️" },
 ];
 
 const DISPUTES = {
@@ -259,8 +265,7 @@ export default function App() {
       r.onload = (ev) => {
         const guide = PHOTO_GUIDES[step];
         setter(p => [...p, { id: Date.now() + Math.random(), data: ev.target.result, time: new Date().toLocaleString("en-AE", { timeZone: "Asia/Dubai", dateStyle: "medium", timeStyle: "short" }), label: guide?.label || "Photo" }]);
-        if (step < PHOTO_GUIDES.length - 1) setPhotoStep(step + 1);
-        else { setPhotoMode(null); setPhotoStep(0); }
+        setPhotoStep(step + 1);
       }; r.readAsDataURL(file);
     }; inp.click();
   };
@@ -313,6 +318,27 @@ export default function App() {
     const guide = PHOTO_GUIDES[photoStep];
     const total = PHOTO_GUIDES.length;
     const progress = ((photoStep) / total) * 100;
+    const isCloseUp = guide?.id.includes("close") || guide?.id === "wheels" || guide?.id === "damage" || guide?.id === "roof";
+    const isDone = photoStep >= total;
+
+    if (isDone) return (
+      <div style={{ position: "fixed", top: 0, left: 0, right: 0, bottom: 0, background: "#FFFFFF", zIndex: 200, display: "flex", flexDirection: "column", fontFamily: "-apple-system, 'SF Pro Display', sans-serif" }}>
+        <div style={{ padding: "16px 20px", display: "flex", alignItems: "center", justifyContent: "center", borderBottom: `1px solid ${T.border}` }}>
+          <span style={{ fontSize: "14px", fontWeight: 700, color: T.text }}>Inspection complete</span>
+        </div>
+        <div style={{ flex: 1, display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", padding: "32px 24px", textAlign: "center" }}>
+          <div style={{ width: "80px", height: "80px", borderRadius: "50%", background: `${T.green}15`, display: "flex", alignItems: "center", justifyContent: "center", fontSize: "40px", marginBottom: "20px" }}>✅</div>
+          <h2 style={{ fontSize: "26px", fontWeight: 800, color: T.text, margin: "0 0 12px" }}>{photoStep} photos taken</h2>
+          <p style={{ fontSize: "16px", color: T.sub, lineHeight: 1.7, maxWidth: "320px", margin: "0 0 8px" }}>Did you find any additional scratches, dents, or damage that you want to photograph?</p>
+          <p style={{ fontSize: "14px", color: T.dim, lineHeight: 1.5, maxWidth: "300px" }}>Tip: Even tiny marks matter. Rental companies can charge AED 500+ for a scratch you didn't document.</p>
+        </div>
+        <div style={{ padding: "16px 24px 36px", display: "flex", flexDirection: "column", gap: "10px" }}>
+          <button onClick={() => handlePhoto(setter)} style={{ background: `linear-gradient(135deg, #E65100, #F57C00)`, color: "#fff", border: "none", borderRadius: "14px", padding: "16px", fontSize: "17px", fontWeight: 700, cursor: "pointer", width: "100%" }}>⚠️ Yes, add more damage photos</button>
+          <button onClick={() => { setPhotoMode(null); setPhotoStep(0); }} style={{ background: `linear-gradient(135deg, ${T.green}, #15803D)`, color: "#fff", border: "none", borderRadius: "14px", padding: "16px", fontSize: "17px", fontWeight: 700, cursor: "pointer", width: "100%" }}>✅ No, I'm done — looks good</button>
+        </div>
+      </div>
+    );
+
     return (
       <div style={{ position: "fixed", top: 0, left: 0, right: 0, bottom: 0, background: "#FFFFFF", zIndex: 200, display: "flex", flexDirection: "column", fontFamily: "-apple-system, 'SF Pro Display', sans-serif" }}>
         <div style={{ padding: "16px 20px", display: "flex", alignItems: "center", justifyContent: "space-between", borderBottom: `1px solid ${T.border}` }}>
@@ -321,21 +347,24 @@ export default function App() {
           <span style={{ fontSize: "13px", color: T.sub }}>{photoStep + 1}/{total}</span>
         </div>
         <div style={{ height: "3px", background: T.border }}><div style={{ height: "100%", width: `${progress}%`, background: T.accent, transition: "width 0.3s ease", borderRadius: "0 3px 3px 0" }} /></div>
-        <div style={{ flex: 1, display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", padding: "32px 24px", textAlign: "center" }}>
-          <div style={{ fontSize: "64px", marginBottom: "20px" }}>{guide.icon}</div>
-          <h2 style={{ fontSize: "28px", fontWeight: 800, color: T.text, margin: "0 0 12px", letterSpacing: "-0.5px" }}>{guide.label}</h2>
-          <p style={{ fontSize: "16px", color: T.sub, lineHeight: 1.6, maxWidth: "320px", margin: "0" }}>{guide.tip}</p>
-          <div style={{ display: "flex", gap: "5px", margin: "28px 0", flexWrap: "wrap", justifyContent: "center" }}>
-            {PHOTO_GUIDES.map((_, i) => (
+        <div style={{ flex: 1, display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", padding: "24px 24px", textAlign: "center" }}>
+          {isCloseUp && <div style={{ background: "#FFF3E0", border: "1px solid #FFB74D", borderRadius: "10px", padding: "8px 16px", marginBottom: "16px", fontSize: "13px", fontWeight: 700, color: "#E65100" }}>CLOSE-UP — Look carefully for scratches</div>}
+          <div style={{ fontSize: "64px", marginBottom: "16px" }}>{guide.icon}</div>
+          <h2 style={{ fontSize: "26px", fontWeight: 800, color: T.text, margin: "0 0 12px", letterSpacing: "-0.5px" }}>{guide.label}</h2>
+          <p style={{ fontSize: "15px", color: T.sub, lineHeight: 1.7, maxWidth: "320px", margin: "0" }}>{guide.tip}</p>
+          <div style={{ display: "flex", gap: "5px", margin: "24px 0", flexWrap: "wrap", justifyContent: "center" }}>
+            {PHOTO_GUIDES.map((g, i) => (
               <div key={i} style={{ width: i === photoStep ? "20px" : "8px", height: "8px", borderRadius: "4px", background: i < photoStep ? T.green : i === photoStep ? T.accent : T.border, transition: "all 0.3s" }} />
             ))}
           </div>
         </div>
-        <div style={{ padding: "20px 24px 36px", display: "flex", flexDirection: "column", gap: "10px" }}>
-          <button onClick={() => handleGuidedPhoto(setter, photoStep)} style={{ background: `linear-gradient(135deg, ${T.accent}, ${T.accent2})`, color: "#fff", border: "none", borderRadius: "14px", padding: "16px", fontSize: "17px", fontWeight: 700, cursor: "pointer", width: "100%" }}>📸 Take photo — {guide.label}</button>
+        <div style={{ padding: "16px 24px 36px", display: "flex", flexDirection: "column", gap: "10px" }}>
+          <button onClick={() => handleGuidedPhoto(setter, photoStep)} style={{ background: isCloseUp ? `linear-gradient(135deg, #E65100, #F57C00)` : `linear-gradient(135deg, ${T.accent}, ${T.accent2})`, color: "#fff", border: "none", borderRadius: "14px", padding: "16px", fontSize: "17px", fontWeight: 700, cursor: "pointer", width: "100%" }}>
+            {isCloseUp ? "🔎 Take close-up" : "📸 Take photo"} — {guide.label}
+          </button>
           <div style={{ display: "flex", gap: "10px" }}>
             {photoStep > 0 && <button onClick={() => setPhotoStep(s => s - 1)} style={{ flex: 1, background: "#F5F5F7", color: T.sub, border: "none", borderRadius: "12px", padding: "12px", fontSize: "14px", fontWeight: 600, cursor: "pointer" }}>← Back</button>}
-            <button onClick={() => { if (photoStep < total - 1) setPhotoStep(s => s + 1); else { setPhotoMode(null); setPhotoStep(0); } }} style={{ flex: 1, background: "#F5F5F7", color: T.sub, border: "none", borderRadius: "12px", padding: "12px", fontSize: "14px", fontWeight: 600, cursor: "pointer" }}>{photoStep < total - 1 ? "Skip →" : "Finish"}</button>
+            <button onClick={() => setPhotoStep(s => s + 1)} style={{ flex: 1, background: "#F5F5F7", color: T.sub, border: "none", borderRadius: "12px", padding: "12px", fontSize: "14px", fontWeight: 600, cursor: "pointer" }}>Skip →</button>
           </div>
         </div>
       </div>
