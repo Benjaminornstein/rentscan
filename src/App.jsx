@@ -460,9 +460,9 @@ export default function App() {
     <div style={css.page}>
       <div style={css.wrap}>
         <Logo />
-        {tab === "scan" && <ScanTab />}
-        {tab === "compare" && <CompareTab />}
-        {tab === "rental" && <RentalTab />}
+        {tab === "scan" && ScanTab()}
+        {tab === "compare" && CompareTab()}
+        {tab === "rental" && RentalTab()}
       </div>
       <Nav />
     </div>
