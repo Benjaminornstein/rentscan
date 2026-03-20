@@ -202,13 +202,16 @@ export default function App() {
   const [cDays, setCDays] = useState(7);
   const [exp, setExp] = useState(null);
   const fRef = useRef();
-  const [rental, setRental] = useState({ company: "", car: "", plate: "", start: "", end: "", insurance: "", excess: "", mileage: "", fuel: "", deposit: "", notes: "" });
+  const [rental, setRental] = useState({ company: "", car: "", plate: "", start: "", end: "", dailyPrice: "", insurance: "", excess: "", mileage: "", fuel: "", deposit: "", notes: "" });
   const [pickupP, setPickupP] = useState([]);
   const [returnP, setReturnP] = useState([]);
   const [contractP, setContractP] = useState([]);
   const [dType, setDType] = useState(null);
   const [photoMode, setPhotoMode] = useState(null); // null | "pickup" | "return" | "contract"
   const [photoStep, setPhotoStep] = useState(0);
+  const [dossierEmail, setDossierEmail] = useState("");
+  const [shareConsent, setShareConsent] = useState(true);
+  const [dossierSaved, setDossierSaved] = useState(false);
 
   // Splash screen timer
   useEffect(() => { const t = setTimeout(() => setSplash(false), 2200); return () => clearTimeout(t); }, []);
@@ -609,7 +612,7 @@ export default function App() {
         <div style={css.card}>
           <h3 style={{ fontSize: "16px", fontWeight: 700, margin: "0 0 14px" }}>🚗 Rental Details</h3>
           <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "10px" }}>
-            {[["company", "Company"], ["car", "Car model"], ["plate", "Plate number"], ["start", "Start date"], ["end", "End date"], ["insurance", "Insurance"], ["excess", "Excess (AED)"], ["mileage", "Mileage limit"], ["fuel", "Fuel policy"], ["deposit", "Deposit (AED)"]].map(([k, l]) => (
+            {[["company", "Company"], ["car", "Car model"], ["plate", "Plate number"], ["start", "Start date"], ["end", "End date"], ["dailyPrice", "Daily price (AED)"], ["insurance", "Insurance"], ["excess", "Excess (AED)"], ["mileage", "Mileage limit"], ["fuel", "Fuel policy"], ["deposit", "Deposit (AED)"]].map(([k, l]) => (
               <div key={k}><div style={css.label}>{l}</div><input value={rental[k]} onChange={e => { setRental(p => ({ ...p, [k]: e.target.value })); if (k === "company" && e.target.value.length === 3) trackEvent("rental_started", { field: k }); }} placeholder={l} style={css.input} type={k === "start" || k === "end" ? "date" : "text"} /></div>
             ))}
           </div>
@@ -619,6 +622,115 @@ export default function App() {
         <Photos title="Contract & Documents" icon="📄" photos={contractP} setter={setContractP} guides={false} />
         <Photos title="Pickup Inspection" icon="🟢" photos={pickupP} setter={setPickupP} guides={true} type="pickup" />
         <Photos title="Return Inspection" icon="🔴" photos={returnP} setter={setReturnP} guides={true} type="return" />
+
+        {/* DOSSIER GENERATION */}
+        <div style={{ ...css.card, border: `2px solid ${T.accent}` }}>
+          <h3 style={{ fontSize: "16px", fontWeight: 700, margin: "0 0 6px" }}>📋 Generate Your Dossier</h3>
+          <p style={{ ...css.sub, fontSize: "12px", marginBottom: "14px" }}>Get a complete PDF with all your rental details, photos, and timestamps.</p>
+
+          <div style={{ marginBottom: "12px" }}>
+            <div style={css.label}>Your email (optional — to receive a copy)</div>
+            <input value={dossierEmail} onChange={e => setDossierEmail(e.target.value)} placeholder="your@email.com" style={css.input} type="email" />
+          </div>
+
+          <label style={{ display: "flex", gap: "10px", alignItems: "flex-start", marginBottom: "16px", cursor: "pointer", fontSize: "13px", color: T.sub, lineHeight: 1.5 }}>
+            <input type="checkbox" checked={shareConsent} onChange={e => setShareConsent(e.target.checked)} style={{ marginTop: "3px", accentColor: T.accent, width: "18px", height: "18px", flexShrink: 0 }} />
+            <span>Help improve RentScan by sharing <strong style={{ color: T.text }}>anonymous</strong> rental info (company name, car model, price, dates). No personal data is shared.</span>
+          </label>
+
+          <button onClick={() => {
+            // Track anonymous rental data
+            if (shareConsent && rental.company) {
+              trackEvent("rental_data", {
+                company: rental.company,
+                car: rental.car,
+                dailyPrice: rental.dailyPrice || "",
+                insurance: rental.insurance,
+                mileage: rental.mileage,
+                fuel: rental.fuel,
+                deposit: rental.deposit,
+                start: rental.start,
+                end: rental.end,
+                pickupPhotos: pickupP.length,
+                returnPhotos: returnP.length,
+              });
+            }
+
+            // Generate HTML dossier and open in new tab for print/save as PDF
+            const d = rental;
+            const allPhotos = [
+              ...contractP.map(p => ({ ...p, section: "Contract" })),
+              ...pickupP.map(p => ({ ...p, section: "Pickup" })),
+              ...returnP.map(p => ({ ...p, section: "Return" })),
+            ];
+            const html = `<!DOCTYPE html><html><head><meta charset="utf-8"><title>RentScan Dossier - ${d.company || "Rental"}</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:-apple-system,sans-serif;color:#1A1A2E;padding:32px;max-width:800px;margin:0 auto}
+h1{font-size:28px;font-weight:800;margin-bottom:4px}
+h2{font-size:18px;font-weight:700;margin:24px 0 12px;padding-bottom:8px;border-bottom:2px solid #E67E3C}
+h3{font-size:14px;font-weight:700;margin:16px 0 8px;color:#E67E3C}
+.sub{color:#6B6B80;font-size:13px;margin-bottom:24px}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:16px}
+.field{background:#F5F5F7;border-radius:8px;padding:10px 14px}
+.field .label{font-size:10px;text-transform:uppercase;letter-spacing:1px;color:#9D9DB0;font-weight:600}
+.field .value{font-size:15px;font-weight:600;margin-top:2px}
+.photos{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin:12px 0}
+.photo{border-radius:8px;overflow:hidden;position:relative}
+.photo img{width:100%;aspect-ratio:1;object-fit:cover;display:block}
+.photo .info{padding:6px;background:#F5F5F7;font-size:10px;color:#6B6B80;text-align:center}
+.photo .info strong{display:block;color:#1A1A2E;font-size:11px}
+.footer{margin-top:32px;padding-top:16px;border-top:1px solid #E8E8ED;text-align:center;color:#9D9DB0;font-size:11px}
+.badge{display:inline-block;background:#E67E3C;color:#fff;padding:3px 10px;border-radius:6px;font-size:10px;font-weight:700;letter-spacing:0.5px}
+@media print{body{padding:16px}img{page-break-inside:avoid}}
+</style></head><body>
+<div style="display:flex;align-items:center;gap:12px;margin-bottom:6px">
+<div style="width:44px;height:44px;border-radius:10px;background:linear-gradient(135deg,#E67E3C,#D4692E);display:flex;align-items:center;justify-content:center;font-size:22px">🔍</div>
+<div><h1>RentScan Dossier</h1><div class="sub" style="margin:0">Generated ${new Date().toLocaleString("en-AE", { timeZone: "Asia/Dubai", dateStyle: "long", timeStyle: "short" })}</div></div>
+</div>
+<div class="sub">This document contains rental details and timestamped photographic evidence.</div>
+
+<h2>Rental Details</h2>
+<div class="grid">
+${[["Company", d.company], ["Car model", d.car], ["Plate number", d.plate], ["Start date", d.start], ["End date", d.end], ["Daily price", d.dailyPrice ? "AED " + d.dailyPrice : "—"], ["Insurance", d.insurance], ["Excess", d.excess ? "AED " + d.excess : "—"], ["Mileage limit", d.mileage], ["Fuel policy", d.fuel], ["Deposit", d.deposit ? "AED " + d.deposit : "—"]].map(([l, v]) => `<div class="field"><div class="label">${l}</div><div class="value">${v || "—"}</div></div>`).join("")}
+</div>
+${d.notes ? `<div class="field" style="margin-bottom:16px"><div class="label">Notes</div><div class="value">${d.notes}</div></div>` : ""}
+
+${[["Contract & Documents", contractP], ["Pickup Inspection", pickupP], ["Return Inspection", returnP]].map(([title, photos]) => photos.length > 0 ? `
+<h2>${title}</h2>
+<p style="color:#6B6B80;font-size:12px;margin-bottom:8px">${photos.length} photo${photos.length > 1 ? "s" : ""}</p>
+<div class="photos">
+${photos.map(p => `<div class="photo"><img src="${p.data}"/><div class="info"><strong>${p.label}</strong>${p.time}</div></div>`).join("")}
+</div>` : "").join("")}
+
+<h2>Summary</h2>
+<div class="grid">
+<div class="field"><div class="label">Total photos</div><div class="value">${allPhotos.length}</div></div>
+<div class="field"><div class="label">Pickup photos</div><div class="value">${pickupP.length}</div></div>
+<div class="field"><div class="label">Return photos</div><div class="value">${returnP.length}</div></div>
+<div class="field"><div class="label">Contract photos</div><div class="value">${contractP.length}</div></div>
+</div>
+
+<div class="footer">
+<div style="margin-bottom:8px"><span class="badge">RENTSCAN.AE</span></div>
+<div>This dossier was generated by RentScan — Scan before you sign</div>
+<div>www.rentscan.ae</div>
+<div style="margin-top:8px;font-size:10px">This document is for informational purposes only and does not constitute legal evidence.<br/>Timestamps are based on device time at moment of capture.</div>
+</div>
+</body></html>`;
+
+            const blob = new Blob([html], { type: "text/html" });
+            const url = URL.createObjectURL(blob);
+            const w = window.open(url, "_blank");
+            if (w) w.onload = () => { setTimeout(() => { w.print(); }, 500); };
+            setDossierSaved(true);
+            trackEvent("dossier_generated", { company: d.company, photos: allPhotos.length });
+          }} disabled={!rental.company && pickupP.length === 0} style={{ ...css.btn, opacity: (!rental.company && pickupP.length === 0) ? 0.4 : 1 }}>
+            📋 Generate & Download Dossier
+          </button>
+          {dossierSaved && <p style={{ fontSize: "12px", color: T.green, textAlign: "center", marginTop: "8px", fontWeight: 600 }}>✅ Dossier generated! Use your browser's "Save as PDF" option.</p>}
+          <p style={{ fontSize: "11px", color: T.dim, textAlign: "center", marginTop: "8px" }}>Opens in new tab → Print → "Save as PDF"</p>
+        </div>
 
         <div style={css.card}>
           <h3 style={{ fontSize: "16px", fontWeight: 700, margin: "0 0 6px" }}>⚖️ Need Help With a Dispute?</h3>
@@ -648,7 +760,7 @@ export default function App() {
             </div>
           ))}
         </div>
-        <p style={{ fontSize: "11px", color: T.dim, textAlign: "center", padding: "16px 0", lineHeight: 1.6 }}>📸 Photos stored locally on your device. 100% private.</p>
+        <p style={{ fontSize: "11px", color: T.dim, textAlign: "center", padding: "16px 0", lineHeight: 1.6 }}>📸 Photos stored locally on your device. Only anonymous rental info (company, car, price) is shared if you consent.</p>
       </>
     );
   };
@@ -852,4 +964,3 @@ export default function App() {
     </div>
   );
 }
-
