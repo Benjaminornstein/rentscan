@@ -264,8 +264,11 @@ export default function App() {
       const r = new FileReader();
       r.onload = (ev) => {
         const guide = PHOTO_GUIDES[step];
+        const isCloseUp = guide?.id.includes("close") || guide?.id === "wheels" || guide?.id === "damage" || guide?.id === "roof";
         setter(p => [...p, { id: Date.now() + Math.random(), data: ev.target.result, time: new Date().toLocaleString("en-AE", { timeZone: "Asia/Dubai", dateStyle: "medium", timeStyle: "short" }), label: guide?.label || "Photo" }]);
-        setPhotoStep(step + 1);
+        // Close-up steps: stay on same step (user clicks Next when done)
+        // Overview steps: auto-advance
+        if (!isCloseUp) setPhotoStep(step + 1);
       }; r.readAsDataURL(file);
     }; inp.click();
   };
@@ -360,11 +363,12 @@ export default function App() {
         </div>
         <div style={{ padding: "16px 24px 36px", display: "flex", flexDirection: "column", gap: "10px" }}>
           <button onClick={() => handleGuidedPhoto(setter, photoStep)} style={{ background: isCloseUp ? `linear-gradient(135deg, #E65100, #F57C00)` : `linear-gradient(135deg, ${T.accent}, ${T.accent2})`, color: "#fff", border: "none", borderRadius: "14px", padding: "16px", fontSize: "17px", fontWeight: 700, cursor: "pointer", width: "100%" }}>
-            {isCloseUp ? "🔎 Take close-up" : "📸 Take photo"} — {guide.label}
+            {isCloseUp ? "🔎 Take close-up photo" : "📸 Take photo"} — {guide.label}
           </button>
+          {isCloseUp && <p style={{ fontSize: "12px", color: T.dim, textAlign: "center", margin: "0" }}>Take as many photos as needed — every scratch counts</p>}
           <div style={{ display: "flex", gap: "10px" }}>
             {photoStep > 0 && <button onClick={() => setPhotoStep(s => s - 1)} style={{ flex: 1, background: "#F5F5F7", color: T.sub, border: "none", borderRadius: "12px", padding: "12px", fontSize: "14px", fontWeight: 600, cursor: "pointer" }}>← Back</button>}
-            <button onClick={() => setPhotoStep(s => s + 1)} style={{ flex: 1, background: "#F5F5F7", color: T.sub, border: "none", borderRadius: "12px", padding: "12px", fontSize: "14px", fontWeight: 600, cursor: "pointer" }}>Skip →</button>
+            <button onClick={() => setPhotoStep(s => s + 1)} style={{ flex: 1, background: isCloseUp ? T.green : "#F5F5F7", color: isCloseUp ? "#fff" : T.sub, border: "none", borderRadius: "12px", padding: "12px", fontSize: "14px", fontWeight: 600, cursor: "pointer" }}>{isCloseUp ? "✓ Done, next →" : "Skip →"}</button>
           </div>
         </div>
       </div>
