@@ -1,0 +1,1014 @@
+[
+  {
+    "company": "Quick Drive",
+    "website": "https://www.quickdrive.ae",
+    "found_prices": true,
+    "cars": [
+      {
+        "model": "JAC J7",
+        "type": "sedan",
+        "perDay": 88,
+        "perWeek": 525,
+        "perMonth": 2100
+      },
+      {
+        "model": "Hyundai Accent",
+        "type": "sedan",
+        "perDay": 87,
+        "perWeek": 518,
+        "perMonth": 1830
+      },
+      {
+        "model": "Mitsubishi ASX",
+        "type": "suv",
+        "perDay": 84,
+        "perWeek": 504,
+        "perMonth": 2010
+      },
+      {
+        "model": "Citroen C5",
+        "type": "suv",
+        "perDay": 92,
+        "perWeek": 553,
+        "perMonth": 2190
+      },
+      {
+        "model": "Citroen C3",
+        "type": "suv",
+        "perDay": 80,
+        "perWeek": 483,
+        "perMonth": 1710
+      },
+      {
+        "model": "MG3",
+        "type": "economy",
+        "perDay": 72,
+        "perWeek": 434,
+        "perMonth": 1410
+      }
+    ],
+    "insurance": "unknown",
+    "mileage_limit": "unknown",
+    "deposit": "unknown",
+    "fuel_policy": "unknown",
+    "airport_fee": "unknown",
+    "min_age": null,
+    "delivery": "unknown",
+    "google_rating": null,
+    "notes": "Pay now & Get a 10% Discount Instantly. Best Price Guarantee. Free Cancellation. Contact: +971 50 525 9245"
+  },
+  {
+    "company": "Absolute Rent a Car",
+    "website": "https://abrc.ae",
+    "found_prices": true,
+    "cars": [
+      {
+        "model": "General SUVs",
+        "type": "suv",
+        "perDay": 210,
+        "perWeek": null,
+        "perMonth": null
+      },
+      {
+        "model": "General Sedans",
+        "type": "sedan",
+        "perDay": 210,
+        "perWeek": null,
+        "perMonth": null
+      },
+      {
+        "model": "General Convertibles",
+        "type": "luxury",
+        "perDay": 650,
+        "perWeek": null,
+        "perMonth": null
+      },
+      {
+        "model": "General Sportcars",
+        "type": "luxury",
+        "perDay": 650,
+        "perWeek": null,
+        "perMonth": null
+      },
+      {
+        "model": "General Electric cars",
+        "type": "electric",
+        "perDay": 450,
+        "perWeek": null,
+        "perMonth": null
+      },
+      {
+        "model": "General Buses",
+        "type": "van",
+        "perDay": 220,
+        "perWeek": null,
+        "perMonth": null
+      }
+    ],
+    "insurance": "CDR insurance included, additional full insurance available for extra fee",
+    "mileage_limit": "unknown",
+    "deposit": "2000 AED",
+    "fuel_policy": "full tank provided",
+    "airport_fee": "100 AED for Dubai International Airport",
+    "min_age": 21,
+    "delivery": "free within Dubai, 100 AED additional driver fee",
+    "google_rating": null,
+    "notes": "Minimum rental 3 days (luxury cars 1 day), additional driver 100 AED, accident penalty 1500 AED if at fault, delivery charges: 250 AED Sharjah, 500 AED other Emirates"
+  },
+  {
+    "company": "Al Emad Cars",
+    "website": "https://al-emadcars.com",
+    "found_prices": true,
+    "cars": [
+      {
+        "model": "MG 5 2026",
+        "type": "economy",
+        "perDay": 85,
+        "perWeek": 560,
+        "perMonth": 1750
+      },
+      {
+        "model": "BYD SONG PLUS 2026",
+        "type": "suv",
+        "perDay": 199,
+        "perWeek": 1250,
+        "perMonth": 3999
+      },
+      {
+        "model": "DONGFENG SHINE 2026",
+        "type": "economy",
+        "perDay": 99,
+        "perWeek": 660,
+        "perMonth": 1799
+      },
+      {
+        "model": "GAC EMZOOM GS3 2026",
+        "type": "suv",
+        "perDay": 110,
+        "perWeek": 750,
+        "perMonth": 2150
+      },
+      {
+        "model": "OMODA C5 2026",
+        "type": "suv",
+        "perDay": 150,
+        "perWeek": 999,
+        "perMonth": 2150
+      },
+      {
+        "model": "Nissan Patrol 2026",
+        "type": "suv",
+        "perDay": 699,
+        "perWeek": 4699,
+        "perMonth": 16000
+      },
+      {
+        "model": "NISSAN X TERRA 2025",
+        "type": "suv",
+        "perDay": 190,
+        "perWeek": 1299,
+        "perMonth": 4499
+      }
+    ],
+    "insurance": "Emergency Roadside Assistance included",
+    "mileage_limit": "unknown",
+    "deposit": "unknown",
+    "fuel_policy": "unknown",
+    "airport_fee": "unknown",
+    "min_age": null,
+    "delivery": "unknown",
+    "google_rating": null,
+    "notes": "No Hidden Charges, NO Maintenance or Service Charges, 0% commission rule, Available in Dubai and Abu Dhabi, Customizable packages available"
+  },
+  {
+    "company": "Rental Cars UAE (Amex)",
+    "website": "https://rentalcarsuae.com",
+    "found_prices": true,
+    "cars": [
+      {
+        "model": "Kia Pegas",
+        "type": "sedan",
+        "perDay": 45,
+        "perWeek": null,
+        "perMonth": 1125
+      },
+      {
+        "model": "MG 5 2025",
+        "type": "sedan",
+        "perDay": 63,
+        "perWeek": null,
+        "perMonth": 1382
+      },
+      {
+        "model": "Geely Emgrand 2026",
+        "type": "sedan",
+        "perDay": 72,
+        "perWeek": null,
+        "perMonth": 1544
+      },
+      {
+        "model": "Toyota Rush",
+        "type": "suv",
+        "perDay": 90,
+        "perWeek": null,
+        "perMonth": 2031
+      },
+      {
+        "model": "Kia Picanto 2025",
+        "type": "economy",
+        "perDay": 52,
+        "perWeek": null,
+        "perMonth": 1057
+      },
+      {
+        "model": "MG 3 2025",
+        "type": "economy",
+        "perDay": 47,
+        "perWeek": null,
+        "perMonth": 1097
+      },
+      {
+        "model": "Suzuki Baleno 2026",
+        "type": "economy",
+        "perDay": 54,
+        "perWeek": null,
+        "perMonth": 1138
+      },
+      {
+        "model": "Nissan Sunny 2025",
+        "type": "sedan",
+        "perDay": 50,
+        "perWeek": null,
+        "perMonth": 1138
+      },
+      {
+        "model": "Kia K3 Hatchback",
+        "type": "economy",
+        "perDay": 50,
+        "perWeek": null,
+        "perMonth": 1146
+      },
+      {
+        "model": "Toyota Yaris",
+        "type": "economy",
+        "perDay": 54,
+        "perWeek": null,
+        "perMonth": 1178
+      },
+      {
+        "model": "Kia Cerato",
+        "type": "sedan",
+        "perDay": 63,
+        "perWeek": null,
+        "perMonth": 1194
+      },
+      {
+        "model": "Toyota Corolla",
+        "type": "sedan",
+        "perDay": 61,
+        "perWeek": null,
+        "perMonth": 1219
+      }
+    ],
+    "insurance": "unknown",
+    "mileage_limit": "unknown",
+    "deposit": "required but amount unknown",
+    "fuel_policy": "same level as received or 50 AED fine",
+    "airport_fee": "available at Dubai Airport terminals 1, 2, 3",
+    "min_age": 21,
+    "delivery": "free for monthly bookings, 60-90 minutes delivery time",
+    "google_rating": null,
+    "notes": "AED 100 OFF coupon available for online bookings, 21 working days for deposit return, 1-2 hours late return compensatable, 3+ hours late charged 1 full day"
+  },
+  {
+    "company": "Babil Rent a Car",
+    "website": "https://babilcar.com",
+    "found_prices": true,
+    "cars": [
+      {
+        "model": "Ferrari SF90 Spider",
+        "type": "luxury",
+        "perDay": 5500,
+        "perWeek": null,
+        "perMonth": null
+      },
+      {
+        "model": "Mercedes Benz S Class AMG BRABUS Kit",
+        "type": "luxury",
+        "perDay": 899,
+        "perWeek": null,
+        "perMonth": null
+      },
+      {
+        "model": "Ford Mustang",
+        "type": "sports",
+        "perDay": 799,
+        "perWeek": null,
+        "perMonth": null
+      },
+      {
+        "model": "Chevrolet Corvette C8 Convertible",
+        "type": "sports",
+        "perDay": 1100,
+        "perWeek": null,
+        "perMonth": null
+      },
+      {
+        "model": "McLaren Artura Orange",
+        "type": "luxury",
+        "perDay": 4299,
+        "perWeek": null,
+        "perMonth": null
+      },
+      {
+        "model": "Ferrari SF90 Spider",
+        "type": "luxury",
+        "perDay": 5999,
+        "perWeek": null,
+        "perMonth": null
+      },
+      {
+        "model": "BMW X7",
+        "type": "suv",
+        "perDay": 1299,
+        "perWeek": null,
+        "perMonth": null
+      },
+      {
+        "model": "Mercedes Benz G63",
+        "type": "suv",
+        "perDay": 1399,
+        "perWeek": null,
+        "perMonth": null
+      },
+      {
+        "model": "Mercedes GLE Coupe",
+        "type": "suv",
+        "perDay": 1399,
+        "perWeek": null,
+        "perMonth": null
+      }
+    ],
+    "insurance": "Insurance included",
+    "mileage_limit": "unknown",
+    "deposit": "zero deposit available",
+    "fuel_policy": "unknown",
+    "airport_fee": "unknown",
+    "min_age": null,
+    "delivery": "free",
+    "google_rating": 5.0,
+    "notes": "Special discounts available for Emirates crew, students, PhD doctors, RTA staff, and police staff. 30-minute delivery anywhere in Dubai. 24/7 roadside assistance included. No hidden charges policy."
+  },
+  {
+    "company": "Udrive",
+    "website": "https://www.udrive.ae",
+    "found_prices": true,
+    "cars": [
+      {
+        "model": "MINI Cooper JCW Cabrio",
+        "type": "economy",
+        "perDay": 279,
+        "perWeek": null,
+        "perMonth": null
+      },
+      {
+        "model": "Kia Pegas",
+        "type": "sedan",
+        "perDay": 139,
+        "perWeek": null,
+        "perMonth": null
+      },
+      {
+        "model": "Ford Territory",
+        "type": "suv",
+        "perDay": 188,
+        "perWeek": null,
+        "perMonth": null
+      },
+      {
+        "model": "Kia Picanto",
+        "type": "economy",
+        "perDay": 139,
+        "perWeek": null,
+        "perMonth": null
+      },
+      {
+        "model": "BYD QIN",
+        "type": "sedan",
+        "perDay": 179,
+        "perWeek": null,
+        "perMonth": null
+      },
+      {
+        "model": "Toyota Rush",
+        "type": "suv",
+        "perDay": 149,
+        "perWeek": null,
+        "perMonth": null
+      },
+      {
+        "model": "Toyota Corolla",
+        "type": "sedan",
+        "perDay": 149,
+        "perWeek": null,
+        "perMonth": null
+      },
+      {
+        "model": "Toyota Camry",
+        "type": "sedan",
+        "perDay": 179,
+        "perWeek": null,
+        "perMonth": null
+      },
+      {
+        "model": "Suzuki Ciaz",
+        "type": "sedan",
+        "perDay": 139,
+        "perWeek": null,
+        "perMonth": null
+      },
+      {
+        "model": "Nissan Sunny",
+        "type": "sedan",
+        "perDay": 129,
+        "perWeek": null,
+        "perMonth": null
+      },
+      {
+        "model": "Mitsubishi Xpander",
+        "type": "van",
+        "perDay": 169,
+        "perWeek": null,
+        "perMonth": null
+      },
+      {
+        "model": "Mitsubishi Attrage",
+        "type": "sedan",
+        "perDay": 135,
+        "perWeek": null,
+        "perMonth": null
+      }
+    ],
+    "insurance": "Basic insurance included with excess fee, CDW and FDC upgrades available",
+    "mileage_limit": "unknown",
+    "deposit": "none",
+    "fuel_policy": "free fuel included",
+    "airport_fee": "unknown",
+    "min_age": 21,
+    "delivery": "unknown",
+    "google_rating": null,
+    "notes": "Free parking, free fuel, no registration fees, no hidden charges, hourly and monthly rentals available"
+  },
+  {
+    "company": "eZhire",
+    "website": "https://www.ezhire.ae",
+    "found_prices": false,
+    "cars": [],
+    "insurance": "unknown",
+    "mileage_limit": "unknown",
+    "deposit": "none",
+    "fuel_policy": "unknown",
+    "airport_fee": "unknown",
+    "min_age": 18,
+    "delivery": "free",
+    "google_rating": null,
+    "notes": "No deposit required, instant delivery from 10 minutes, 24/7 support, flexible plans available (daily/weekly/monthly/subscription), multiple payment options including credit card, Apple Pay, and Tabby, free cancellations and extensions"
+  },
+  {
+    "company": "Motorkart",
+    "website": "https://motorkart.ae",
+    "found_prices": true,
+    "cars": [
+      {
+        "model": "Mitsubishi Attrage 2024",
+        "type": "sedan",
+        "perDay": 90,
+        "perWeek": null,
+        "perMonth": 1680
+      },
+      {
+        "model": "Nissan Sunny 2021",
+        "type": "sedan",
+        "perDay": 80,
+        "perWeek": null,
+        "perMonth": 1450
+      },
+      {
+        "model": "Nissan Sunny 2021",
+        "type": "sedan",
+        "perDay": 80,
+        "perWeek": null,
+        "perMonth": 1575
+      },
+      {
+        "model": "Mercedes-Benz V 250",
+        "type": "van",
+        "perDay": 700,
+        "perWeek": null,
+        "perMonth": 15000
+      },
+      {
+        "model": "Toyota Yaris 2025",
+        "type": "hatchback",
+        "perDay": 95,
+        "perWeek": null,
+        "perMonth": 1650
+      },
+      {
+        "model": "Toyota Yaris 2025",
+        "type": "hatchback",
+        "perDay": 120,
+        "perWeek": null,
+        "perMonth": 1550
+      },
+      {
+        "model": "Toyota Yaris 2025",
+        "type": "hatchback",
+        "perDay": 110,
+        "perWeek": null,
+        "perMonth": 1590
+      },
+      {
+        "model": "MG 3 2025",
+        "type": "hatchback",
+        "perDay": 95,
+        "perWeek": null,
+        "perMonth": 1599
+      },
+      {
+        "model": "Land Rover Defender 110 HSE V6 P400",
+        "type": "suv",
+        "perDay": 850,
+        "perWeek": null,
+        "perMonth": 21000
+      },
+      {
+        "model": "Land Rover Defender 90 V8",
+        "type": "suv",
+        "perDay": 900,
+        "perWeek": null,
+        "perMonth": 22500
+      },
+      {
+        "model": "Land Rover Range Rover Vogue HSE V8 P530",
+        "type": "luxury",
+        "perDay": 1200,
+        "perWeek": null,
+        "perMonth": 30000
+      },
+      {
+        "model": "Land Rover Range Rover Vogue HSE V8 P530",
+        "type": "luxury",
+        "perDay": 1500,
+        "perWeek": null,
+        "perMonth": 35000
+      }
+    ],
+    "insurance": "Insurance Included",
+    "mileage_limit": "200 km daily for economy cars, 250 km daily for luxury/SUV",
+    "deposit": "unknown",
+    "fuel_policy": "unknown",
+    "airport_fee": "unknown",
+    "min_age": null,
+    "delivery": "free",
+    "google_rating": null,
+    "notes": "Starting from AED 50/day advertised, free delivery, no commission, direct booking via WhatsApp/call, 500+ verified cars available"
+  },
+  {
+    "company": "Shift Car Rental",
+    "website": "https://shiftcarrental.com",
+    "found_prices": false,
+    "cars": [],
+    "insurance": "unknown",
+    "mileage_limit": "unknown",
+    "deposit": "unknown",
+    "fuel_policy": "unknown",
+    "airport_fee": "unknown",
+    "min_age": null,
+    "delivery": "free",
+    "google_rating": null,
+    "notes": "Company offers daily, weekly, and monthly rentals across Dubai, Abu Dhabi and UAE. Fleet includes small, medium, crossover, luxury, SUV, and commercial vehicles. Door-to-door delivery and pickup service available. Award-winning customer service with 24/7 support."
+  },
+  {
+    "company": "Rent Any Car",
+    "website": "https://rentanycar.ae",
+    "found_prices": true,
+    "cars": [
+      {
+        "model": "Lamborghini Urus Mansory",
+        "type": "luxury",
+        "perDay": 3500,
+        "perWeek": null,
+        "perMonth": null
+      },
+      {
+        "model": "Ferrari Purosangue",
+        "type": "luxury",
+        "perDay": 9500,
+        "perWeek": null,
+        "perMonth": null
+      },
+      {
+        "model": "Ferrari F8 Spider",
+        "type": "luxury",
+        "perDay": 3700,
+        "perWeek": null,
+        "perMonth": null
+      },
+      {
+        "model": "Porsche 911 Turbo S",
+        "type": "luxury",
+        "perDay": 3200,
+        "perWeek": null,
+        "perMonth": null
+      },
+      {
+        "model": "Mini Cooper S",
+        "type": "economy",
+        "perDay": 349,
+        "perWeek": null,
+        "perMonth": null
+      },
+      {
+        "model": "Range Rover Vogue Autobiography",
+        "type": "luxury",
+        "perDay": 2400,
+        "perWeek": null,
+        "perMonth": null
+      },
+      {
+        "model": "Audi Q3 Sportsback",
+        "type": "suv",
+        "perDay": 550,
+        "perWeek": null,
+        "perMonth": null
+      },
+      {
+        "model": "Land Rover Defender",
+        "type": "suv",
+        "perDay": 1100,
+        "perWeek": null,
+        "perMonth": null
+      }
+    ],
+    "insurance": "unknown",
+    "mileage_limit": "unknown",
+    "deposit": "unknown",
+    "fuel_policy": "unknown",
+    "airport_fee": "unknown",
+    "min_age": null,
+    "delivery": "unknown",
+    "google_rating": null,
+    "notes": "Up to 35% discounts & special offers available. No upfront costs mentioned. 150+ luxury cars fleet available for short and long term periods."
+  },
+  {
+    "company": "Hertz UAE",
+    "website": "https://www.hertz.ae",
+    "found_prices": false,
+    "cars": [],
+    "insurance": "unknown",
+    "mileage_limit": "unknown",
+    "deposit": "unknown",
+    "fuel_policy": "unknown",
+    "airport_fee": "unknown",
+    "min_age": 21,
+    "delivery": "unknown",
+    "google_rating": null,
+    "notes": "Teachers & Parents rental offers available, corporate leasing options, long-term rental options, 14 rental locations in UAE, fleet of over 11,000 vehicles, 24/7 contact center"
+  },
+  {
+    "company": "Europcar Dubai",
+    "website": "https://www.europcar.com/en-ae",
+    "found_prices": true,
+    "cars": [
+      {
+        "model": "Monthly Car Rental",
+        "type": "unknown",
+        "perDay": null,
+        "perWeek": null,
+        "perMonth": 1219
+      }
+    ],
+    "insurance": "unknown",
+    "mileage_limit": "unknown",
+    "deposit": "unknown",
+    "fuel_policy": "unknown",
+    "airport_fee": "unknown",
+    "min_age": null,
+    "delivery": "unknown",
+    "google_rating": null,
+    "notes": "Up to 20% OFF fall getaway promotion, Up to 30% OFF French Alps promotion, Flexible Long Term Rentals with Europcar Flex, Chauffeur service available, Online check-in service available, 1-9 months rental options available"
+  },
+  {
+    "company": "Sixt Dubai",
+    "website": "https://www.sixt.ae",
+    "found_prices": false,
+    "cars": [],
+    "insurance": "unknown",
+    "mileage_limit": "unknown",
+    "deposit": "unknown",
+    "fuel_policy": "unknown",
+    "airport_fee": "unknown",
+    "min_age": null,
+    "delivery": "unknown",
+    "google_rating": null,
+    "notes": "Premium car rental at affordable rates. Fleet includes luxury sedans, premium SUVs, convertibles, economy cars, electric cars, minivans, sports cars, station wagons. Limousine service available. Locations in Dubai & Abu Dhabi."
+  },
+  {
+    "company": "Budget UAE",
+    "website": "https://www.budget-uae.com/en",
+    "found_prices": false,
+    "cars": [],
+    "insurance": "unknown",
+    "mileage_limit": "unlimited",
+    "deposit": "unknown",
+    "fuel_policy": "unknown",
+    "airport_fee": "unknown",
+    "min_age": null,
+    "delivery": "unknown",
+    "google_rating": null,
+    "notes": "Wide range of vehicles available including luxury, daily drives, city sprints, and family getaways. Optional add-ons include additional drivers, one-way rentals, GPS, and mobile Wi-Fi. Contact: 800 283438 or +971 4 873 5666"
+  },
+  {
+    "company": "Taite Luxury",
+    "website": "https://taiteluxurycarrental.com",
+    "found_prices": true,
+    "cars": [
+      {
+        "model": "Lamborghini Aventador SVJ",
+        "type": "luxury",
+        "perDay": 12000,
+        "perWeek": null,
+        "perMonth": null
+      },
+      {
+        "model": "Rolls Royce Cullinan",
+        "type": "luxury",
+        "perDay": 4500,
+        "perWeek": null,
+        "perMonth": null
+      },
+      {
+        "model": "Ferrari Purosangue",
+        "type": "luxury",
+        "perDay": 12000,
+        "perWeek": null,
+        "perMonth": null
+      },
+      {
+        "model": "Bugatti Chiron",
+        "type": "luxury",
+        "perDay": null,
+        "perWeek": null,
+        "perMonth": null
+      },
+      {
+        "model": "Lamborghini Revuelto",
+        "type": "luxury",
+        "perDay": 12000,
+        "perWeek": null,
+        "perMonth": null
+      },
+      {
+        "model": "Audi RSQ8 Performance",
+        "type": "suv",
+        "perDay": 1500,
+        "perWeek": null,
+        "perMonth": null
+      },
+      {
+        "model": "Ferrari 296 GTB",
+        "type": "luxury",
+        "perDay": 4500,
+        "perWeek": null,
+        "perMonth": null
+      },
+      {
+        "model": "Ferrari 812 GTS",
+        "type": "luxury",
+        "perDay": 6000,
+        "perWeek": null,
+        "perMonth": null
+      },
+      {
+        "model": "Ferrari SF90 Stradale",
+        "type": "luxury",
+        "perDay": 7500,
+        "perWeek": null,
+        "perMonth": null
+      },
+      {
+        "model": "Lamborghini Urus Performante",
+        "type": "suv",
+        "perDay": 3500,
+        "perWeek": null,
+        "perMonth": null
+      },
+      {
+        "model": "Mclaren Artura",
+        "type": "luxury",
+        "perDay": 3500,
+        "perWeek": null,
+        "perMonth": null
+      }
+    ],
+    "insurance": "unknown",
+    "mileage_limit": "unknown",
+    "deposit": "unknown",
+    "fuel_policy": "unknown",
+    "airport_fee": "unknown",
+    "min_age": null,
+    "delivery": "unknown",
+    "google_rating": null,
+    "notes": "Bugatti Chiron price on demand. Company offers monthly packages and flexible rental options. WhatsApp contact available."
+  },
+  {
+    "company": "Trinity Rental",
+    "website": "https://trinityrental.com",
+    "found_prices": true,
+    "cars": [
+      {
+        "model": "Bentley Continental GT Speed",
+        "type": "luxury",
+        "perDay": 3000,
+        "perWeek": 28000,
+        "perMonth": 90000
+      },
+      {
+        "model": "G-class P820 Mansory",
+        "type": "luxury",
+        "perDay": 2700,
+        "perWeek": 28350,
+        "perMonth": 81000
+      },
+      {
+        "model": "McLaren 720S",
+        "type": "luxury",
+        "perDay": 2220,
+        "perWeek": 23310,
+        "perMonth": 66600
+      },
+      {
+        "model": "Lamborghini Urus",
+        "type": "luxury",
+        "perDay": 1790,
+        "perWeek": 18830,
+        "perMonth": 53700
+      },
+      {
+        "model": "Rolls-Royce Cullinan",
+        "type": "luxury",
+        "perDay": 2700,
+        "perWeek": 28350,
+        "perMonth": 81000
+      },
+      {
+        "model": "McLaren 750S Spider",
+        "type": "luxury",
+        "perDay": 2940,
+        "perWeek": 30870,
+        "perMonth": 88200
+      },
+      {
+        "model": "McLaren 720S Spider TopCar",
+        "type": "luxury",
+        "perDay": 2580,
+        "perWeek": 27090,
+        "perMonth": 77400
+      },
+      {
+        "model": "Mercedes G63 Black 2025",
+        "type": "luxury",
+        "perDay": 1600,
+        "perWeek": 16450,
+        "perMonth": 48000
+      },
+      {
+        "model": "Ferrari Roma",
+        "type": "luxury",
+        "perDay": 1740,
+        "perWeek": 18270,
+        "perMonth": 52200
+      },
+      {
+        "model": "Lamborghini Urus SE",
+        "type": "luxury",
+        "perDay": 2800,
+        "perWeek": 27300,
+        "perMonth": 84000
+      }
+    ],
+    "insurance": "VAT included in price",
+    "mileage_limit": "unknown",
+    "deposit": "No deposit required",
+    "fuel_policy": "Full tank of fuel as a gift",
+    "airport_fee": "unknown",
+    "min_age": null,
+    "delivery": "unknown",
+    "google_rating": 4.7,
+    "notes": "No deposit required, VAT included, toll roads included, full tank as gift, 80+ luxury cars available, new cars with minimal mileage"
+  },
+  {
+    "company": "MK Rent a Car",
+    "website": "https://mkrentacar.com",
+    "found_prices": true,
+    "cars": [
+      {
+        "model": "Ferrari SF 90",
+        "type": "luxury",
+        "perDay": 2999,
+        "perWeek": null,
+        "perMonth": null
+      },
+      {
+        "model": "Lamborghini Huracan STO",
+        "type": "luxury",
+        "perDay": 2499,
+        "perWeek": null,
+        "perMonth": null
+      },
+      {
+        "model": "McLaren Artura Orange",
+        "type": "luxury",
+        "perDay": 1499,
+        "perWeek": null,
+        "perMonth": null
+      }
+    ],
+    "insurance": "unknown",
+    "mileage_limit": "unknown",
+    "deposit": "none",
+    "fuel_policy": "unknown",
+    "airport_fee": "unknown",
+    "min_age": null,
+    "delivery": "unknown",
+    "google_rating": 4.9,
+    "notes": "No deposit required, 24/7 available, prices inclusive of VAT & deposit fee, daily offers with limited time validity"
+  },
+  {
+    "company": "Great Dubai",
+    "website": "https://greatdubai.com",
+    "found_prices": true,
+    "cars": [
+      {
+        "model": "McLaren Spider 720s",
+        "type": "luxury",
+        "perDay": 4000,
+        "perWeek": null,
+        "perMonth": 88000
+      },
+      {
+        "model": "Chevrolet Impala",
+        "type": "sedan",
+        "perDay": 99,
+        "perWeek": null,
+        "perMonth": 2900
+      },
+      {
+        "model": "Tesla Model 3",
+        "type": "electric",
+        "perDay": 199,
+        "perWeek": null,
+        "perMonth": 4996
+      },
+      {
+        "model": "JAC S3",
+        "type": "suv",
+        "perDay": 70,
+        "perWeek": null,
+        "perMonth": 1800
+      },
+      {
+        "model": "Mercedes Benz C300",
+        "type": "suv",
+        "perDay": 89,
+        "perWeek": null,
+        "perMonth": 4500
+      }
+    ],
+    "insurance": "unknown",
+    "mileage_limit": "unknown",
+    "deposit": "unknown",
+    "fuel_policy": "unknown",
+    "airport_fee": "unknown",
+    "min_age": null,
+    "delivery": "unknown",
+    "google_rating": null,
+    "notes": "Company offers car auctions, installment plans, and luxury/economy rental categories. Also provides real estate and job services."
+  },
+  {
+    "company": "Al Muftah Rent a Car",
+    "website": "https://almuftahrentacar.com",
+    "found_prices": false,
+    "cars": [],
+    "insurance": "unknown",
+    "mileage_limit": "unknown",
+    "deposit": "unknown",
+    "fuel_policy": "unknown",
+    "airport_fee": "unknown",
+    "min_age": null,
+    "delivery": "unknown",
+    "google_rating": null,
+    "notes": "Website appears to be a default hosting page with no car rental content available"
+  }
+]

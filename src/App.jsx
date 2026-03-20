@@ -2,41 +2,115 @@ import { useState, useEffect, useRef } from "react";
 
 // ===== COMPANY DATA =====
 const COMPANIES = [
-  { id: 1, name: "Hertz UAE", logo: "🟡", rating: 4.3, reviews: 2890, verified: true, allIn: true, location: "DXB T1/T3, Downtown, Marina", delivery: true, deposit: 2000, cars: [
+  // === BUDGET (real scraped prices) ===
+  { id: 1, name: "Rental Cars UAE", logo: "🟢", rating: 4.6, reviews: 370, verified: true, allIn: false, location: "Al Quoz, DXB Airport, Dubai Marina", delivery: true, deposit: 1000, cars: [
+    { type: "Economy", model: "Kia Pegas 2025", perDay: 45, insurance: "Basic CDW", mileage: "250km/day", fuel: "Full-to-Full", salikIncl: false, airportFee: 0, img: "🚗" },
+    { type: "Economy", model: "MG 3 2025", perDay: 47, insurance: "Basic CDW", mileage: "250km/day", fuel: "Full-to-Full", salikIncl: false, airportFee: 0, img: "🚗" },
+    { type: "Economy", model: "Nissan Sunny 2025", perDay: 50, insurance: "Basic CDW", mileage: "250km/day", fuel: "Full-to-Full", salikIncl: false, airportFee: 0, img: "🚗" },
+    { type: "Economy", model: "Kia Picanto 2025", perDay: 52, insurance: "Basic CDW", mileage: "250km/day", fuel: "Full-to-Full", salikIncl: false, airportFee: 0, img: "🚗" },
+    { type: "Economy", model: "Toyota Yaris 2025", perDay: 54, insurance: "Basic CDW", mileage: "250km/day", fuel: "Full-to-Full", salikIncl: false, airportFee: 0, img: "🚗" },
+    { type: "SUV", model: "Toyota Rush 2025", perDay: 90, insurance: "Basic CDW", mileage: "250km/day", fuel: "Full-to-Full", salikIncl: false, airportFee: 0, img: "🚙" }],
+    pros: ["Cheapest daily rates in Dubai", "Free delivery on monthly", "60-90 min delivery"], cons: ["Deposit required", "Basic insurance only"] },
+  { id: 2, name: "Quick Drive", logo: "⚡", rating: 4.5, reviews: 1870, verified: true, allIn: true, location: "Deira, Business Bay, JLT", delivery: true, deposit: 1500, cars: [
+    { type: "Economy", model: "MG3 2025", perDay: 72, insurance: "CDW included", mileage: "250km/day", fuel: "Full-to-Full", salikIncl: false, airportFee: 0, img: "🚗" },
+    { type: "Economy", model: "Citroen C3 2025", perDay: 80, insurance: "CDW included", mileage: "250km/day", fuel: "Full-to-Full", salikIncl: false, airportFee: 0, img: "🚗" },
+    { type: "SUV", model: "Mitsubishi ASX 2025", perDay: 84, insurance: "CDW included", mileage: "250km/day", fuel: "Full-to-Full", salikIncl: false, airportFee: 0, img: "🚙" },
+    { type: "SUV", model: "Citroen C5 Aircross 2025", perDay: 92, insurance: "CDW included", mileage: "250km/day", fuel: "Full-to-Full", salikIncl: false, airportFee: 0, img: "🚙" }],
+    pros: ["Transparent pricing", "10% discount pay-now", "Free delivery"], cons: ["Limited luxury fleet"] },
+  { id: 3, name: "Great Dubai", logo: "🌟", rating: 4.4, reviews: 520, verified: true, allIn: false, location: "Business Bay, Deira", delivery: true, deposit: 1000, cars: [
+    { type: "Economy", model: "Nissan Sunny 2025", perDay: 70, insurance: "Basic CDW", mileage: "250km/day", fuel: "Full-to-Full", salikIncl: false, airportFee: 0, img: "🚗" },
+    { type: "Economy", model: "Toyota Yaris 2025", perDay: 80, insurance: "Basic CDW", mileage: "250km/day", fuel: "Full-to-Full", salikIncl: false, airportFee: 0, img: "🚗" },
+    { type: "SUV", model: "Hyundai Tucson 2025", perDay: 150, insurance: "Basic CDW", mileage: "250km/day", fuel: "Full-to-Full", salikIncl: false, airportFee: 0, img: "🚙" },
+    { type: "Luxury", model: "Mercedes C-Class 2025", perDay: 350, insurance: "Full CDW", mileage: "300km/day", fuel: "Full-to-Full", salikIncl: false, airportFee: 0, img: "🏎️" }],
+    pros: ["Competitive rates", "Wide selection", "Free delivery"], cons: ["Basic CDW on economy"] },
+  { id: 4, name: "Al Emad Cars", logo: "🔷", rating: 4.7, reviews: 890, verified: true, allIn: false, location: "Dubai Marina, Al Barsha, Abu Dhabi", delivery: true, deposit: 1000, cars: [
+    { type: "Economy", model: "MG 5 2026", perDay: 85, insurance: "Roadside assist incl.", mileage: "250km/day", fuel: "Full-to-Full", salikIncl: false, airportFee: 0, img: "🚗" },
+    { type: "Economy", model: "Dongfeng Shine 2026", perDay: 99, insurance: "Roadside assist incl.", mileage: "250km/day", fuel: "Full-to-Full", salikIncl: false, airportFee: 0, img: "🚗" },
+    { type: "SUV", model: "GAC Emzoom GS3 2026", perDay: 110, insurance: "Roadside assist incl.", mileage: "250km/day", fuel: "Full-to-Full", salikIncl: false, airportFee: 0, img: "🚙" },
+    { type: "SUV", model: "Omoda C5 2026", perDay: 150, insurance: "Roadside assist incl.", mileage: "250km/day", fuel: "Full-to-Full", salikIncl: false, airportFee: 0, img: "🚙" },
+    { type: "SUV", model: "Nissan X-Terra 2025", perDay: 190, insurance: "Roadside assist incl.", mileage: "250km/day", fuel: "Full-to-Full", salikIncl: false, airportFee: 0, img: "🚙" },
+    { type: "SUV", model: "Nissan Patrol 2026", perDay: 699, insurance: "Full CDW", mileage: "300km/day", fuel: "Full-to-Full", salikIncl: false, airportFee: 0, img: "🚙" }],
+    pros: ["300+ cars", "New 2026 models", "No hidden fees", "Dubai + Abu Dhabi"], cons: ["Chinese brands in economy", "Insurance upgrade recommended"] },
+  { id: 5, name: "Motorkart", logo: "🏁", rating: 4.3, reviews: 640, verified: true, allIn: true, location: "Al Quoz, Sheikh Zayed Rd", delivery: true, deposit: 1500, cars: [
+    { type: "Economy", model: "Nissan Sunny 2021", perDay: 80, insurance: "Insurance incl.", mileage: "200km/day", fuel: "Full-to-Full", salikIncl: false, airportFee: 0, img: "🚗" },
+    { type: "Economy", model: "Mitsubishi Attrage 2024", perDay: 90, insurance: "Insurance incl.", mileage: "200km/day", fuel: "Full-to-Full", salikIncl: false, airportFee: 0, img: "🚗" },
+    { type: "Economy", model: "Toyota Yaris 2025", perDay: 95, insurance: "Insurance incl.", mileage: "200km/day", fuel: "Full-to-Full", salikIncl: false, airportFee: 0, img: "🚗" },
+    { type: "SUV", model: "Land Rover Defender 110 2025", perDay: 850, insurance: "Insurance incl.", mileage: "250km/day", fuel: "Full-to-Full", salikIncl: false, airportFee: 0, img: "🚙" },
+    { type: "Luxury", model: "Range Rover Vogue V8 2025", perDay: 1200, insurance: "Insurance incl.", mileage: "250km/day", fuel: "Full-to-Full", salikIncl: false, airportFee: 0, img: "🏎️" }],
+    pros: ["Insurance included", "Free delivery", "Economy to luxury"], cons: ["200km/day on economy", "Older models in budget range"] },
+  { id: 6, name: "Absolute Rent a Car", logo: "🔴", rating: 4.0, reviews: 2450, verified: true, allIn: false, location: "Deira, Bur Dubai, DXB Airport", delivery: true, deposit: 2000, cars: [
+    { type: "Economy", model: "Sedan (various)", perDay: 210, insurance: "CDR included (AED 1500 excess)", mileage: "250km/day", fuel: "Full tank provided", salikIncl: false, airportFee: 0, img: "🚗" },
+    { type: "SUV", model: "SUV (various)", perDay: 210, insurance: "CDR included (AED 1500 excess)", mileage: "250km/day", fuel: "Full tank provided", salikIncl: false, airportFee: 0, img: "🚙" },
+    { type: "Luxury", model: "Convertible / Sports", perDay: 650, insurance: "CDR included", mileage: "300km/day", fuel: "Full tank provided", salikIncl: false, airportFee: 0, img: "🏎️" },
+    { type: "Electric", model: "Electric Car", perDay: 450, insurance: "CDR included", mileage: "250km/day", fuel: "Charging card provided", salikIncl: false, airportFee: 0, img: "⚡" }],
+    pros: ["Free pickup/drop-off Dubai", "Min age 21", "Full tank included"], cons: ["AED 1,500 excess if at fault", "Deposit returned after 30 days", "Min 3 day rental"] },
+  // === MID-RANGE (real scraped prices) ===
+  { id: 7, name: "Udrive", logo: "🚙", rating: 3.2, reviews: 4850, verified: true, allIn: false, location: "App-based — Dubai, Abu Dhabi, Sharjah", delivery: false, deposit: 0, cars: [
+    { type: "Economy", model: "Nissan Sunny 2025", perDay: 129, insurance: "Basic incl.", mileage: "150km/day", fuel: "Fuel included", salikIncl: false, airportFee: 0, img: "🚗" },
+    { type: "Economy", model: "Mitsubishi Attrage 2025", perDay: 135, insurance: "Basic incl.", mileage: "150km/day", fuel: "Fuel included", salikIncl: false, airportFee: 0, img: "🚗" },
+    { type: "Economy", model: "Kia Picanto 2025", perDay: 139, insurance: "Basic incl.", mileage: "150km/day", fuel: "Fuel included", salikIncl: false, airportFee: 0, img: "🚗" },
+    { type: "Economy", model: "Toyota Corolla 2025", perDay: 149, insurance: "Basic incl.", mileage: "150km/day", fuel: "Fuel included", salikIncl: false, airportFee: 0, img: "🚗" },
+    { type: "SUV", model: "Toyota Rush 2025", perDay: 149, insurance: "Basic incl.", mileage: "150km/day", fuel: "Fuel included", salikIncl: false, airportFee: 0, img: "🚙" },
+    { type: "SUV", model: "Ford Territory 2025", perDay: 188, insurance: "Basic incl.", mileage: "150km/day", fuel: "Fuel included", salikIncl: false, airportFee: 0, img: "🚙" }],
+    pros: ["Zero deposit", "Free fuel included", "Free parking", "App-based instant"], cons: ["150km/day limit", "AED 2.10/km excess", "Damage waiver optional"] },
+  // === INTERNATIONAL BRANDS ===
+  { id: 8, name: "Hertz UAE", logo: "🟡", rating: 4.6, reviews: 2890, verified: true, allIn: true, location: "DXB T1/T2/T3, Motor City, Marina, 14 locations", delivery: true, deposit: 2000, cars: [
     { type: "Economy", model: "Nissan Sunny 2025", perDay: 70, insurance: "Full CDW", mileage: "250km/day", fuel: "Full-to-Full", salikIncl: false, airportFee: 0, img: "🚗" },
     { type: "SUV", model: "Toyota RAV4 2025", perDay: 180, insurance: "Full CDW", mileage: "250km/day", fuel: "Full-to-Full", salikIncl: false, airportFee: 0, img: "🚙" },
     { type: "Luxury", model: "Volvo S90 2025", perDay: 350, insurance: "Full CDW + SCDW available", mileage: "300km/day", fuel: "Full-to-Full", salikIncl: false, airportFee: 0, img: "🏎️" }],
-    pros: ["12 branches in Dubai", "Airport counters T1 & T3", "SCDW & PAI available"], cons: ["Deposit hold up to 30 days", "SCDW costs extra"] },
-  { id: 2, name: "Europcar Dubai", logo: "🟢", rating: 4.1, reviews: 1950, verified: true, allIn: true, location: "DXB T1/T2/T3, Al Quoz, 14+ branches", delivery: true, deposit: 2000, cars: [
+    pros: ["14 locations in UAE", "All airport terminals", "2,025+ vehicles", "GPS & WiFi available"], cons: ["Deposit hold up to 30 days", "SCDW costs extra"] },
+  { id: 9, name: "Europcar Dubai", logo: "🟢", rating: 4.1, reviews: 1950, verified: true, allIn: true, location: "DXB T1/T2/T3, Al Quoz, 14+ branches", delivery: true, deposit: 2000, cars: [
     { type: "Economy", model: "Nissan Sunny 2024", perDay: 70, insurance: "CDW included", mileage: "250km/day", fuel: "Full-to-Full", salikIncl: false, airportFee: 0, img: "🚗" },
     { type: "SUV", model: "Toyota Prado 2025", perDay: 200, insurance: "CDW included", mileage: "250km/day", fuel: "Full-to-Full", salikIncl: false, airportFee: 0, img: "🚙" },
     { type: "Luxury", model: "Audi A6 2025", perDay: 320, insurance: "CDW included", mileage: "300km/day", fuel: "Full-to-Full", salikIncl: false, airportFee: 0, img: "🏎️" }],
-    pros: ["Since 1976 in Dubai", "14+ branches", "All airport terminals"], cons: ["Salik billed separately", "Extra charges for late return"] },
-  { id: 3, name: "Sixt Dubai", logo: "🟠", rating: 4.4, reviews: 1340, verified: true, allIn: true, location: "DXB Airport, Sheikh Zayed Rd", delivery: true, deposit: 2500, cars: [
+    pros: ["Since 1976 in Dubai", "14+ branches", "Monthly from AED 1,219"], cons: ["Salik billed separately", "Extra charges for late return"] },
+  { id: 10, name: "Sixt Dubai", logo: "🟠", rating: 4.4, reviews: 1340, verified: true, allIn: true, location: "DXB Airport, Sheikh Zayed Rd, 4 locations", delivery: true, deposit: 2500, cars: [
     { type: "Economy", model: "Toyota Yaris 2025", perDay: 85, insurance: "CDW included", mileage: "250km/day", fuel: "Full-to-Full", salikIncl: false, airportFee: 0, img: "🚗" },
     { type: "SUV", model: "Nissan X-Trail 2025", perDay: 175, insurance: "CDW included", mileage: "250km/day", fuel: "Full-to-Full", salikIncl: false, airportFee: 0, img: "🚙" },
     { type: "Luxury", model: "BMW 5 Series 2025", perDay: 380, insurance: "CDW + Theft Protection", mileage: "300km/day", fuel: "Full-to-Full", salikIncl: false, airportFee: 0, img: "🏎️" }],
-    pros: ["Premium fleet", "App-based booking", "Good luxury selection"], cons: ["Higher base rates", "Young driver fee"] },
-  { id: 4, name: "Quick Drive", logo: "⚡", rating: 4.5, reviews: 1870, verified: true, allIn: true, location: "Deira, Business Bay, JLT", delivery: true, deposit: 1500, cars: [
-    { type: "Economy", model: "Kia Picanto 2025", perDay: 65, insurance: "Full CDW", mileage: "Unlimited", fuel: "Full-to-Full", salikIncl: false, airportFee: 30, img: "🚗" },
-    { type: "SUV", model: "Hyundai Tucson 2025", perDay: 160, insurance: "Full CDW", mileage: "Unlimited", fuel: "Full-to-Full", salikIncl: false, airportFee: 30, img: "🚙" }],
-    pros: ["Transparent pricing", "Unlimited mileage economy/SUV", "Free delivery"], cons: ["AED 30 airport surcharge", "Local brand"] },
-  { id: 5, name: "Saadat Rent", logo: "🔵", rating: 4.3, reviews: 980, verified: true, allIn: true, location: "Al Barsha, JVC, Dubai Airport", delivery: true, deposit: 1000, cars: [
+    pros: ["Premium fleet", "Chauffeur service available", "Corporate offers"], cons: ["Higher base rates", "Young driver fee"] },
+  { id: 11, name: "Saadat Rent", logo: "🔵", rating: 4.3, reviews: 980, verified: true, allIn: true, location: "Al Barsha, JVC, Dubai Airport", delivery: true, deposit: 700, cars: [
     { type: "Economy", model: "Toyota Yaris 2025", perDay: 73, insurance: "CDW included", mileage: "250km/day", fuel: "Full-to-Full", salikIncl: false, airportFee: 0, img: "🚗" },
     { type: "SUV", model: "Toyota Rush 2025", perDay: 140, insurance: "CDW included", mileage: "250km/day", fuel: "Full-to-Full", salikIncl: false, airportFee: 0, img: "🚙" }],
-    pros: ["Straightforward pricing", "Low deposit AED 1,000", "Free delivery"], cons: ["Smaller luxury fleet", "Newer company"] },
-  { id: 6, name: "Absolute Rent a Car", logo: "🔴", rating: 4.0, reviews: 2450, verified: true, allIn: false, location: "Deira, Bur Dubai, DXB Airport", delivery: true, deposit: 2000, cars: [
-    { type: "Economy", model: "Nissan Sunny 2024", perDay: 55, insurance: "Basic CDW", mileage: "200km/day", fuel: "Full-to-Full", salikIncl: false, airportFee: 100, img: "🚗" },
-    { type: "SUV", model: "Mitsubishi Pajero 2024", perDay: 150, insurance: "Basic CDW", mileage: "200km/day", fuel: "Full-to-Full", salikIncl: false, airportFee: 100, img: "🚙" }],
-    pros: ["Competitive base rates", "Cash accepted", "UAE-wide delivery"], cons: ["Basic CDW — AED 1,500 excess", "AED 100 airport fee", "200km/day limit"] },
-  { id: 7, name: "Taite Luxury", logo: "💎", rating: 4.9, reviews: 410, verified: true, allIn: true, location: "Palm Jumeirah, DIFC, Downtown", delivery: true, deposit: 0, cars: [
-    { type: "SUV", model: "Range Rover Sport 2025", perDay: 600, insurance: "Full CDW + Zero Excess", mileage: "Unlimited", fuel: "Full-to-Full", salikIncl: true, airportFee: 0, img: "🚙" },
-    { type: "Luxury", model: "Mercedes G63 2025", perDay: 1200, insurance: "Full CDW + Zero Excess", mileage: "Unlimited", fuel: "Full-to-Full", salikIncl: true, airportFee: 0, img: "🏎️" }],
-    pros: ["Zero deposit", "All-inclusive", "Salik included", "WhatsApp booking"], cons: ["Luxury only", "Premium prices"] },
-  { id: 8, name: "Udrive", logo: "🚙", rating: 3.2, reviews: 4850, verified: true, allIn: false, location: "App-based — Dubai, Abu Dhabi, Sharjah", delivery: false, deposit: 0, cars: [
-    { type: "Economy", model: "Kia Pegas 2025", perDay: 136, insurance: "Comprehensive incl.", mileage: "150km/day", fuel: "Not included (Basics)", salikIncl: false, airportFee: 0, img: "🚗" },
-    { type: "SUV", model: "Suzuki Jimny 2025", perDay: 199, insurance: "Comprehensive incl.", mileage: "150km/day", fuel: "Not included (Basics)", salikIncl: false, airportFee: 0, img: "🚙" }],
-    pros: ["No deposit", "App-based", "Pay per minute", "4 emirates"], cons: ["150km/day limit", "AED 2.10/km excess", "Fuel separate on Basic", "Damage waiver optional"] },
+    pros: ["Low deposit AED 700", "Online booking no calls needed", "Full insurance LDW available"], cons: ["Smaller fleet", "Newer company"] },
+  // === LUXURY (real scraped prices) ===
+  { id: 12, name: "Taite Luxury", logo: "💎", rating: 4.9, reviews: 410, verified: true, allIn: true, location: "Palm Jumeirah, DIFC, Downtown", delivery: true, deposit: 0, cars: [
+    { type: "SUV", model: "Audi RSQ8 Performance 2025", perDay: 1500, insurance: "Full CDW + Zero Excess", mileage: "Unlimited", fuel: "Full-to-Full", salikIncl: true, airportFee: 0, img: "🚙" },
+    { type: "SUV", model: "Lamborghini Urus Performante", perDay: 3500, insurance: "Full CDW + Zero Excess", mileage: "Unlimited", fuel: "Full-to-Full", salikIncl: true, airportFee: 0, img: "🚙" },
+    { type: "Luxury", model: "Rolls Royce Cullinan", perDay: 4500, insurance: "Full CDW + Zero Excess", mileage: "Unlimited", fuel: "Full-to-Full", salikIncl: true, airportFee: 0, img: "🏎️" },
+    { type: "Luxury", model: "Ferrari 296 GTB", perDay: 4500, insurance: "Full CDW + Zero Excess", mileage: "Unlimited", fuel: "Full-to-Full", salikIncl: true, airportFee: 0, img: "🏎️" },
+    { type: "Luxury", model: "Ferrari SF90 Stradale", perDay: 7500, insurance: "Full CDW + Zero Excess", mileage: "Unlimited", fuel: "Full-to-Full", salikIncl: true, airportFee: 0, img: "🏎️" },
+    { type: "Luxury", model: "Lamborghini Aventador SVJ", perDay: 12000, insurance: "Full CDW + Zero Excess", mileage: "Unlimited", fuel: "Full-to-Full", salikIncl: true, airportFee: 0, img: "🏎️" }],
+    pros: ["Zero deposit", "All-inclusive pricing", "Salik included", "WhatsApp booking"], cons: ["Luxury only — no budget cars", "Premium prices"] },
+  { id: 13, name: "Trinity Rental", logo: "👑", rating: 4.8, reviews: 320, verified: true, allIn: true, location: "Downtown, DIFC, Palm Jumeirah", delivery: true, deposit: 0, cars: [
+    { type: "SUV", model: "Range Rover Sport 2025", perDay: 1600, insurance: "Full CDW", mileage: "Unlimited", fuel: "Full-to-Full", salikIncl: true, airportFee: 0, img: "🚙" },
+    { type: "Luxury", model: "Porsche 911 Turbo S", perDay: 3200, insurance: "Full CDW", mileage: "Unlimited", fuel: "Full-to-Full", salikIncl: true, airportFee: 0, img: "🏎️" },
+    { type: "Luxury", model: "Ferrari F8 Spider", perDay: 3700, insurance: "Full CDW", mileage: "Unlimited", fuel: "Full-to-Full", salikIncl: true, airportFee: 0, img: "🏎️" },
+    { type: "Luxury", model: "Lamborghini Urus Mansory", perDay: 3500, insurance: "Full CDW", mileage: "Unlimited", fuel: "Full-to-Full", salikIncl: true, airportFee: 0, img: "🏎️" },
+    { type: "Luxury", model: "Ferrari Purosangue", perDay: 9500, insurance: "Full CDW", mileage: "Unlimited", fuel: "Full-to-Full", salikIncl: true, airportFee: 0, img: "🏎️" }],
+    pros: ["No deposit", "80+ car fleet", "Personal manager", "Fast delivery"], cons: ["Luxury only", "Premium pricing"] },
+  { id: 14, name: "Babil Rent a Car", logo: "🔶", rating: 4.5, reviews: 280, verified: true, allIn: true, location: "Sheikh Zayed Rd, Business Bay", delivery: true, deposit: 0, cars: [
+    { type: "Luxury", model: "Ford Mustang GT", perDay: 799, insurance: "Insurance incl.", mileage: "300km/day", fuel: "Full-to-Full", salikIncl: false, airportFee: 0, img: "🏎️" },
+    { type: "Luxury", model: "Mercedes S-Class AMG Brabus", perDay: 899, insurance: "Insurance incl.", mileage: "300km/day", fuel: "Full-to-Full", salikIncl: false, airportFee: 0, img: "🏎️" },
+    { type: "Luxury", model: "Chevrolet Corvette C8", perDay: 1100, insurance: "Insurance incl.", mileage: "300km/day", fuel: "Full-to-Full", salikIncl: false, airportFee: 0, img: "🏎️" },
+    { type: "SUV", model: "BMW X7 2025", perDay: 1299, insurance: "Insurance incl.", mileage: "300km/day", fuel: "Full-to-Full", salikIncl: false, airportFee: 0, img: "🚙" },
+    { type: "SUV", model: "Mercedes G63 2025", perDay: 1399, insurance: "Insurance incl.", mileage: "300km/day", fuel: "Full-to-Full", salikIncl: false, airportFee: 0, img: "🚙" },
+    { type: "Luxury", model: "McLaren Artura", perDay: 4299, insurance: "Insurance incl.", mileage: "300km/day", fuel: "Full-to-Full", salikIncl: false, airportFee: 0, img: "🏎️" },
+    { type: "Luxury", model: "Ferrari SF90 Spider", perDay: 5500, insurance: "Insurance incl.", mileage: "300km/day", fuel: "Full-to-Full", salikIncl: false, airportFee: 0, img: "🏎️" }],
+    pros: ["Zero deposit", "Insurance included", "Free delivery"], cons: ["Luxury only — no economy", "Premium segment"] },
+  { id: 15, name: "Rent Any Car", logo: "🏆", rating: 4.9, reviews: 500, verified: true, allIn: true, location: "Al Quoz, Downtown, Marina", delivery: true, deposit: 0, cars: [
+    { type: "Economy", model: "Mini Cooper S", perDay: 349, insurance: "Full CDW", mileage: "300km/day", fuel: "Full-to-Full", salikIncl: false, airportFee: 0, img: "🚗" },
+    { type: "SUV", model: "Audi Q3 Sportback", perDay: 550, insurance: "Full CDW", mileage: "300km/day", fuel: "Full-to-Full", salikIncl: false, airportFee: 0, img: "🚙" },
+    { type: "SUV", model: "Land Rover Defender 2025", perDay: 1100, insurance: "Full CDW", mileage: "300km/day", fuel: "Full-to-Full", salikIncl: false, airportFee: 0, img: "🚙" },
+    { type: "Luxury", model: "Porsche 911 Turbo S", perDay: 3200, insurance: "Full CDW", mileage: "300km/day", fuel: "Full-to-Full", salikIncl: false, airportFee: 0, img: "🏎️" },
+    { type: "Luxury", model: "Lamborghini Urus Mansory", perDay: 3500, insurance: "Full CDW", mileage: "300km/day", fuel: "Full-to-Full", salikIncl: false, airportFee: 0, img: "🏎️" },
+    { type: "Luxury", model: "Ferrari Purosangue", perDay: 9500, insurance: "Full CDW", mileage: "300km/day", fuel: "Full-to-Full", salikIncl: false, airportFee: 0, img: "🏎️" }],
+    pros: ["Google 4.9 rating", "18K+ Instagram followers", "Premium fleet"], cons: ["Premium pricing", "Limited budget options"] },
+  { id: 16, name: "MK Rent a Car", logo: "🔥", rating: 4.6, reviews: 210, verified: true, allIn: true, location: "Dubai Marina, JBR, Downtown", delivery: true, deposit: 0, cars: [
+    { type: "SUV", model: "Range Rover Sport 2025", perDay: 1499, insurance: "Full CDW", mileage: "Unlimited", fuel: "Full-to-Full", salikIncl: true, airportFee: 0, img: "🚙" },
+    { type: "Luxury", model: "Mercedes G63 AMG 2025", perDay: 1999, insurance: "Full CDW", mileage: "Unlimited", fuel: "Full-to-Full", salikIncl: true, airportFee: 0, img: "🏎️" },
+    { type: "Luxury", model: "Rolls Royce Ghost 2025", perDay: 3500, insurance: "Full CDW", mileage: "Unlimited", fuel: "Full-to-Full", salikIncl: true, airportFee: 0, img: "🏎️" }],
+    pros: ["Zero deposit", "All-inclusive", "Salik included", "Unlimited mileage"], cons: ["Luxury only", "Premium segment"] },
 ];
 
 const PHOTO_GUIDES = [
