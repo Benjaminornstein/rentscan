@@ -116,10 +116,17 @@ export default function App() {
   const [contractP, setContractP] = useState([]);
   const [dType, setDType] = useState(null);
 
+  // ===== ANALYTICS EVENTS =====
+  const trackEvent = (name, params = {}) => {
+    try { if (window.gtag) window.gtag("event", name, params); } catch {}
+    try { if (window.OneSignal) window.OneSignal.push(function() { window.OneSignal.sendTag(name, "true"); }); } catch {}
+  };
+
   // ===== SCAN with API =====
   const doScan = async () => {
     if (!text.trim()) return;
     setLoading(true);
+    trackEvent("scan_started", { length: text.length });
     try {
       const resp = await fetch("/api/scan", {
         method: "POST",
@@ -380,7 +387,7 @@ export default function App() {
                   <span>💳 Deposit: AED {co.deposit.toLocaleString()}</span>
                   <span>{co.delivery ? "🚗 Free delivery" : "📍 Pickup only"}</span>
                 </div>
-                <button onClick={() => setLeads(p => ({ ...p, [co.name]: true }))} disabled={leads[co.name]} style={{ ...css.btn, background: leads[co.name] ? T.green : `linear-gradient(135deg, ${T.accent}, ${T.accent2})` }}>
+                <button onClick={() => { setLeads(p => ({ ...p, [co.name]: true })); trackEvent("quote_requested", { company: co.name }); }} disabled={leads[co.name]} style={{ ...css.btn, background: leads[co.name] ? T.green : `linear-gradient(135deg, ${T.accent}, ${T.accent2})` }}>
                   {leads[co.name] ? "✓ Quote requested!" : `Get Free Quote from ${co.name}`}
                 </button>
                 {leads[co.name] && <p style={{ fontSize: "12px", color: T.green, textAlign: "center", marginTop: "8px" }}>📱 They'll contact you within 2 hours</p>}
@@ -413,7 +420,7 @@ export default function App() {
           <h3 style={{ fontSize: "16px", fontWeight: 700, margin: "0 0 14px" }}>🚗 Rental Details</h3>
           <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "10px" }}>
             {[["company", "Company"], ["car", "Car model"], ["plate", "Plate number"], ["start", "Start date"], ["end", "End date"], ["insurance", "Insurance"], ["excess", "Excess (AED)"], ["mileage", "Mileage limit"], ["fuel", "Fuel policy"], ["deposit", "Deposit (AED)"]].map(([k, l]) => (
-              <div key={k}><div style={css.label}>{l}</div><input value={rental[k]} onChange={e => setRental(p => ({ ...p, [k]: e.target.value }))} placeholder={l} style={css.input} type={k === "start" || k === "end" ? "date" : "text"} /></div>
+              <div key={k}><div style={css.label}>{l}</div><input value={rental[k]} onChange={e => { setRental(p => ({ ...p, [k]: e.target.value })); if (k === "company" && e.target.value.length === 3) trackEvent("rental_started", { field: k }); }} placeholder={l} style={css.input} type={k === "start" || k === "end" ? "date" : "text"} /></div>
             ))}
           </div>
           <div style={{ marginTop: "10px" }}><div style={css.label}>Notes</div><textarea value={rental.notes} onChange={e => setRental(p => ({ ...p, notes: e.target.value }))} placeholder="Important notes..." style={{ ...css.input, minHeight: "50px", resize: "vertical" }} /></div>
@@ -428,7 +435,7 @@ export default function App() {
           <p style={{ ...css.sub, fontSize: "12px", marginBottom: "14px" }}>Select your issue for step-by-step guidance.</p>
           <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "8px", marginBottom: "14px" }}>
             {[["damage", "📸 Damage charge"], ["deposit", "💳 Deposit issue"], ["overcharge", "💰 Unexpected bill"], ["accident", "🚨 Accident"]].map(([k, l]) => (
-              <button key={k} onClick={() => setDType(dType === k ? null : k)} style={{ background: dType === k ? `${T.accent}20` : "rgba(255,255,255,0.03)", color: dType === k ? T.accent : T.sub, border: dType === k ? `1px solid ${T.accent}40` : `1px solid ${T.border}`, borderRadius: "14px", padding: "14px", fontSize: "13px", fontWeight: 600, cursor: "pointer" }}>{l}</button>
+              <button key={k} onClick={() => { setDType(dType === k ? null : k); trackEvent("dispute_opened", { type: k }); }} style={{ background: dType === k ? `${T.accent}20` : "rgba(255,255,255,0.03)", color: dType === k ? T.accent : T.sub, border: dType === k ? `1px solid ${T.accent}40` : `1px solid ${T.border}`, borderRadius: "14px", padding: "14px", fontSize: "13px", fontWeight: 600, cursor: "pointer" }}>{l}</button>
             ))}
           </div>
           {dType && DISPUTES[dType] && <div style={{ background: T.card2, border: `1px solid ${T.border}`, borderRadius: "16px", padding: "18px" }}>
