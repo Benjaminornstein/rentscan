@@ -168,12 +168,13 @@ function AnimN({ value }) {
   return <span>{d.toLocaleString()}</span>;
 }
 
-// ===== THEME =====
-const T = { bg: "#0B0E18", card: "#12162A", card2: "#181D35", border: "#1F2545", accent: "#E67E3C", accent2: "#F0A050", text: "#E4E8F7", sub: "#8B92B0", dim: "#555C7A", green: "#3DDC84", red: "#FF6B6B", blue: "#5B9CF6" };
-const costColor = { base: T.green, extra: T.accent2, maybe: T.red, opt: T.blue };
+// ===== THEME (Light — XE/Chrono24 inspired) =====
+const T = { bg: "#F5F5F7", card: "#FFFFFF", card2: "#FAFAFA", border: "#E8E8ED", accent: "#E67E3C", accent2: "#D4692E", text: "#1A1A2E", sub: "#6B6B80", dim: "#9D9DB0", green: "#1B9E5E", red: "#D94040", blue: "#2E6FD4" };
+const costColor = { base: T.green, extra: T.accent, maybe: T.red, opt: T.blue };
 
 // ===== APP =====
 export default function App() {
+  const [splash, setSplash] = useState(true);
   const [tab, setTab] = useState("scan");
   const [text, setText] = useState("");
   const [res, setRes] = useState(null);
@@ -189,6 +190,20 @@ export default function App() {
   const [returnP, setReturnP] = useState([]);
   const [contractP, setContractP] = useState([]);
   const [dType, setDType] = useState(null);
+
+  // Splash screen timer
+  useEffect(() => { const t = setTimeout(() => setSplash(false), 2200); return () => clearTimeout(t); }, []);
+
+  // Splash Screen
+  if (splash) return (
+    <div style={{ minHeight: "100vh", background: "#FFFFFF", display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", fontFamily: "-apple-system, 'SF Pro Display', 'Segoe UI', sans-serif" }}>
+      <div style={{ width: "80px", height: "80px", borderRadius: "20px", background: `linear-gradient(135deg, ${T.accent}, ${T.accent2})`, display: "flex", alignItems: "center", justifyContent: "center", fontSize: "40px", boxShadow: "0 12px 40px rgba(230,126,60,0.3)", marginBottom: "24px", animation: "pulse 1.5s ease-in-out infinite" }}>🔍</div>
+      <div style={{ fontSize: "32px", fontWeight: 800, color: T.text, letterSpacing: "-1px" }}>RentScan</div>
+      <div style={{ fontSize: "13px", color: T.sub, letterSpacing: "3px", textTransform: "uppercase", marginTop: "6px" }}>Dubai Car Rentals</div>
+      <div style={{ width: "40px", height: "3px", background: `linear-gradient(135deg, ${T.accent}, ${T.accent2})`, borderRadius: "3px", marginTop: "28px" }} />
+      <style>{`@keyframes pulse { 0%,100% { transform: scale(1); } 50% { transform: scale(1.06); } }`}</style>
+    </div>
+  );
 
   // ===== ANALYTICS EVENTS =====
   const trackEvent = (name, params = {}) => {
@@ -230,29 +245,29 @@ export default function App() {
     }); inp.click();
   };
 
-  // ===== STYLES =====
+  // ===== STYLES (Light theme) =====
   const css = {
     page: { minHeight: "100vh", background: T.bg, fontFamily: "-apple-system, 'SF Pro Display', 'Segoe UI', sans-serif", color: T.text, WebkitFontSmoothing: "antialiased" },
     wrap: { maxWidth: "500px", margin: "0 auto", padding: "16px 16px 100px" },
-    card: { background: T.card, border: `1px solid ${T.border}`, borderRadius: "18px", padding: "18px", marginBottom: "12px" },
-    btn: { background: `linear-gradient(135deg, ${T.accent}, ${T.accent2})`, color: "#fff", border: "none", borderRadius: "14px", padding: "14px", fontSize: "15px", fontWeight: 700, cursor: "pointer", width: "100%", letterSpacing: "0.2px" },
+    card: { background: T.card, borderRadius: "16px", padding: "18px", marginBottom: "12px", boxShadow: "0 1px 3px rgba(0,0,0,0.06), 0 1px 2px rgba(0,0,0,0.04)" },
+    btn: { background: `linear-gradient(135deg, ${T.accent}, ${T.accent2})`, color: "#fff", border: "none", borderRadius: "12px", padding: "14px", fontSize: "15px", fontWeight: 700, cursor: "pointer", width: "100%", letterSpacing: "0.2px" },
     btnSm: { background: `linear-gradient(135deg, ${T.accent}, ${T.accent2})`, color: "#fff", border: "none", borderRadius: "10px", padding: "10px 18px", fontSize: "13px", fontWeight: 600, cursor: "pointer" },
-    input: { width: "100%", background: "rgba(255,255,255,0.04)", border: `1px solid ${T.border}`, borderRadius: "12px", padding: "12px 14px", color: T.text, fontSize: "14px", fontFamily: "inherit", outline: "none", boxSizing: "border-box" },
-    tag: (c) => ({ display: "inline-flex", background: `${c}12`, color: c, border: `1px solid ${c}30`, borderRadius: "8px", padding: "3px 10px", fontSize: "10px", fontWeight: 700, letterSpacing: "0.4px", textTransform: "uppercase" }),
-    pill: (on) => ({ background: on ? `linear-gradient(135deg, ${T.accent}, ${T.accent2})` : "rgba(255,255,255,0.03)", color: on ? "#fff" : T.sub, border: on ? "none" : `1px solid ${T.border}`, borderRadius: "12px", padding: "9px 18px", fontSize: "13px", fontWeight: 600, cursor: "pointer" }),
-    h2: { fontSize: "26px", fontWeight: 800, letterSpacing: "-0.5px", lineHeight: 1.2, margin: "0 0 10px" },
+    input: { width: "100%", background: "#FFFFFF", border: `1.5px solid ${T.border}`, borderRadius: "12px", padding: "12px 14px", color: T.text, fontSize: "14px", fontFamily: "inherit", outline: "none", boxSizing: "border-box" },
+    tag: (c) => ({ display: "inline-flex", background: `${c}10`, color: c, border: `1px solid ${c}25`, borderRadius: "6px", padding: "3px 8px", fontSize: "10px", fontWeight: 700, letterSpacing: "0.3px", textTransform: "uppercase" }),
+    pill: (on) => ({ background: on ? T.accent : "#FFFFFF", color: on ? "#fff" : T.sub, border: on ? "none" : `1.5px solid ${T.border}`, borderRadius: "10px", padding: "8px 16px", fontSize: "13px", fontWeight: 600, cursor: "pointer" }),
+    h2: { fontSize: "26px", fontWeight: 800, letterSpacing: "-0.5px", lineHeight: 1.2, margin: "0 0 10px", color: T.text },
     sub: { color: T.sub, fontSize: "14px", lineHeight: 1.5 },
-    label: { fontSize: "10px", color: T.dim, textTransform: "uppercase", letterSpacing: "1.2px", marginBottom: "8px" },
+    label: { fontSize: "10px", color: T.dim, textTransform: "uppercase", letterSpacing: "1.2px", marginBottom: "8px", fontWeight: 600 },
   };
 
-  // ===== BOTTOM NAV =====
+  // ===== BOTTOM NAV (XE-style) =====
   const Nav = () => (
-    <div style={{ position: "fixed", bottom: 0, left: 0, right: 0, background: `${T.bg}EE`, backdropFilter: "blur(20px)", WebkitBackdropFilter: "blur(20px)", borderTop: `1px solid ${T.border}`, zIndex: 100, padding: "8px 0 max(env(safe-area-inset-bottom), 8px)" }}>
+    <div style={{ position: "fixed", bottom: 0, left: 0, right: 0, background: "rgba(255,255,255,0.95)", backdropFilter: "blur(20px)", WebkitBackdropFilter: "blur(20px)", borderTop: `1px solid ${T.border}`, zIndex: 100, padding: "6px 0 max(env(safe-area-inset-bottom), 6px)" }}>
       <div style={{ display: "flex", maxWidth: "500px", margin: "0 auto", justifyContent: "space-around" }}>
-        {[["scan", "🔍", "Scan"], ["compare", "📊", "Compare & Rent"], ["rental", "📋", "My Rental"]].map(([k, ico, lbl]) => (
+        {[["scan", "🔍", "Scan"], ["compare", "📊", "Compare"], ["rental", "📋", "My Rental"]].map(([k, ico, lbl]) => (
           <button key={k} onClick={() => setTab(k)} style={{ background: "none", border: "none", cursor: "pointer", padding: "6px 24px", display: "flex", flexDirection: "column", alignItems: "center", gap: "2px" }}>
-            <span style={{ fontSize: "24px", opacity: tab === k ? 1 : 0.4, transition: "opacity 0.2s" }}>{ico}</span>
-            <span style={{ fontSize: "10px", fontWeight: 700, color: tab === k ? T.accent : T.dim, letterSpacing: "0.5px" }}>{lbl}</span>
+            <span style={{ fontSize: "22px", opacity: tab === k ? 1 : 0.35, transition: "opacity 0.2s" }}>{ico}</span>
+            <span style={{ fontSize: "10px", fontWeight: 700, color: tab === k ? T.accent : T.dim, letterSpacing: "0.3px" }}>{lbl}</span>
           </button>
         ))}
       </div>
@@ -260,9 +275,9 @@ export default function App() {
   );
 
   const Logo = () => (
-    <div style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: "10px", marginBottom: "28px", paddingBottom: "20px", borderBottom: `1px solid ${T.border}` }}>
-      <div style={{ width: "40px", height: "40px", borderRadius: "12px", background: `linear-gradient(135deg, ${T.accent}, ${T.accent2})`, display: "flex", alignItems: "center", justifyContent: "center", fontSize: "20px", boxShadow: `0 4px 15px ${T.accent}40` }}>🔍</div>
-      <div><div style={{ fontSize: "22px", fontWeight: 800, letterSpacing: "-0.5px" }}>RentScan</div><div style={{ fontSize: "10px", color: T.dim, letterSpacing: "2px", textTransform: "uppercase", marginTop: "-1px" }}>Dubai Car Rentals</div></div>
+    <div style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: "10px", marginBottom: "24px", paddingBottom: "16px", borderBottom: `1px solid ${T.border}` }}>
+      <div style={{ width: "38px", height: "38px", borderRadius: "10px", background: `linear-gradient(135deg, ${T.accent}, ${T.accent2})`, display: "flex", alignItems: "center", justifyContent: "center", fontSize: "18px", boxShadow: `0 4px 12px rgba(230,126,60,0.25)` }}>🔍</div>
+      <div><div style={{ fontSize: "20px", fontWeight: 800, letterSpacing: "-0.5px", color: T.text }}>RentScan</div><div style={{ fontSize: "9px", color: T.dim, letterSpacing: "2px", textTransform: "uppercase", marginTop: "-1px" }}>Dubai Car Rentals</div></div>
     </div>
   );
 
@@ -271,7 +286,7 @@ export default function App() {
     <div style={css.card}>
       <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "14px" }}>
         <span style={{ fontSize: "15px", fontWeight: 700 }}>{icon} {title}</span>
-        <span style={{ fontSize: "11px", fontWeight: 600, color: photos.length > 0 ? T.green : T.dim, background: photos.length > 0 ? `${T.green}15` : "rgba(255,255,255,0.04)", padding: "4px 12px", borderRadius: "8px" }}>{photos.length} photos</span>
+        <span style={{ fontSize: "11px", fontWeight: 600, color: photos.length > 0 ? T.green : T.dim, background: photos.length > 0 ? `${T.green}10` : "#F5F5F7", padding: "4px 12px", borderRadius: "8px" }}>{photos.length} photos</span>
       </div>
       {photos.length > 0 && <div style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: "6px", marginBottom: "14px" }}>
         {photos.map(p => <div key={p.id} style={{ position: "relative", borderRadius: "12px", overflow: "hidden", aspectRatio: "1" }}>
@@ -281,7 +296,7 @@ export default function App() {
         </div>)}
       </div>}
       {guides && <div style={{ marginBottom: "14px" }}><div style={css.label}>Recommended shots</div><div style={{ display: "flex", flexWrap: "wrap", gap: "4px" }}>
-        {PHOTO_GUIDES.map((g, i) => <span key={i} style={{ fontSize: "10px", background: "rgba(255,255,255,0.03)", border: `1px solid ${T.border}`, borderRadius: "8px", padding: "4px 10px", color: T.sub }}>{g}</span>)}
+        {PHOTO_GUIDES.map((g, i) => <span key={i} style={{ fontSize: "10px", background: "#F5F5F7", border: `1px solid ${T.border}`, borderRadius: "8px", padding: "4px 10px", color: T.sub }}>{g}</span>)}
       </div></div>}
       <button onClick={() => handlePhoto(setter)} style={css.btn}>📸 {photos.length === 0 ? "Take Photos" : "Add More"}</button>
     </div>
@@ -301,14 +316,14 @@ export default function App() {
             <div style={{ fontSize: "9px", color: T.dim, textTransform: "uppercase", letterSpacing: "1.5px", marginTop: "3px" }}>{l}</div>
           </div>))}
       </div>
-      <div onDragOver={e => e.preventDefault()} onDrop={doFile} onClick={() => fRef.current?.click()} style={{ border: `2px dashed ${T.border}`, borderRadius: "18px", padding: "28px", textAlign: "center", cursor: "pointer", marginBottom: "14px" }}>
+      <div onDragOver={e => e.preventDefault()} onDrop={doFile} onClick={() => fRef.current?.click()} style={{ border: `2px dashed ${T.border}`, borderRadius: "16px", padding: "28px", textAlign: "center", cursor: "pointer", marginBottom: "14px", background: "#FFFFFF" }}>
         <input ref={fRef} type="file" onChange={doFile} style={{ display: "none" }} />
         <div style={{ fontSize: "32px", marginBottom: "8px" }}>📄</div>
         <div style={{ color: T.sub, fontSize: "14px" }}>Drop contract or tap to upload</div>
       </div>
       <div style={{ display: "flex", alignItems: "center", gap: "14px", margin: "16px 0" }}>
         <div style={{ flex: 1, height: "1px", background: T.border }} />
-        <span style={{ fontSize: "10px", color: T.dim, textTransform: "uppercase", letterSpacing: "2px" }}>or paste text</span>
+        <span style={{ fontSize: "10px", color: T.dim, textTransform: "uppercase", letterSpacing: "2px", fontWeight: 600 }}>or type</span>
         <div style={{ flex: 1, height: "1px", background: T.border }} />
       </div>
       <textarea value={text} onChange={e => setText(e.target.value)} placeholder={'Paste a rental quote to scan costs, or ask any question:\n\n📄 "Toyota Corolla, AED 150/day, 7 days, basic CDW, 250km/day, airport pickup DXB"\n\n💬 "What should I check before renting a car in Dubai?"\n\n💬 "Is it better to get full insurance or basic CDW?"'} style={{ ...css.input, minHeight: "130px", resize: "vertical", lineHeight: 1.6 }} />
@@ -321,7 +336,7 @@ export default function App() {
     </>
   ) : (
     <>
-      <button onClick={() => { setRes(null); setText(""); }} style={{ background: "none", border: `1px solid ${T.border}`, color: T.sub, borderRadius: "10px", padding: "8px 18px", cursor: "pointer", fontSize: "13px", marginBottom: "12px" }}>← New question</button>
+      <button onClick={() => { setRes(null); setText(""); }} style={{ background: "none", border: `1.5px solid ${T.border}`, color: T.sub, borderRadius: "10px", padding: "8px 18px", cursor: "pointer", fontSize: "13px", marginBottom: "12px" }}>← New question</button>
       {res.aiPowered && <div style={{ textAlign: "center", marginBottom: "8px" }}><span style={css.tag(T.green)}>✨ AI-Powered</span></div>}
 
       {/* CHAT MODE */}
@@ -345,7 +360,7 @@ export default function App() {
 
       {/* SCAN MODE */}
       {res.mode === "scan" && <>
-      <div style={{ background: `linear-gradient(135deg, ${T.accent}15, ${T.red}10)`, border: `1px solid ${T.accent}30`, borderRadius: "20px", padding: "28px", textAlign: "center", marginBottom: "20px" }}>
+      <div style={{ background: "#FFFFFF", border: `1px solid ${T.accent}25`, borderRadius: "20px", padding: "28px", textAlign: "center", marginBottom: "20px", boxShadow: "0 2px 12px rgba(230,126,60,0.08)" }}>
         <div style={{ fontSize: "11px", color: T.accent, textTransform: "uppercase", letterSpacing: "2px", marginBottom: "8px", fontWeight: 600 }}>Estimated total cost</div>
         <div style={{ fontSize: "44px", fontWeight: 800, letterSpacing: "-2px" }}>AED <AnimN value={res.totalEstimate} /></div>
         <div style={{ fontSize: "13px", color: T.sub, marginTop: "6px" }}>Base: AED {res.baseTotal?.toLocaleString()} · <span style={{ color: T.accent2 }}>+{Math.round(((res.totalEstimate - res.baseTotal) / res.baseTotal) * 100)}% additional</span></div>
@@ -364,14 +379,14 @@ export default function App() {
       </div>
       <h3 style={{ fontSize: "16px", fontWeight: 700, marginBottom: "12px" }}>💰 Breakdown</h3>
       {res.costs?.map((c, i) => (
-        <div key={i} style={{ display: "flex", justifyContent: "space-between", padding: "12px 16px", background: T.card, borderRadius: "12px", marginBottom: "6px", borderLeft: `3px solid ${costColor[c.type] || T.sub}` }}>
+        <div key={i} style={{ display: "flex", justifyContent: "space-between", padding: "12px 16px", background: "#FFFFFF", borderRadius: "12px", marginBottom: "6px", borderLeft: `3px solid ${costColor[c.type] || T.sub}`, boxShadow: "0 1px 2px rgba(0,0,0,0.04)" }}>
           <div style={{ flex: 1 }}><div style={{ fontSize: "14px", fontWeight: 600 }}>{c.label}</div><div style={{ fontSize: "11px", color: T.dim, marginTop: "2px" }}>{c.detail}</div></div>
           <div style={{ fontSize: "15px", fontWeight: 700, color: costColor[c.type] || T.sub, whiteSpace: "nowrap" }}>AED {c.amount?.toLocaleString()}</div>
         </div>
       ))}
       {res.notes?.length > 0 && <>
         <h3 style={{ fontSize: "16px", fontWeight: 700, margin: "20px 0 12px" }}>ℹ️ Good to Know</h3>
-        <div style={{ background: `${T.accent2}08`, border: `1px solid ${T.accent2}20`, borderRadius: "16px", padding: "16px" }}>
+        <div style={{ background: `${T.accent}06`, border: `1px solid ${T.accent}15`, borderRadius: "16px", padding: "16px" }}>
           {res.notes.map((n, i) => <div key={i} style={{ fontSize: "13px", color: T.sub, padding: "6px 0", borderBottom: i < res.notes.length - 1 ? `1px solid ${T.border}` : "none", lineHeight: 1.5 }}>{n}</div>)}
         </div>
       </>}
@@ -414,8 +429,8 @@ export default function App() {
         {list.map((co, idx) => {
           const isExp = exp === co.id; const extra = co.tt - co.cheapest.perDay * cDays;
           return (
-            <div key={co.id} style={{ ...css.card, padding: 0, overflow: "hidden", border: idx === 0 ? `1px solid ${T.accent}40` : `1px solid ${T.border}` }}>
-              {idx === 0 && <div style={{ background: `linear-gradient(135deg, ${T.accent}, ${T.accent2})`, padding: "5px", textAlign: "center", fontSize: "11px", fontWeight: 700, letterSpacing: "1px" }}>🏆 BEST DEAL</div>}
+            <div key={co.id} style={{ ...css.card, padding: 0, overflow: "hidden", border: idx === 0 ? `2px solid ${T.accent}` : `1px solid ${T.border}` }}>
+              {idx === 0 && <div style={{ background: `linear-gradient(135deg, ${T.accent}, ${T.accent2})`, padding: "5px", textAlign: "center", fontSize: "11px", fontWeight: 700, letterSpacing: "1px", color: "#fff" }}>🏆 BEST DEAL</div>}
               <div style={{ padding: "16px", cursor: "pointer" }} onClick={() => setExp(isExp ? null : co.id)}>
                 <div style={{ display: "flex", alignItems: "center", gap: "12px" }}>
                   <div style={{ fontSize: "34px" }}>{co.logo}</div>
@@ -437,7 +452,7 @@ export default function App() {
               {isExp && <div style={{ borderTop: `1px solid ${T.border}`, padding: "16px", background: T.card2 }}>
                 <div style={css.label}>Available cars</div>
                 {co.matchCars.map((car, ci) => (
-                  <div key={ci} style={{ display: "flex", alignItems: "center", padding: "12px", background: "rgba(255,255,255,0.02)", borderRadius: "14px", marginBottom: "8px", gap: "12px" }}>
+                  <div key={ci} style={{ display: "flex", alignItems: "center", padding: "12px", background: "#FFFFFF", borderRadius: "12px", marginBottom: "8px", gap: "12px", border: `1px solid ${T.border}` }}>
                     <span style={{ fontSize: "28px" }}>{car.img}</span>
                     <div style={{ flex: 1 }}>
                       <div style={{ fontSize: "14px", fontWeight: 600 }}>{car.model}</div>
@@ -509,10 +524,10 @@ export default function App() {
           <p style={{ ...css.sub, fontSize: "12px", marginBottom: "14px" }}>Select your issue for step-by-step guidance.</p>
           <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "8px", marginBottom: "14px" }}>
             {[["damage", "📸 Damage charge"], ["deposit", "💳 Deposit issue"], ["overcharge", "💰 Unexpected bill"], ["accident", "🚨 Accident"]].map(([k, l]) => (
-              <button key={k} onClick={() => { setDType(dType === k ? null : k); trackEvent("dispute_opened", { type: k }); }} style={{ background: dType === k ? `${T.accent}20` : "rgba(255,255,255,0.03)", color: dType === k ? T.accent : T.sub, border: dType === k ? `1px solid ${T.accent}40` : `1px solid ${T.border}`, borderRadius: "14px", padding: "14px", fontSize: "13px", fontWeight: 600, cursor: "pointer" }}>{l}</button>
+              <button key={k} onClick={() => { setDType(dType === k ? null : k); trackEvent("dispute_opened", { type: k }); }} style={{ background: dType === k ? `${T.accent}10` : "#FFFFFF", color: dType === k ? T.accent : T.sub, border: dType === k ? `1.5px solid ${T.accent}` : `1.5px solid ${T.border}`, borderRadius: "12px", padding: "14px", fontSize: "13px", fontWeight: 600, cursor: "pointer" }}>{l}</button>
             ))}
           </div>
-          {dType && DISPUTES[dType] && <div style={{ background: T.card2, border: `1px solid ${T.border}`, borderRadius: "16px", padding: "18px" }}>
+          {dType && DISPUTES[dType] && <div style={{ background: "#FFFFFF", border: `1px solid ${T.border}`, borderRadius: "16px", padding: "18px" }}>
             <h4 style={{ fontSize: "15px", fontWeight: 700, color: T.accent, margin: "0 0 14px" }}>{DISPUTES[dType].title}</h4>
             {DISPUTES[dType].steps.map((step, i) => (
               <div key={i} style={{ display: "flex", gap: "12px", marginBottom: "12px" }}>
@@ -540,7 +555,7 @@ export default function App() {
   // ===== LEGAL PAGES =====
   const LegalPage = ({ title, children }) => (
     <>
-      <button onClick={() => setTab("scan")} style={{ background: "none", border: `1px solid ${T.border}`, color: T.sub, borderRadius: "10px", padding: "8px 18px", cursor: "pointer", fontSize: "13px", marginBottom: "16px" }}>← Back</button>
+      <button onClick={() => setTab("scan")} style={{ background: "none", border: `1.5px solid ${T.border}`, color: T.sub, borderRadius: "10px", padding: "8px 18px", cursor: "pointer", fontSize: "13px", marginBottom: "16px" }}>← Back</button>
       <h2 style={{ fontSize: "22px", fontWeight: 800, marginBottom: "20px" }}>{title}</h2>
       <div style={{ fontSize: "13px", color: T.sub, lineHeight: 1.8 }}>{children}</div>
     </>
