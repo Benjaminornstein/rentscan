@@ -114,9 +114,20 @@ const COMPANIES = [
 ];
 
 const PHOTO_GUIDES = [
-  "⬆️ Front", "⬇️ Rear", "⬅️ Left", "➡️ Right", "↖️ Front-left", "↗️ Front-right",
-  "↙️ Rear-left", "↘️ Rear-right", "🎛️ Dashboard", "🔢 Odometer", "⛽ Fuel level",
-  "💺 Interior", "🧳 Trunk", "📸 Existing damage"
+  { id: "front", label: "Front", tip: "Stand 3 meters back. Capture full front bumper, headlights and license plate.", icon: "⬆️" },
+  { id: "rear", label: "Rear", tip: "Same distance. Get the full rear bumper, tail lights and license plate clearly.", icon: "⬇️" },
+  { id: "left", label: "Left side", tip: "Stand back to capture the full side. Look for dents, scratches along doors.", icon: "⬅️" },
+  { id: "right", label: "Right side", tip: "Same as left. Check wheel arches and lower panels — damage hides there.", icon: "➡️" },
+  { id: "fl", label: "Front-left corner", tip: "Close-up of corner. Bumper edges get hit most in parking — check carefully.", icon: "↖️" },
+  { id: "fr", label: "Front-right corner", tip: "Close-up. Run your finger along the edge — feel for dents you can't see.", icon: "↗️" },
+  { id: "rl", label: "Rear-left corner", tip: "Close-up of corner and tail light. Check for cracks and paint chips.", icon: "↙️" },
+  { id: "rr", label: "Rear-right corner", tip: "Close-up. Rental companies often charge for tiny scratches here.", icon: "↘️" },
+  { id: "dash", label: "Dashboard", tip: "Sit in driver seat. Capture dashboard, warning lights and infotainment screen.", icon: "🎛️" },
+  { id: "odo", label: "Odometer / mileage", tip: "Zoom in on the mileage reading. This is your proof of starting kilometers.", icon: "🔢" },
+  { id: "fuel", label: "Fuel level", tip: "Capture the fuel gauge clearly. You must return at the same level.", icon: "⛽" },
+  { id: "interior", label: "Interior & seats", tip: "Photograph seats, steering wheel and floor mats. Check for stains or tears.", icon: "💺" },
+  { id: "trunk", label: "Trunk / boot", tip: "Open trunk. Photo inside. Check for spare tire, jack and warning triangle.", icon: "🧳" },
+  { id: "damage", label: "Existing damage", tip: "Found a scratch or dent? Take a close-up AND a wide shot showing location.", icon: "📸" },
 ];
 
 const DISPUTES = {
@@ -190,6 +201,8 @@ export default function App() {
   const [returnP, setReturnP] = useState([]);
   const [contractP, setContractP] = useState([]);
   const [dType, setDType] = useState(null);
+  const [photoMode, setPhotoMode] = useState(null); // null | "pickup" | "return" | "contract"
+  const [photoStep, setPhotoStep] = useState(0);
 
   // Splash screen timer
   useEffect(() => { const t = setTimeout(() => setSplash(false), 2200); return () => clearTimeout(t); }, []);
@@ -199,7 +212,7 @@ export default function App() {
     <div style={{ minHeight: "100vh", background: "#FFFFFF", display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", fontFamily: "-apple-system, 'SF Pro Display', 'Segoe UI', sans-serif" }}>
       <div style={{ width: "80px", height: "80px", borderRadius: "20px", background: `linear-gradient(135deg, ${T.accent}, ${T.accent2})`, display: "flex", alignItems: "center", justifyContent: "center", fontSize: "40px", boxShadow: "0 12px 40px rgba(230,126,60,0.3)", marginBottom: "24px", animation: "pulse 1.5s ease-in-out infinite" }}>🔍</div>
       <div style={{ fontSize: "32px", fontWeight: 800, color: T.text, letterSpacing: "-1px" }}>RentScan</div>
-      <div style={{ fontSize: "13px", color: T.sub, letterSpacing: "3px", textTransform: "uppercase", marginTop: "6px" }}>Dubai Car Rentals</div>
+      <div style={{ fontSize: "13px", color: T.sub, letterSpacing: "3px", textTransform: "uppercase", marginTop: "6px" }}>Scan before you sign</div>
       <div style={{ width: "40px", height: "3px", background: `linear-gradient(135deg, ${T.accent}, ${T.accent2})`, borderRadius: "3px", marginTop: "28px" }} />
       <style>{`@keyframes pulse { 0%,100% { transform: scale(1); } 50% { transform: scale(1.06); } }`}</style>
     </div>
@@ -238,10 +251,24 @@ export default function App() {
 
   const doFile = (e) => { e.preventDefault(); const f = e.dataTransfer?.files?.[0] || e.target?.files?.[0]; if (f) { const r = new FileReader(); r.onload = (ev) => setText(ev.target.result); r.readAsText(f); } };
 
+  const handleGuidedPhoto = (setter, step) => {
+    const inp = document.createElement("input"); inp.type = "file"; inp.accept = "image/*"; inp.capture = "environment";
+    inp.onchange = (e) => {
+      const file = e.target.files[0]; if (!file) return;
+      const r = new FileReader();
+      r.onload = (ev) => {
+        const guide = PHOTO_GUIDES[step];
+        setter(p => [...p, { id: Date.now() + Math.random(), data: ev.target.result, time: new Date().toLocaleString("en-AE", { timeZone: "Asia/Dubai", dateStyle: "medium", timeStyle: "short" }), label: guide?.label || "Photo" }]);
+        if (step < PHOTO_GUIDES.length - 1) setPhotoStep(step + 1);
+        else { setPhotoMode(null); setPhotoStep(0); }
+      }; r.readAsDataURL(file);
+    }; inp.click();
+  };
+
   const handlePhoto = (setter) => {
     const inp = document.createElement("input"); inp.type = "file"; inp.accept = "image/*"; inp.capture = "environment"; inp.multiple = true;
     inp.onchange = (e) => Array.from(e.target.files).forEach(file => {
-      const r = new FileReader(); r.onload = (ev) => setter(p => [...p, { id: Date.now() + Math.random(), data: ev.target.result, time: new Date().toLocaleString("en-AE", { timeZone: "Asia/Dubai", dateStyle: "medium", timeStyle: "short" }) }]); r.readAsDataURL(file);
+      const r = new FileReader(); r.onload = (ev) => setter(p => [...p, { id: Date.now() + Math.random(), data: ev.target.result, time: new Date().toLocaleString("en-AE", { timeZone: "Asia/Dubai", dateStyle: "medium", timeStyle: "short" }), label: "Photo" }]); r.readAsDataURL(file);
     }); inp.click();
   };
 
@@ -277,28 +304,69 @@ export default function App() {
   const Logo = () => (
     <div style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: "10px", marginBottom: "24px", paddingBottom: "16px", borderBottom: `1px solid ${T.border}` }}>
       <div style={{ width: "38px", height: "38px", borderRadius: "10px", background: `linear-gradient(135deg, ${T.accent}, ${T.accent2})`, display: "flex", alignItems: "center", justifyContent: "center", fontSize: "18px", boxShadow: `0 4px 12px rgba(230,126,60,0.25)` }}>🔍</div>
-      <div><div style={{ fontSize: "20px", fontWeight: 800, letterSpacing: "-0.5px", color: T.text }}>RentScan</div><div style={{ fontSize: "9px", color: T.dim, letterSpacing: "2px", textTransform: "uppercase", marginTop: "-1px" }}>Dubai Car Rentals</div></div>
+      <div><div style={{ fontSize: "20px", fontWeight: 800, letterSpacing: "-0.5px", color: T.text }}>RentScan</div><div style={{ fontSize: "9px", color: T.dim, letterSpacing: "2px", textTransform: "uppercase", marginTop: "-1px" }}>Scan before you sign</div></div>
     </div>
   );
 
+  // ===== GUIDED PHOTO FLOW =====
+  const GuidedPhotoFlow = ({ setter }) => {
+    const guide = PHOTO_GUIDES[photoStep];
+    const total = PHOTO_GUIDES.length;
+    const progress = ((photoStep) / total) * 100;
+    return (
+      <div style={{ position: "fixed", top: 0, left: 0, right: 0, bottom: 0, background: "#FFFFFF", zIndex: 200, display: "flex", flexDirection: "column", fontFamily: "-apple-system, 'SF Pro Display', sans-serif" }}>
+        <div style={{ padding: "16px 20px", display: "flex", alignItems: "center", justifyContent: "space-between", borderBottom: `1px solid ${T.border}` }}>
+          <button onClick={() => { setPhotoMode(null); setPhotoStep(0); }} style={{ background: "none", border: "none", fontSize: "15px", color: T.accent, fontWeight: 600, cursor: "pointer" }}>Close</button>
+          <span style={{ fontSize: "14px", fontWeight: 700, color: T.text }}>{photoMode === "pickup" ? "Pickup" : "Return"} Inspection</span>
+          <span style={{ fontSize: "13px", color: T.sub }}>{photoStep + 1}/{total}</span>
+        </div>
+        <div style={{ height: "3px", background: T.border }}><div style={{ height: "100%", width: `${progress}%`, background: T.accent, transition: "width 0.3s ease", borderRadius: "0 3px 3px 0" }} /></div>
+        <div style={{ flex: 1, display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", padding: "32px 24px", textAlign: "center" }}>
+          <div style={{ fontSize: "64px", marginBottom: "20px" }}>{guide.icon}</div>
+          <h2 style={{ fontSize: "28px", fontWeight: 800, color: T.text, margin: "0 0 12px", letterSpacing: "-0.5px" }}>{guide.label}</h2>
+          <p style={{ fontSize: "16px", color: T.sub, lineHeight: 1.6, maxWidth: "320px", margin: "0" }}>{guide.tip}</p>
+          <div style={{ display: "flex", gap: "5px", margin: "28px 0", flexWrap: "wrap", justifyContent: "center" }}>
+            {PHOTO_GUIDES.map((_, i) => (
+              <div key={i} style={{ width: i === photoStep ? "20px" : "8px", height: "8px", borderRadius: "4px", background: i < photoStep ? T.green : i === photoStep ? T.accent : T.border, transition: "all 0.3s" }} />
+            ))}
+          </div>
+        </div>
+        <div style={{ padding: "20px 24px 36px", display: "flex", flexDirection: "column", gap: "10px" }}>
+          <button onClick={() => handleGuidedPhoto(setter, photoStep)} style={{ background: `linear-gradient(135deg, ${T.accent}, ${T.accent2})`, color: "#fff", border: "none", borderRadius: "14px", padding: "16px", fontSize: "17px", fontWeight: 700, cursor: "pointer", width: "100%" }}>📸 Take photo — {guide.label}</button>
+          <div style={{ display: "flex", gap: "10px" }}>
+            {photoStep > 0 && <button onClick={() => setPhotoStep(s => s - 1)} style={{ flex: 1, background: "#F5F5F7", color: T.sub, border: "none", borderRadius: "12px", padding: "12px", fontSize: "14px", fontWeight: 600, cursor: "pointer" }}>← Back</button>}
+            <button onClick={() => { if (photoStep < total - 1) setPhotoStep(s => s + 1); else { setPhotoMode(null); setPhotoStep(0); } }} style={{ flex: 1, background: "#F5F5F7", color: T.sub, border: "none", borderRadius: "12px", padding: "12px", fontSize: "14px", fontWeight: 600, cursor: "pointer" }}>{photoStep < total - 1 ? "Skip →" : "Finish"}</button>
+          </div>
+        </div>
+      </div>
+    );
+  };
+
   // ===== PHOTO SECTION =====
-  const Photos = ({ title, icon, photos, setter, guides }) => (
+  const Photos = ({ title, icon, photos, setter, guides, type }) => (
     <div style={css.card}>
       <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "14px" }}>
         <span style={{ fontSize: "15px", fontWeight: 700 }}>{icon} {title}</span>
         <span style={{ fontSize: "11px", fontWeight: 600, color: photos.length > 0 ? T.green : T.dim, background: photos.length > 0 ? `${T.green}10` : "#F5F5F7", padding: "4px 12px", borderRadius: "8px" }}>{photos.length} photos</span>
       </div>
       {photos.length > 0 && <div style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: "6px", marginBottom: "14px" }}>
-        {photos.map(p => <div key={p.id} style={{ position: "relative", borderRadius: "12px", overflow: "hidden", aspectRatio: "1" }}>
+        {photos.map(p => <div key={p.id} style={{ position: "relative", borderRadius: "10px", overflow: "hidden", aspectRatio: "1" }}>
           <img src={p.data} alt="" style={{ width: "100%", height: "100%", objectFit: "cover" }} />
-          <div style={{ position: "absolute", bottom: 0, left: 0, right: 0, background: "linear-gradient(transparent, rgba(0,0,0,0.85))", padding: "10px 4px 3px", fontSize: "7px", color: "#bbb", textAlign: "center" }}>{p.time}</div>
+          <div style={{ position: "absolute", bottom: 0, left: 0, right: 0, background: "linear-gradient(transparent, rgba(0,0,0,0.8))", padding: "8px 4px 3px" }}>
+            <div style={{ fontSize: "8px", color: "#fff", textAlign: "center", fontWeight: 600 }}>{p.label}</div>
+            <div style={{ fontSize: "7px", color: "#bbb", textAlign: "center" }}>{p.time}</div>
+          </div>
           <button onClick={() => setter(pr => pr.filter(x => x.id !== p.id))} style={{ position: "absolute", top: 3, right: 3, background: "rgba(0,0,0,0.5)", color: "#fff", border: "none", borderRadius: "50%", width: "20px", height: "20px", fontSize: "11px", cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center" }}>×</button>
         </div>)}
       </div>}
-      {guides && <div style={{ marginBottom: "14px" }}><div style={css.label}>Recommended shots</div><div style={{ display: "flex", flexWrap: "wrap", gap: "4px" }}>
-        {PHOTO_GUIDES.map((g, i) => <span key={i} style={{ fontSize: "10px", background: "#F5F5F7", border: `1px solid ${T.border}`, borderRadius: "8px", padding: "4px 10px", color: T.sub }}>{g}</span>)}
-      </div></div>}
-      <button onClick={() => handlePhoto(setter)} style={css.btn}>📸 {photos.length === 0 ? "Take Photos" : "Add More"}</button>
+      {guides ? (
+        <div>
+          <button onClick={() => { setPhotoMode(type); setPhotoStep(0); }} style={{ ...css.btn, marginBottom: "8px" }}>📸 Start guided inspection ({PHOTO_GUIDES.length} shots)</button>
+          <button onClick={() => handlePhoto(setter)} style={{ background: "none", border: `1.5px solid ${T.border}`, color: T.sub, borderRadius: "12px", padding: "10px", fontSize: "13px", fontWeight: 600, cursor: "pointer", width: "100%", textAlign: "center" }}>Or add photos manually</button>
+        </div>
+      ) : (
+        <button onClick={() => handlePhoto(setter)} style={css.btn}>📸 {photos.length === 0 ? "Take Photos" : "Add More"}</button>
+      )}
     </div>
   );
 
@@ -516,8 +584,8 @@ export default function App() {
         </div>
 
         <Photos title="Contract & Documents" icon="📄" photos={contractP} setter={setContractP} guides={false} />
-        <Photos title="Pickup Inspection" icon="🟢" photos={pickupP} setter={setPickupP} guides={true} />
-        <Photos title="Return Inspection" icon="🔴" photos={returnP} setter={setReturnP} guides={true} />
+        <Photos title="Pickup Inspection" icon="🟢" photos={pickupP} setter={setPickupP} guides={true} type="pickup" />
+        <Photos title="Return Inspection" icon="🔴" photos={returnP} setter={setReturnP} guides={true} type="return" />
 
         <div style={css.card}>
           <h3 style={{ fontSize: "16px", fontWeight: 700, margin: "0 0 6px" }}>⚖️ Need Help With a Dispute?</h3>
@@ -735,6 +803,8 @@ export default function App() {
 
   return (
     <div style={css.page}>
+      {photoMode === "pickup" && <GuidedPhotoFlow setter={setPickupP} />}
+      {photoMode === "return" && <GuidedPhotoFlow setter={setReturnP} />}
       <div style={css.wrap}>
         <Logo />
         {tab === "scan" && ScanTab()}
@@ -749,3 +819,4 @@ export default function App() {
     </div>
   );
 }
+
