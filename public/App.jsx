@@ -186,7 +186,7 @@ function AnimN({ value }) {
 }
 
 // ===== THEME (Light — XE/Chrono24 inspired) =====
-const T = { bg: "#0A0E14", card: "#141920", card2: "#1A2030", border: "#2A2F3E", accent: "#C8962E", accent2: "#A67A20", text: "#F5EDD6", sub: "#9A9488", dim: "#5A5E68", green: "#1B9E5E", red: "#D94040", blue: "#4A9EFF" };
+const T = { bg: "#F5F5F7", card: "#FFFFFF", card2: "#FAFAFA", border: "#E8E8ED", accent: "#E67E3C", accent2: "#D4692E", text: "#1A1A2E", sub: "#6B6B80", dim: "#9D9DB0", green: "#1B9E5E", red: "#D94040", blue: "#2E6FD4" };
 const costColor = { base: T.green, extra: T.accent, maybe: T.red, opt: T.blue };
 
 // ===== APP =====
@@ -218,11 +218,11 @@ export default function App() {
 
   // Splash Screen
   if (splash) return (
-    <div style={{ minHeight: "100vh", background: "#0A0E14", display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", fontFamily: "-apple-system, 'SF Pro Display', 'Segoe UI', sans-serif" }}>
-      <img src="/logo.png" alt="RentScan" style={{ width: "90px", height: "90px", borderRadius: "20px", marginBottom: "24px", animation: "pulse 1.5s ease-in-out infinite" }} />
-      <div style={{ fontSize: "32px", fontWeight: 800, color: "#F5EDD6", letterSpacing: "-1px" }}>RentScan</div>
-      <div style={{ fontSize: "13px", color: "#C8962E", letterSpacing: "3px", textTransform: "uppercase", marginTop: "6px" }}>Scan. Save. Protect.</div>
-      <div style={{ width: "40px", height: "3px", background: "linear-gradient(135deg, #C8962E, #A67A20)", borderRadius: "3px", marginTop: "28px" }} />
+    <div style={{ minHeight: "100vh", background: "#FFFFFF", display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", fontFamily: "-apple-system, 'SF Pro Display', 'Segoe UI', sans-serif" }}>
+      <div style={{ width: "80px", height: "80px", borderRadius: "20px", background: `linear-gradient(135deg, ${T.accent}, ${T.accent2})`, display: "flex", alignItems: "center", justifyContent: "center", fontSize: "40px", boxShadow: "0 12px 40px rgba(230,126,60,0.3)", marginBottom: "24px", animation: "pulse 1.5s ease-in-out infinite" }}>🔍</div>
+      <div style={{ fontSize: "32px", fontWeight: 800, color: T.text, letterSpacing: "-1px" }}>RentScan</div>
+      <div style={{ fontSize: "13px", color: T.sub, letterSpacing: "3px", textTransform: "uppercase", marginTop: "6px" }}>Compare. Save. Protect.</div>
+      <div style={{ width: "40px", height: "3px", background: `linear-gradient(135deg, ${T.accent}, ${T.accent2})`, borderRadius: "3px", marginTop: "28px" }} />
       <style>{`@keyframes pulse { 0%,100% { transform: scale(1); } 50% { transform: scale(1.06); } }`}</style>
     </div>
   );
@@ -290,9 +290,9 @@ export default function App() {
     card: { background: T.card, borderRadius: "16px", padding: "18px", marginBottom: "12px", boxShadow: "0 1px 3px rgba(0,0,0,0.06), 0 1px 2px rgba(0,0,0,0.04)" },
     btn: { background: `linear-gradient(135deg, ${T.accent}, ${T.accent2})`, color: "#fff", border: "none", borderRadius: "12px", padding: "14px", fontSize: "15px", fontWeight: 700, cursor: "pointer", width: "100%", letterSpacing: "0.2px" },
     btnSm: { background: `linear-gradient(135deg, ${T.accent}, ${T.accent2})`, color: "#fff", border: "none", borderRadius: "10px", padding: "10px 18px", fontSize: "13px", fontWeight: 600, cursor: "pointer" },
-    input: { width: "100%", background: T.card, border: `1.5px solid ${T.border}`, borderRadius: "12px", padding: "12px 14px", color: T.text, fontSize: "14px", fontFamily: "inherit", outline: "none", boxSizing: "border-box" },
+    input: { width: "100%", background: "#FFFFFF", border: `1.5px solid ${T.border}`, borderRadius: "12px", padding: "12px 14px", color: T.text, fontSize: "14px", fontFamily: "inherit", outline: "none", boxSizing: "border-box" },
     tag: (c) => ({ display: "inline-flex", background: `${c}10`, color: c, border: `1px solid ${c}25`, borderRadius: "6px", padding: "3px 8px", fontSize: "10px", fontWeight: 700, letterSpacing: "0.3px", textTransform: "uppercase" }),
-    pill: (on) => ({ background: on ? T.accent : T.card, color: on ? "#fff" : T.sub, border: on ? "none" : `1.5px solid ${T.border}`, borderRadius: "10px", padding: "8px 16px", fontSize: "13px", fontWeight: 600, cursor: "pointer" }),
+    pill: (on) => ({ background: on ? T.accent : "#FFFFFF", color: on ? "#fff" : T.sub, border: on ? "none" : `1.5px solid ${T.border}`, borderRadius: "10px", padding: "8px 16px", fontSize: "13px", fontWeight: 600, cursor: "pointer" }),
     h2: { fontSize: "26px", fontWeight: 800, letterSpacing: "-0.5px", lineHeight: 1.2, margin: "0 0 10px", color: T.text },
     sub: { color: T.sub, fontSize: "14px", lineHeight: 1.5 },
     label: { fontSize: "10px", color: T.dim, textTransform: "uppercase", letterSpacing: "1.2px", marginBottom: "8px", fontWeight: 600 },
@@ -300,9 +300,9 @@ export default function App() {
 
   // ===== BOTTOM NAV (XE-style) =====
   const Nav = () => (
-    <div style={{ position: "fixed", bottom: 0, left: 0, right: 0, background: "rgba(10,14,20,0.95)", backdropFilter: "blur(20px)", WebkitBackdropFilter: "blur(20px)", borderTop: `1px solid ${T.border}`, zIndex: 100, padding: "6px 0 max(env(safe-area-inset-bottom), 6px)" }}>
+    <div style={{ position: "fixed", bottom: 0, left: 0, right: 0, background: "rgba(255,255,255,0.95)", backdropFilter: "blur(20px)", WebkitBackdropFilter: "blur(20px)", borderTop: `1px solid ${T.border}`, zIndex: 100, padding: "6px 0 max(env(safe-area-inset-bottom), 6px)" }}>
       <div style={{ display: "flex", maxWidth: "500px", margin: "0 auto", justifyContent: "space-around" }}>
-        {[["scan", "🔍", "Scan"], ["rental", "📋", "My Rental"]].map(([k, ico, lbl]) => (
+        {[["scan", "🔍", "Scan"], ["compare", "📊", "Compare"], ["rental", "📋", "My Rental"]].map(([k, ico, lbl]) => (
           <button key={k} onClick={() => setTab(k)} style={{ background: "none", border: "none", cursor: "pointer", padding: "6px 24px", display: "flex", flexDirection: "column", alignItems: "center", gap: "2px" }}>
             <span style={{ fontSize: "22px", opacity: tab === k ? 1 : 0.35, transition: "opacity 0.2s" }}>{ico}</span>
             <span style={{ fontSize: "10px", fontWeight: 700, color: tab === k ? T.accent : T.dim, letterSpacing: "0.3px" }}>{lbl}</span>
@@ -314,8 +314,8 @@ export default function App() {
 
   const Logo = () => (
     <div style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: "10px", marginBottom: "24px", paddingBottom: "16px", borderBottom: `1px solid ${T.border}` }}>
-      <img src="/logo.png" alt="RentScan" style={{ width: "38px", height: "38px", borderRadius: "10px" }} />
-      <div><div style={{ fontSize: "20px", fontWeight: 800, letterSpacing: "-0.5px", color: T.text }}>RentScan</div><div style={{ fontSize: "9px", color: T.accent, letterSpacing: "2px", textTransform: "uppercase", marginTop: "-1px" }}>Scan. Save. Protect.</div></div>
+      <div style={{ width: "38px", height: "38px", borderRadius: "10px", background: `linear-gradient(135deg, ${T.accent}, ${T.accent2})`, display: "flex", alignItems: "center", justifyContent: "center", fontSize: "18px", boxShadow: `0 4px 12px rgba(230,126,60,0.25)` }}>🔍</div>
+      <div><div style={{ fontSize: "20px", fontWeight: 800, letterSpacing: "-0.5px", color: T.text }}>RentScan</div><div style={{ fontSize: "9px", color: T.dim, letterSpacing: "2px", textTransform: "uppercase", marginTop: "-1px" }}>Compare. Save. Protect.</div></div>
     </div>
   );
 
@@ -328,7 +328,7 @@ export default function App() {
     const isDone = photoStep >= total;
 
     if (isDone) return (
-      <div style={{ position: "fixed", top: 0, left: 0, right: 0, bottom: 0, background: "#0A0E14", zIndex: 200, display: "flex", flexDirection: "column", fontFamily: "-apple-system, 'SF Pro Display', sans-serif" }}>
+      <div style={{ position: "fixed", top: 0, left: 0, right: 0, bottom: 0, background: "#FFFFFF", zIndex: 200, display: "flex", flexDirection: "column", fontFamily: "-apple-system, 'SF Pro Display', sans-serif" }}>
         <div style={{ padding: "16px 20px", display: "flex", alignItems: "center", justifyContent: "center", borderBottom: `1px solid ${T.border}` }}>
           <span style={{ fontSize: "14px", fontWeight: 700, color: T.text }}>Inspection complete</span>
         </div>
@@ -339,14 +339,14 @@ export default function App() {
           <p style={{ fontSize: "14px", color: T.dim, lineHeight: 1.5, maxWidth: "300px" }}>Tip: Even tiny marks matter. Rental companies can charge AED 500+ for a scratch you didn't document.</p>
         </div>
         <div style={{ padding: "16px 24px 36px", display: "flex", flexDirection: "column", gap: "10px" }}>
-          <button onClick={() => handlePhoto(setter)} style={{ background: `linear-gradient(135deg, #C8962E, #A67A20)`, color: "#fff", border: "none", borderRadius: "14px", padding: "16px", fontSize: "17px", fontWeight: 700, cursor: "pointer", width: "100%" }}>⚠️ Yes, add more damage photos</button>
+          <button onClick={() => handlePhoto(setter)} style={{ background: `linear-gradient(135deg, #E65100, #F57C00)`, color: "#fff", border: "none", borderRadius: "14px", padding: "16px", fontSize: "17px", fontWeight: 700, cursor: "pointer", width: "100%" }}>⚠️ Yes, add more damage photos</button>
           <button onClick={() => { setPhotoMode(null); setPhotoStep(0); }} style={{ background: `linear-gradient(135deg, ${T.green}, #15803D)`, color: "#fff", border: "none", borderRadius: "14px", padding: "16px", fontSize: "17px", fontWeight: 700, cursor: "pointer", width: "100%" }}>✅ No, I'm done — looks good</button>
         </div>
       </div>
     );
 
     return (
-      <div style={{ position: "fixed", top: 0, left: 0, right: 0, bottom: 0, background: "#0A0E14", zIndex: 200, display: "flex", flexDirection: "column", fontFamily: "-apple-system, 'SF Pro Display', sans-serif" }}>
+      <div style={{ position: "fixed", top: 0, left: 0, right: 0, bottom: 0, background: "#FFFFFF", zIndex: 200, display: "flex", flexDirection: "column", fontFamily: "-apple-system, 'SF Pro Display', sans-serif" }}>
         <div style={{ padding: "16px 20px", display: "flex", alignItems: "center", justifyContent: "space-between", borderBottom: `1px solid ${T.border}` }}>
           <button onClick={() => { setPhotoMode(null); setPhotoStep(0); }} style={{ background: "none", border: "none", fontSize: "15px", color: T.accent, fontWeight: 600, cursor: "pointer" }}>Close</button>
           <span style={{ fontSize: "14px", fontWeight: 700, color: T.text }}>{photoMode === "pickup" ? "Pickup" : "Return"} Inspection</span>
@@ -354,7 +354,7 @@ export default function App() {
         </div>
         <div style={{ height: "3px", background: T.border }}><div style={{ height: "100%", width: `${progress}%`, background: T.accent, transition: "width 0.3s ease", borderRadius: "0 3px 3px 0" }} /></div>
         <div style={{ flex: 1, display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", padding: "24px 24px", textAlign: "center" }}>
-          {isCloseUp && <div style={{ background: "#C8962E20", border: "1px solid #C8962E", borderRadius: "10px", padding: "8px 16px", marginBottom: "16px", fontSize: "13px", fontWeight: 700, color: "#C8962E" }}>CLOSE-UP — Look carefully for scratches</div>}
+          {isCloseUp && <div style={{ background: "#FFF3E0", border: "1px solid #FFB74D", borderRadius: "10px", padding: "8px 16px", marginBottom: "16px", fontSize: "13px", fontWeight: 700, color: "#E65100" }}>CLOSE-UP — Look carefully for scratches</div>}
           <div style={{ fontSize: "64px", marginBottom: "16px" }}>{guide.icon}</div>
           <h2 style={{ fontSize: "26px", fontWeight: 800, color: T.text, margin: "0 0 12px", letterSpacing: "-0.5px" }}>{guide.label}</h2>
           <p style={{ fontSize: "15px", color: T.sub, lineHeight: 1.7, maxWidth: "320px", margin: "0" }}>{guide.tip}</p>
@@ -365,13 +365,13 @@ export default function App() {
           </div>
         </div>
         <div style={{ padding: "16px 24px 36px", display: "flex", flexDirection: "column", gap: "10px" }}>
-          <button onClick={() => handleGuidedPhoto(setter, photoStep)} style={{ background: isCloseUp ? `linear-gradient(135deg, #C8962E, #A67A20)` : `linear-gradient(135deg, ${T.accent}, ${T.accent2})`, color: "#fff", border: "none", borderRadius: "14px", padding: "16px", fontSize: "17px", fontWeight: 700, cursor: "pointer", width: "100%" }}>
+          <button onClick={() => handleGuidedPhoto(setter, photoStep)} style={{ background: isCloseUp ? `linear-gradient(135deg, #E65100, #F57C00)` : `linear-gradient(135deg, ${T.accent}, ${T.accent2})`, color: "#fff", border: "none", borderRadius: "14px", padding: "16px", fontSize: "17px", fontWeight: 700, cursor: "pointer", width: "100%" }}>
             {isCloseUp ? "🔎 Take close-up photo" : "📸 Take photo"} — {guide.label}
           </button>
           {isCloseUp && <p style={{ fontSize: "12px", color: T.dim, textAlign: "center", margin: "0" }}>Take as many photos as needed — every scratch counts</p>}
           <div style={{ display: "flex", gap: "10px" }}>
-            {photoStep > 0 && <button onClick={() => setPhotoStep(s => s - 1)} style={{ flex: 1, background: T.card, color: T.sub, border: "none", borderRadius: "12px", padding: "12px", fontSize: "14px", fontWeight: 600, cursor: "pointer" }}>← Back</button>}
-            <button onClick={() => setPhotoStep(s => s + 1)} style={{ flex: 1, background: isCloseUp ? T.green : T.card, color: isCloseUp ? "#fff" : T.sub, border: "none", borderRadius: "12px", padding: "12px", fontSize: "14px", fontWeight: 600, cursor: "pointer" }}>{isCloseUp ? "✓ Done, next →" : "Skip →"}</button>
+            {photoStep > 0 && <button onClick={() => setPhotoStep(s => s - 1)} style={{ flex: 1, background: "#F5F5F7", color: T.sub, border: "none", borderRadius: "12px", padding: "12px", fontSize: "14px", fontWeight: 600, cursor: "pointer" }}>← Back</button>}
+            <button onClick={() => setPhotoStep(s => s + 1)} style={{ flex: 1, background: isCloseUp ? T.green : "#F5F5F7", color: isCloseUp ? "#fff" : T.sub, border: "none", borderRadius: "12px", padding: "12px", fontSize: "14px", fontWeight: 600, cursor: "pointer" }}>{isCloseUp ? "✓ Done, next →" : "Skip →"}</button>
           </div>
         </div>
       </div>
@@ -383,7 +383,7 @@ export default function App() {
     <div style={css.card}>
       <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "14px" }}>
         <span style={{ fontSize: "15px", fontWeight: 700 }}>{icon} {title}</span>
-        <span style={{ fontSize: "11px", fontWeight: 600, color: photos.length > 0 ? T.green : T.dim, background: photos.length > 0 ? `${T.green}10` : T.card, padding: "4px 12px", borderRadius: "8px" }}>{photos.length} photos</span>
+        <span style={{ fontSize: "11px", fontWeight: 600, color: photos.length > 0 ? T.green : T.dim, background: photos.length > 0 ? `${T.green}10` : "#F5F5F7", padding: "4px 12px", borderRadius: "8px" }}>{photos.length} photos</span>
       </div>
       {photos.length > 0 && <div style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: "6px", marginBottom: "14px" }}>
         {photos.map(p => <div key={p.id} style={{ position: "relative", borderRadius: "10px", overflow: "hidden", aspectRatio: "1" }}>
@@ -420,7 +420,7 @@ export default function App() {
             <div style={{ fontSize: "9px", color: T.dim, textTransform: "uppercase", letterSpacing: "1.5px", marginTop: "3px" }}>{l}</div>
           </div>))}
       </div>
-      <div onDragOver={e => e.preventDefault()} onDrop={doFile} onClick={() => fRef.current?.click()} style={{ border: `2px dashed ${T.border}`, borderRadius: "16px", padding: "28px", textAlign: "center", cursor: "pointer", marginBottom: "14px", background: T.card }}>
+      <div onDragOver={e => e.preventDefault()} onDrop={doFile} onClick={() => fRef.current?.click()} style={{ border: `2px dashed ${T.border}`, borderRadius: "16px", padding: "28px", textAlign: "center", cursor: "pointer", marginBottom: "14px", background: "#FFFFFF" }}>
         <input ref={fRef} type="file" onChange={doFile} style={{ display: "none" }} />
         <div style={{ fontSize: "32px", marginBottom: "8px" }}>📄</div>
         <div style={{ color: T.sub, fontSize: "14px" }}>Drop contract or tap to upload</div>
@@ -457,11 +457,14 @@ export default function App() {
             </div>
           ))}
         </div>}
+        <div style={{ textAlign: "center", marginTop: "20px" }}>
+          <button onClick={() => setTab("compare")} style={css.btn}>📊 Compare & Rent</button>
+        </div>
       </>}
 
       {/* SCAN MODE */}
       {res.mode === "scan" && <>
-      <div style={{ background: T.card, border: `1px solid ${T.accent}25`, borderRadius: "20px", padding: "28px", textAlign: "center", marginBottom: "20px", boxShadow: "0 2px 12px rgba(200,150,46,0.08)" }}>
+      <div style={{ background: "#FFFFFF", border: `1px solid ${T.accent}25`, borderRadius: "20px", padding: "28px", textAlign: "center", marginBottom: "20px", boxShadow: "0 2px 12px rgba(230,126,60,0.08)" }}>
         <div style={{ fontSize: "11px", color: T.accent, textTransform: "uppercase", letterSpacing: "2px", marginBottom: "8px", fontWeight: 600 }}>Estimated total cost</div>
         <div style={{ fontSize: "44px", fontWeight: 800, letterSpacing: "-2px" }}>AED <AnimN value={res.totalEstimate} /></div>
         <div style={{ fontSize: "13px", color: T.sub, marginTop: "6px" }}>Base: AED {res.baseTotal?.toLocaleString()} · <span style={{ color: T.accent2 }}>+{Math.round(((res.totalEstimate - res.baseTotal) / res.baseTotal) * 100)}% additional</span></div>
@@ -480,7 +483,7 @@ export default function App() {
       </div>
       <h3 style={{ fontSize: "16px", fontWeight: 700, marginBottom: "12px" }}>💰 Breakdown</h3>
       {res.costs?.map((c, i) => (
-        <div key={i} style={{ display: "flex", justifyContent: "space-between", padding: "12px 16px", background: T.card, borderRadius: "12px", marginBottom: "6px", borderLeft: `3px solid ${costColor[c.type] || T.sub}`, boxShadow: "0 1px 2px rgba(0,0,0,0.1)" }}>
+        <div key={i} style={{ display: "flex", justifyContent: "space-between", padding: "12px 16px", background: "#FFFFFF", borderRadius: "12px", marginBottom: "6px", borderLeft: `3px solid ${costColor[c.type] || T.sub}`, boxShadow: "0 1px 2px rgba(0,0,0,0.04)" }}>
           <div style={{ flex: 1 }}><div style={{ fontSize: "14px", fontWeight: 600 }}>{c.label}</div><div style={{ fontSize: "11px", color: T.dim, marginTop: "2px" }}>{c.detail}</div></div>
           <div style={{ fontSize: "15px", fontWeight: 700, color: costColor[c.type] || T.sub, whiteSpace: "nowrap" }}>AED {c.amount?.toLocaleString()}</div>
         </div>
@@ -491,6 +494,10 @@ export default function App() {
           {res.notes.map((n, i) => <div key={i} style={{ fontSize: "13px", color: T.sub, padding: "6px 0", borderBottom: i < res.notes.length - 1 ? `1px solid ${T.border}` : "none", lineHeight: 1.5 }}>{n}</div>)}
         </div>
       </>}
+      <div style={{ textAlign: "center", marginTop: "28px" }}>
+        <button onClick={() => setTab("compare")} style={css.btn}>📊 Compare & Rent</button>
+        <p style={{ ...css.sub, fontSize: "12px", marginTop: "10px" }}>See estimated costs across Dubai rental companies</p>
+      </div>
       </>}
     </>
   );
@@ -549,7 +556,7 @@ export default function App() {
               {isExp && <div style={{ borderTop: `1px solid ${T.border}`, padding: "16px", background: T.card2 }}>
                 <div style={css.label}>Available cars</div>
                 {co.matchCars.map((car, ci) => (
-                  <div key={ci} style={{ display: "flex", alignItems: "center", padding: "12px", background: "#0A0E14", borderRadius: "12px", marginBottom: "8px", gap: "12px", border: `1px solid ${T.border}` }}>
+                  <div key={ci} style={{ display: "flex", alignItems: "center", padding: "12px", background: "#FFFFFF", borderRadius: "12px", marginBottom: "8px", gap: "12px", border: `1px solid ${T.border}` }}>
                     <span style={{ fontSize: "28px" }}>{car.img}</span>
                     <div style={{ flex: 1 }}>
                       <div style={{ fontSize: "14px", fontWeight: 600 }}>{car.model}</div>
@@ -647,24 +654,24 @@ export default function App() {
 *{margin:0;padding:0;box-sizing:border-box}
 body{font-family:-apple-system,sans-serif;color:#1A1A2E;padding:32px;max-width:800px;margin:0 auto}
 h1{font-size:28px;font-weight:800;margin-bottom:4px}
-h2{font-size:18px;font-weight:700;margin:24px 0 12px;padding-bottom:8px;border-bottom:2px solid #C8962E}
+h2{font-size:18px;font-weight:700;margin:24px 0 12px;padding-bottom:8px;border-bottom:2px solid #E67E3C}
 .sub{color:#6B6B80;font-size:13px;margin-bottom:24px}
 .grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:16px}
-.field{background:#141920;border-radius:8px;padding:10px 14px}
+.field{background:#F5F5F7;border-radius:8px;padding:10px 14px}
 .field .label{font-size:10px;text-transform:uppercase;letter-spacing:1px;color:#9D9DB0;font-weight:600}
 .field .value{font-size:15px;font-weight:600;margin-top:2px}
 .photos{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin:12px 0}
 .photo{border-radius:8px;overflow:hidden}
 .photo img{width:100%;aspect-ratio:1;object-fit:cover;display:block}
-.photo .info{padding:6px;background:#141920;font-size:10px;color:#6B6B80;text-align:center}
+.photo .info{padding:6px;background:#F5F5F7;font-size:10px;color:#6B6B80;text-align:center}
 .photo .info strong{display:block;color:#1A1A2E;font-size:11px}
-.notice{background:#C8962E20;border:1px solid #C8962E;border-radius:8px;padding:14px;margin:20px 0;font-size:13px;color:#C8962E;line-height:1.5}
+.notice{background:#FFF3E0;border:1px solid #FFB74D;border-radius:8px;padding:14px;margin:20px 0;font-size:13px;color:#E65100;line-height:1.5}
 .footer{margin-top:32px;padding-top:16px;border-top:1px solid #E8E8ED;text-align:center;color:#9D9DB0;font-size:11px}
-.badge{display:inline-block;background:#C8962E;color:#fff;padding:3px 10px;border-radius:6px;font-size:10px;font-weight:700}
+.badge{display:inline-block;background:#E67E3C;color:#fff;padding:3px 10px;border-radius:6px;font-size:10px;font-weight:700}
 @media print{body{padding:16px}img{page-break-inside:avoid}}
 </style></head><body>
 <div style="display:flex;align-items:center;gap:12px;margin-bottom:6px">
-<div style="width:44px;height:44px;border-radius:10px;background:linear-gradient(135deg,#C8962E,#A67A20);display:flex;align-items:center;justify-content:center;font-size:22px">🔍</div>
+<div style="width:44px;height:44px;border-radius:10px;background:linear-gradient(135deg,#E67E3C,#D4692E);display:flex;align-items:center;justify-content:center;font-size:22px">🔍</div>
 <div><h1>Pickup Dossier</h1><div class="sub" style="margin:0">Generated ${dossierDate}</div></div>
 </div>
 <div class="sub">This document records the condition of the vehicle at the time of pickup.</div>
@@ -736,7 +743,7 @@ ${pickupP.length > 0 ? `<h2>Vehicle Condition at Pickup</h2>
                 const url = URL.createObjectURL(window._dossierBlob);
                 const w = window.open(url, "_blank");
                 if (w) w.onload = () => setTimeout(() => w.print(), 500);
-              }} style={{ flex: 1, background: "#0A0E14", border: `1.5px solid ${T.border}`, color: T.sub, borderRadius: "12px", padding: "12px", fontSize: "13px", fontWeight: 600, cursor: "pointer", textAlign: "center" }}>
+              }} style={{ flex: 1, background: "#FFFFFF", border: `1.5px solid ${T.border}`, color: T.sub, borderRadius: "12px", padding: "12px", fontSize: "13px", fontWeight: 600, cursor: "pointer", textAlign: "center" }}>
                 📥 Save as PDF
               </button>
 
@@ -760,10 +767,10 @@ ${pickupP.length > 0 ? `<h2>Vehicle Condition at Pickup</h2>
           <p style={{ ...css.sub, fontSize: "12px", marginBottom: "14px" }}>Select your issue for step-by-step guidance.</p>
           <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "8px", marginBottom: "14px" }}>
             {[["damage", "📸 Damage charge"], ["deposit", "💳 Deposit issue"], ["overcharge", "💰 Unexpected bill"], ["accident", "🚨 Accident"]].map(([k, l]) => (
-              <button key={k} onClick={() => { setDType(dType === k ? null : k); trackEvent("dispute_opened", { type: k }); }} style={{ background: dType === k ? `${T.accent}10` : T.card, color: dType === k ? T.accent : T.sub, border: dType === k ? `1.5px solid ${T.accent}` : `1.5px solid ${T.border}`, borderRadius: "12px", padding: "14px", fontSize: "13px", fontWeight: 600, cursor: "pointer" }}>{l}</button>
+              <button key={k} onClick={() => { setDType(dType === k ? null : k); trackEvent("dispute_opened", { type: k }); }} style={{ background: dType === k ? `${T.accent}10` : "#FFFFFF", color: dType === k ? T.accent : T.sub, border: dType === k ? `1.5px solid ${T.accent}` : `1.5px solid ${T.border}`, borderRadius: "12px", padding: "14px", fontSize: "13px", fontWeight: 600, cursor: "pointer" }}>{l}</button>
             ))}
           </div>
-          {dType && DISPUTES[dType] && <div style={{ background: "#0A0E14", border: `1px solid ${T.border}`, borderRadius: "16px", padding: "18px" }}>
+          {dType && DISPUTES[dType] && <div style={{ background: "#FFFFFF", border: `1px solid ${T.border}`, borderRadius: "16px", padding: "18px" }}>
             <h4 style={{ fontSize: "15px", fontWeight: 700, color: T.accent, margin: "0 0 14px" }}>{DISPUTES[dType].title}</h4>
             {DISPUTES[dType].steps.map((step, i) => (
               <div key={i} style={{ display: "flex", gap: "12px", marginBottom: "12px" }}>
@@ -976,6 +983,7 @@ ${pickupP.length > 0 ? `<h2>Vehicle Condition at Pickup</h2>
       <div style={css.wrap}>
         <Logo />
         {tab === "scan" && ScanTab()}
+        {tab === "compare" && CompareTab()}
         {tab === "rental" && RentalTab()}
         {tab === "terms" && <TermsPage />}
         {tab === "privacy" && <PrivacyPage />}
