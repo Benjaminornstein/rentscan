@@ -605,14 +605,8 @@ export default function App() {
         <div style={css.card}>
           <h3 style={{ fontSize: "16px", fontWeight: 700, margin: "0 0 14px" }}>🚗 Rental Details</h3>
           <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "10px" }}>
-            {[["company", "Company"], ["car", "Car model"]].map(([k, l]) => (
-              <div key={k}><div style={css.label}>{l}</div><input value={rental[k]} onChange={e => { setRental(p => ({ ...p, [k]: e.target.value })); if (k === "company" && e.target.value.length === 3) trackEvent("rental_started", { field: k }); }} placeholder={l} style={css.input} /></div>
-            ))}
-          </div>
-          <div style={{ marginTop: "10px" }}><div style={css.label}>Plate number</div><input value={rental.plate} onChange={e => setRental(p => ({ ...p, plate: e.target.value }))} placeholder="Plate number" style={css.input} /></div>
-          <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "10px", marginTop: "10px" }}>
-            {[["start", "Start date", "date"], ["end", "End date", "date"], ["dailyPrice", "Daily price (AED)", "text"], ["deposit", "Deposit (AED)", "text"], ["insurance", "Insurance", "text"], ["excess", "Excess (AED)", "text"], ["mileage", "Mileage limit", "text"], ["fuel", "Fuel policy", "text"]].map(([k, l, t]) => (
-              <div key={k}><div style={css.label}>{l}</div><input value={rental[k]} onChange={e => setRental(p => ({ ...p, [k]: e.target.value }))} placeholder={l} style={{ ...css.input, minHeight: "44px" }} type={t} /></div>
+            {[["company", "Company", "text"], ["car", "Car model", "text"], ["plate", "Plate number", "text"], ["start", "Start date", "date"], ["end", "End date", "date"], ["dailyPrice", "Daily price (AED)", "number"], ["deposit", "Deposit (AED)", "number"], ["insurance", "Insurance", "text"], ["excess", "Excess (AED)", "number"], ["mileage", "Mileage limit", "text"], ["fuel", "Fuel policy", "text"]].map(([k, l, t]) => (
+              <div key={k}><div style={css.label}>{l}</div><input value={rental[k]} onChange={e => { setRental(p => ({ ...p, [k]: e.target.value })); if (k === "company" && e.target.value.length === 3) trackEvent("rental_started", { field: k }); }} placeholder={l} style={{ ...css.input, height: "44px" }} type={t} /></div>
             ))}
           </div>
           <div style={{ marginTop: "10px" }}><div style={css.label}>Notes</div><textarea value={rental.notes} onChange={e => setRental(p => ({ ...p, notes: e.target.value }))} placeholder="Important notes..." style={{ ...css.input, minHeight: "50px", resize: "vertical" }} /></div>
@@ -992,5 +986,6 @@ ${pickupP.length > 0 ? `<h2>Vehicle Condition at Pickup</h2>
     </div>
   );
 }
+
 
 
