@@ -219,9 +219,9 @@ export default function App() {
   // Splash Screen
   if (splash) return (
     <div style={{ minHeight: "100vh", background: "#0A0E14", display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", fontFamily: "-apple-system, 'SF Pro Display', 'Segoe UI', sans-serif" }}>
-      <img src="/logo.png" alt="RentScan" style={{ width: "90px", height: "90px", borderRadius: "20px", marginBottom: "24px", animation: "pulse 1.5s ease-in-out infinite" }} />
-      <div style={{ fontSize: "32px", fontWeight: 800, color: "#F5EDD6", letterSpacing: "-1px" }}>RentScan</div>
-      <div style={{ fontSize: "13px", color: "#C8962E", letterSpacing: "3px", textTransform: "uppercase", marginTop: "6px" }}>Rent safely!</div>
+      <img src="/logo.png" alt="RentScan" style={{ width: "160px", height: "160px", borderRadius: "32px", marginBottom: "28px", animation: "pulse 1.5s ease-in-out infinite" }} />
+      <div style={{ fontSize: "42px", fontWeight: 800, color: "#F5EDD6", letterSpacing: "-1px" }}>RentScan</div>
+      <div style={{ fontSize: "15px", color: "#C8962E", letterSpacing: "4px", textTransform: "uppercase", marginTop: "8px" }}>Rent safely!</div>
       <div style={{ width: "40px", height: "3px", background: "linear-gradient(135deg, #C8962E, #A67A20)", borderRadius: "3px", marginTop: "28px" }} />
       <style>{`@keyframes pulse { 0%,100% { transform: scale(1); } 50% { transform: scale(1.06); } }`}</style>
     </div>
@@ -413,13 +413,6 @@ export default function App() {
         <h2 style={css.h2}>Know the <span style={{ color: T.accent }}>full cost</span><br />before you book</h2>
         <p style={css.sub}>Paste a rental quote to scan costs, or ask anything about renting in Dubai.</p>
       </div>
-      <div style={{ display: "flex", justifyContent: "center", gap: "36px", marginBottom: "36px" }}>
-        {[["3,291", "Scans"], ["AED 340", "Avg saved"], ["8", "Companies"]].map(([v, l]) => (
-          <div key={l} style={{ textAlign: "center" }}>
-            <div style={{ fontSize: "20px", fontWeight: 800, color: T.accent }}>{v}</div>
-            <div style={{ fontSize: "9px", color: T.dim, textTransform: "uppercase", letterSpacing: "1.5px", marginTop: "3px" }}>{l}</div>
-          </div>))}
-      </div>
       <div onDragOver={e => e.preventDefault()} onDrop={doFile} onClick={() => fRef.current?.click()} style={{ border: `2px dashed ${T.border}`, borderRadius: "16px", padding: "28px", textAlign: "center", cursor: "pointer", marginBottom: "14px", background: T.card }}>
         <input ref={fRef} type="file" onChange={doFile} style={{ display: "none" }} />
         <div style={{ fontSize: "32px", marginBottom: "8px" }}>📄</div>
@@ -606,10 +599,10 @@ export default function App() {
           <h3 style={{ fontSize: "16px", fontWeight: 700, margin: "0 0 14px" }}>🚗 Rental Details</h3>
           <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "10px" }}>
             {[["company", "Company"], ["car", "Car model"], ["plate", "Plate number"], ["emirate", "Emirate"], ["start", "Start date"], ["end", "End date"], ["dailyPrice", "Daily price (AED)"], ["deposit", "Deposit (AED)"], ["insurance", "Insurance"], ["excess", "Excess (AED)"], ["mileage", "Mileage limit"], ["fuel", "Fuel policy"]].map(([k, l]) => (
-              <div key={k}><div style={css.label}>{l}</div><input value={rental[k]} onChange={e => setRental(p => ({ ...p, [k]: e.target.value }))} placeholder={l} style={{ ...css.input, height: "44px", display: "flex", alignItems: "center", padding: "0 14px", WebkitAppearance: "none" }} type="text" /></div>
+              <div key={k}><input value={rental[k]} onChange={e => setRental(p => ({ ...p, [k]: e.target.value }))} placeholder={l} style={{ ...css.input, height: "48px", lineHeight: "48px", padding: "0 14px", WebkitAppearance: "none" }} type="text" /></div>
             ))}
           </div>
-          <div style={{ marginTop: "10px" }}><div style={css.label}>Notes</div><textarea value={rental.notes} onChange={e => setRental(p => ({ ...p, notes: e.target.value }))} placeholder="Important notes..." style={{ ...css.input, minHeight: "50px", resize: "vertical" }} /></div>
+          <div style={{ marginTop: "10px" }}><textarea value={rental.notes} onChange={e => setRental(p => ({ ...p, notes: e.target.value }))} placeholder="Notes..." style={{ ...css.input, minHeight: "50px", resize: "vertical" }} /></div>
         </div>
 
         <Photos title="Contract & Documents" icon="📄" photos={contractP} setter={setContractP} guides={false} />
@@ -986,4 +979,5 @@ ${pickupP.length > 0 ? `<h2>Vehicle Condition at Pickup</h2>
     </div>
   );
 }
+
 
