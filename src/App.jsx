@@ -202,7 +202,7 @@ export default function App() {
   const [cDays, setCDays] = useState(7);
   const [exp, setExp] = useState(null);
   const fRef = useRef();
-  const [rental, setRental] = useState({ company: "", car: "", plate: "", start: "", end: "", dailyPrice: "", insurance: "", excess: "", mileage: "", fuel: "", deposit: "", notes: "" });
+  const [rental, setRental] = useState({ company: "", car: "", plate: "", emirate: "", start: "", end: "", dailyPrice: "", insurance: "", excess: "", mileage: "", fuel: "", deposit: "", notes: "" });
   const [pickupP, setPickupP] = useState([]);
   const [returnP, setReturnP] = useState([]);
   const [contractP, setContractP] = useState([]);
@@ -605,8 +605,8 @@ export default function App() {
         <div style={css.card}>
           <h3 style={{ fontSize: "16px", fontWeight: 700, margin: "0 0 14px" }}>🚗 Rental Details</h3>
           <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "10px" }}>
-            {[["company", "Company"], ["car", "Car model"], ["plate", "Plate number"], ["start", "Start date (e.g. 28/03)"], ["end", "End date (e.g. 04/04)"], ["dailyPrice", "Daily price (AED)"], ["deposit", "Deposit (AED)"], ["insurance", "Insurance"], ["excess", "Excess (AED)"], ["mileage", "Mileage limit"], ["fuel", "Fuel policy"]].map(([k, l]) => (
-              <div key={k}><div style={css.label}>{l.split(" (e.g")[0]}</div><input value={rental[k]} onChange={e => { setRental(p => ({ ...p, [k]: e.target.value })); if (k === "company" && e.target.value.length === 3) trackEvent("rental_started", { field: k }); }} placeholder={l} style={{ ...css.input, height: "44px", maxHeight: "44px", WebkitAppearance: "none", MozAppearance: "none", appearance: "none" }} type="text" /></div>
+            {[["company", "Company"], ["car", "Car model"], ["plate", "Plate number"], ["emirate", "Emirate"], ["start", "Start date"], ["end", "End date"], ["dailyPrice", "Daily price (AED)"], ["deposit", "Deposit (AED)"], ["insurance", "Insurance"], ["excess", "Excess (AED)"], ["mileage", "Mileage limit"], ["fuel", "Fuel policy"]].map(([k, l]) => (
+              <div key={k}><div style={css.label}>{l}</div><input value={rental[k]} onChange={e => setRental(p => ({ ...p, [k]: e.target.value }))} placeholder={l} style={{ ...css.input, height: "44px", display: "flex", alignItems: "center", padding: "0 14px", WebkitAppearance: "none" }} type="text" /></div>
             ))}
           </div>
           <div style={{ marginTop: "10px" }}><div style={css.label}>Notes</div><textarea value={rental.notes} onChange={e => setRental(p => ({ ...p, notes: e.target.value }))} placeholder="Important notes..." style={{ ...css.input, minHeight: "50px", resize: "vertical" }} /></div>
@@ -986,7 +986,4 @@ ${pickupP.length > 0 ? `<h2>Vehicle Condition at Pickup</h2>
     </div>
   );
 }
-
-
-
 
