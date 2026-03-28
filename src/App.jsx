@@ -192,6 +192,8 @@ const costColor = { base: T.green, extra: T.accent, maybe: T.red, opt: T.blue };
 // ===== APP =====
 export default function App() {
   const [splash, setSplash] = useState(true);
+  const [onboard, setOnboard] = useState(() => !localStorage.getItem("rs_onboarded"));
+  const [onboardStep, setOnboardStep] = useState(0);
   const [tab, setTab] = useState("scan");
   const [text, setText] = useState("");
   const [res, setRes] = useState(null);
@@ -224,6 +226,38 @@ export default function App() {
       <div style={{ fontSize: "15px", color: "#C8962E", letterSpacing: "4px", textTransform: "uppercase", marginTop: "8px" }}>Rent safely!</div>
       <div style={{ width: "40px", height: "3px", background: "linear-gradient(135deg, #C8962E, #A67A20)", borderRadius: "3px", marginTop: "28px" }} />
       <style>{`@keyframes pulse { 0%,100% { transform: scale(1); } 50% { transform: scale(1.06); } }`}</style>
+    </div>
+  );
+
+  // ===== ONBOARDING SCREENS =====
+  const onboardScreens = [
+    { icon: "🔍", title: "Scan Your Contract", desc: "Paste any rental quote or contract. Our AI instantly reveals the real total cost — including all hidden fees, Salik tolls, and insurance gaps.", color: T.accent },
+    { icon: "📸", title: "Protect Yourself", desc: "Use the guided photo inspection to document the car before you drive away. Timestamped proof that saves you from unfair damage charges.", color: T.green },
+    { icon: "🛡️", title: "Rent Safely in Dubai", desc: "Ask any question about renting in Dubai. Get instant, expert answers about insurance, deposits, fuel policies, and your rights.", color: "#4A9EFF" },
+  ];
+
+  if (onboard) return (
+    <div style={{ minHeight: "100vh", background: T.bg, display: "flex", flexDirection: "column", fontFamily: "-apple-system, 'SF Pro Display', 'Segoe UI', sans-serif" }}>
+      <div style={{ flex: 1, display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", padding: "40px 32px", textAlign: "center" }}>
+        <div style={{ fontSize: "80px", marginBottom: "32px" }}>{onboardScreens[onboardStep].icon}</div>
+        <h1 style={{ fontSize: "28px", fontWeight: 800, color: T.text, margin: "0 0 16px", letterSpacing: "-0.5px" }}>{onboardScreens[onboardStep].title}</h1>
+        <p style={{ fontSize: "16px", color: T.sub, lineHeight: 1.7, maxWidth: "320px", margin: 0 }}>{onboardScreens[onboardStep].desc}</p>
+      </div>
+      <div style={{ display: "flex", justifyContent: "center", gap: "8px", marginBottom: "32px" }}>
+        {onboardScreens.map((_, i) => (
+          <div key={i} style={{ width: i === onboardStep ? "24px" : "8px", height: "8px", borderRadius: "4px", background: i === onboardStep ? onboardScreens[onboardStep].color : T.border, transition: "all 0.3s" }} />
+        ))}
+      </div>
+      <div style={{ padding: "0 32px 48px" }}>
+        {onboardStep < 2 ? (
+          <button onClick={() => setOnboardStep(s => s + 1)} style={{ background: `linear-gradient(135deg, ${T.accent}, ${T.accent2})`, color: "#fff", border: "none", borderRadius: "14px", padding: "16px", fontSize: "17px", fontWeight: 700, cursor: "pointer", width: "100%" }}>Next</button>
+        ) : (
+          <button onClick={() => { setOnboard(false); localStorage.setItem("rs_onboarded", "1"); }} style={{ background: `linear-gradient(135deg, ${T.accent}, ${T.accent2})`, color: "#fff", border: "none", borderRadius: "14px", padding: "16px", fontSize: "17px", fontWeight: 700, cursor: "pointer", width: "100%" }}>Start Scanning →</button>
+        )}
+        {onboardStep < 2 && (
+          <button onClick={() => { setOnboard(false); localStorage.setItem("rs_onboarded", "1"); }} style={{ background: "none", border: "none", color: T.dim, fontSize: "14px", cursor: "pointer", width: "100%", marginTop: "12px", padding: "8px" }}>Skip</button>
+        )}
+      </div>
     </div>
   );
 
@@ -409,31 +443,25 @@ export default function App() {
   // ===== SCAN TAB =====
   const ScanTab = () => !res ? (
     <>
-      <div style={{ textAlign: "center", marginBottom: "36px" }}>
-        <h2 style={css.h2}>Know the <span style={{ color: T.accent }}>full cost</span><br />before you book</h2>
-        <p style={css.sub}>Paste a rental quote to scan costs, or ask anything about renting in Dubai.</p>
+      <div style={{ textAlign: "center", marginBottom: "28px" }}>
+        <h2 style={css.h2}><span style={{ color: T.accent }}>Scan</span> your rental<br />contract</h2>
+        <p style={css.sub}>Paste a quote, upload a contract, or ask anything about renting in Dubai.</p>
       </div>
-      <div onDragOver={e => e.preventDefault()} onDrop={doFile} onClick={() => fRef.current?.click()} style={{ border: `2px dashed ${T.border}`, borderRadius: "16px", padding: "28px", textAlign: "center", cursor: "pointer", marginBottom: "14px", background: T.card }}>
-        <input ref={fRef} type="file" onChange={doFile} style={{ display: "none" }} />
-        <div style={{ fontSize: "32px", marginBottom: "8px" }}>📄</div>
-        <div style={{ color: T.sub, fontSize: "14px" }}>Drop contract or tap to upload</div>
-      </div>
-      <div style={{ display: "flex", alignItems: "center", gap: "14px", margin: "16px 0" }}>
-        <div style={{ flex: 1, height: "1px", background: T.border }} />
-        <span style={{ fontSize: "10px", color: T.dim, textTransform: "uppercase", letterSpacing: "2px", fontWeight: 600 }}>or type</span>
-        <div style={{ flex: 1, height: "1px", background: T.border }} />
-      </div>
-      <textarea value={text} onChange={e => setText(e.target.value)} placeholder={'Paste a rental quote to scan costs, or ask any question:\n\n📄 "Toyota Corolla, AED 150/day, 7 days, basic CDW, 250km/day, airport pickup DXB"\n\n💬 "What should I check before renting a car in Dubai?"\n\n💬 "Is it better to get full insurance or basic CDW?"'} style={{ ...css.input, minHeight: "130px", resize: "vertical", lineHeight: 1.6 }} />
-      <button onClick={doScan} disabled={!text.trim() || loading} style={{ ...css.btn, marginTop: "16px", opacity: text.trim() ? 1 : 0.4 }}>
-        {loading ? "🔍 Analyzing..." : "🔍 Scan or Ask"}
+      <textarea value={text} onChange={e => setText(e.target.value)} placeholder={'Paste your rental quote here...\n\nExample: "Toyota Corolla, AED 150/day, 7 days, basic CDW, 250km/day, airport pickup"'} style={{ ...css.input, minHeight: "120px", resize: "vertical", lineHeight: 1.6 }} />
+      <button onClick={doScan} disabled={!text.trim() || loading} style={{ ...css.btn, marginTop: "14px", fontSize: "17px", padding: "16px", opacity: text.trim() ? 1 : 0.4 }}>
+        {loading ? "🔍 Scanning..." : "🔍 Scan Contract"}
       </button>
+      <div onDragOver={e => e.preventDefault()} onDrop={doFile} onClick={() => fRef.current?.click()} style={{ border: `1.5px dashed ${T.border}`, borderRadius: "12px", padding: "14px", textAlign: "center", cursor: "pointer", marginTop: "14px", background: "transparent" }}>
+        <input ref={fRef} type="file" onChange={doFile} style={{ display: "none" }} />
+        <span style={{ color: T.dim, fontSize: "13px" }}>📄 Or upload a contract file</span>
+      </div>
       <div style={{ display: "flex", justifyContent: "center", gap: "24px", marginTop: "20px" }}>
         {["🔒 Private", "⚡ AI-Powered", "🆓 Free"].map(b => <span key={b} style={{ fontSize: "11px", color: T.dim }}>{b}</span>)}
       </div>
     </>
   ) : (
     <>
-      <button onClick={() => { setRes(null); setText(""); }} style={{ background: "none", border: `1.5px solid ${T.border}`, color: T.sub, borderRadius: "10px", padding: "8px 18px", cursor: "pointer", fontSize: "13px", marginBottom: "12px" }}>← New question</button>
+      <button onClick={() => { setRes(null); setText(""); }} style={{ background: "none", border: `1.5px solid ${T.border}`, color: T.sub, borderRadius: "10px", padding: "8px 18px", cursor: "pointer", fontSize: "13px", marginBottom: "12px" }}>← Scan again</button>
       {res.aiPowered && <div style={{ textAlign: "center", marginBottom: "8px" }}><span style={css.tag(T.green)}>✨ AI-Powered</span></div>}
 
       {/* CHAT MODE */}
@@ -581,12 +609,30 @@ export default function App() {
   // ===== RENTAL TAB =====
   const RentalTab = () => {
     const total = pickupP.length + returnP.length + contractP.length;
+    const hasStarted = rental.company || rental.car || total > 0;
     return (
       <>
         <div style={{ textAlign: "center", marginBottom: "24px" }}>
           <h2 style={css.h2}>My <span style={{ color: T.accent }}>Rental Dossier</span></h2>
-          <p style={css.sub}>Document everything. Protect yourself.</p>
+          <p style={css.sub}>Your evidence if anything goes wrong.</p>
         </div>
+
+        {!hasStarted && (
+          <div style={{ ...css.card, border: `1px solid ${T.accent}30`, marginBottom: "20px" }}>
+            <div style={{ display: "grid", gap: "16px" }}>
+              {[
+                ["📝", "Fill in your rental details", "Company, car, dates, insurance — everything in one place."],
+                ["📸", "Take guided photos at pickup", "16 shots covering every angle. Timestamped proof."],
+                ["📋", "Generate your dossier", "One PDF with all details and photos. Your protection."],
+              ].map(([ico, title, desc]) => (
+                <div key={title} style={{ display: "flex", gap: "12px", alignItems: "flex-start" }}>
+                  <div style={{ fontSize: "24px", flexShrink: 0, marginTop: "2px" }}>{ico}</div>
+                  <div><div style={{ fontSize: "14px", fontWeight: 700, color: T.text, marginBottom: "2px" }}>{title}</div><div style={{ fontSize: "12px", color: T.sub, lineHeight: 1.5 }}>{desc}</div></div>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
         {total > 0 && <div style={{ display: "flex", justifyContent: "center", gap: "24px", marginBottom: "24px" }}>
           {[[`${total}`, "Photos"], [pickupP.length > 0 ? "✓" : "—", "Pickup"], [returnP.length > 0 ? "✓" : "—", "Return"], [contractP.length > 0 ? "✓" : "—", "Docs"]].map(([v, l]) => (
             <div key={l} style={{ textAlign: "center" }}>
@@ -979,3 +1025,4 @@ ${pickupP.length > 0 ? `<h2>Vehicle Condition at Pickup</h2>
     </div>
   );
 }
+
