@@ -221,7 +221,7 @@ export default function App() {
     <div style={{ minHeight: "100vh", background: "#0A0E14", display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", fontFamily: "-apple-system, 'SF Pro Display', 'Segoe UI', sans-serif" }}>
       <img src="/logo.png" alt="RentScan" style={{ width: "90px", height: "90px", borderRadius: "20px", marginBottom: "24px", animation: "pulse 1.5s ease-in-out infinite" }} />
       <div style={{ fontSize: "32px", fontWeight: 800, color: "#F5EDD6", letterSpacing: "-1px" }}>RentScan</div>
-      <div style={{ fontSize: "13px", color: "#C8962E", letterSpacing: "3px", textTransform: "uppercase", marginTop: "6px" }}>Scan. Save. Protect.</div>
+      <div style={{ fontSize: "13px", color: "#C8962E", letterSpacing: "3px", textTransform: "uppercase", marginTop: "6px" }}>Rent safely!</div>
       <div style={{ width: "40px", height: "3px", background: "linear-gradient(135deg, #C8962E, #A67A20)", borderRadius: "3px", marginTop: "28px" }} />
       <style>{`@keyframes pulse { 0%,100% { transform: scale(1); } 50% { transform: scale(1.06); } }`}</style>
     </div>
@@ -315,7 +315,7 @@ export default function App() {
   const Logo = () => (
     <div style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: "10px", marginBottom: "24px", paddingBottom: "16px", borderBottom: `1px solid ${T.border}` }}>
       <img src="/logo.png" alt="RentScan" style={{ width: "38px", height: "38px", borderRadius: "10px" }} />
-      <div><div style={{ fontSize: "20px", fontWeight: 800, letterSpacing: "-0.5px", color: T.text }}>RentScan</div><div style={{ fontSize: "9px", color: T.accent, letterSpacing: "2px", textTransform: "uppercase", marginTop: "-1px" }}>Scan. Save. Protect.</div></div>
+      <div><div style={{ fontSize: "20px", fontWeight: 800, letterSpacing: "-0.5px", color: T.text }}>RentScan</div><div style={{ fontSize: "9px", color: T.accent, letterSpacing: "2px", textTransform: "uppercase", marginTop: "-1px" }}>Rent safely!</div></div>
     </div>
   );
 
@@ -605,8 +605,14 @@ export default function App() {
         <div style={css.card}>
           <h3 style={{ fontSize: "16px", fontWeight: 700, margin: "0 0 14px" }}>🚗 Rental Details</h3>
           <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "10px" }}>
-            {[["company", "Company"], ["car", "Car model"], ["plate", "Plate number"], ["start", "Start date"], ["end", "End date"], ["dailyPrice", "Daily price (AED)"], ["insurance", "Insurance"], ["excess", "Excess (AED)"], ["mileage", "Mileage limit"], ["fuel", "Fuel policy"], ["deposit", "Deposit (AED)"]].map(([k, l]) => (
-              <div key={k}><div style={css.label}>{l}</div><input value={rental[k]} onChange={e => { setRental(p => ({ ...p, [k]: e.target.value })); if (k === "company" && e.target.value.length === 3) trackEvent("rental_started", { field: k }); }} placeholder={l} style={css.input} type={k === "start" || k === "end" ? "date" : "text"} /></div>
+            {[["company", "Company"], ["car", "Car model"]].map(([k, l]) => (
+              <div key={k}><div style={css.label}>{l}</div><input value={rental[k]} onChange={e => { setRental(p => ({ ...p, [k]: e.target.value })); if (k === "company" && e.target.value.length === 3) trackEvent("rental_started", { field: k }); }} placeholder={l} style={css.input} /></div>
+            ))}
+          </div>
+          <div style={{ marginTop: "10px" }}><div style={css.label}>Plate number</div><input value={rental.plate} onChange={e => setRental(p => ({ ...p, plate: e.target.value }))} placeholder="Plate number" style={css.input} /></div>
+          <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "10px", marginTop: "10px" }}>
+            {[["start", "Start date", "date"], ["end", "End date", "date"], ["dailyPrice", "Daily price (AED)", "text"], ["deposit", "Deposit (AED)", "text"], ["insurance", "Insurance", "text"], ["excess", "Excess (AED)", "text"], ["mileage", "Mileage limit", "text"], ["fuel", "Fuel policy", "text"]].map(([k, l, t]) => (
+              <div key={k}><div style={css.label}>{l}</div><input value={rental[k]} onChange={e => setRental(p => ({ ...p, [k]: e.target.value }))} placeholder={l} style={{ ...css.input, minHeight: "44px" }} type={t} /></div>
             ))}
           </div>
           <div style={{ marginTop: "10px" }}><div style={css.label}>Notes</div><textarea value={rental.notes} onChange={e => setRental(p => ({ ...p, notes: e.target.value }))} placeholder="Important notes..." style={{ ...css.input, minHeight: "50px", resize: "vertical" }} /></div>
@@ -986,4 +992,5 @@ ${pickupP.length > 0 ? `<h2>Vehicle Condition at Pickup</h2>
     </div>
   );
 }
+
 
