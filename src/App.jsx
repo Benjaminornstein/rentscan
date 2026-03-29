@@ -273,7 +273,7 @@ export default function App() {
     setLoading(true);
     trackEvent("scan_started", { length: text.length });
     try {
-      const resp = await fetch("/api/scan", {
+      const resp = await fetch("https://rentscan.ae/api/scan", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ contractText: text })
@@ -449,7 +449,7 @@ export default function App() {
       </div>
       <textarea value={text} onChange={e => setText(e.target.value)} placeholder={'Paste your rental quote here...\n\nExample: "Toyota Corolla, AED 150/day, 7 days, basic CDW, 250km/day, airport pickup"'} style={{ ...css.input, minHeight: "120px", resize: "vertical", lineHeight: 1.6 }} />
       <button onClick={doScan} disabled={!text.trim() || loading} style={{ ...css.btn, marginTop: "14px", fontSize: "17px", padding: "16px", opacity: text.trim() ? 1 : 0.4 }}>
-        {loading ? "🔍 Scanning..." : "🔍 Scan Contract"}
+        {loading ? "🔍 Scanning..." : "🔍 Scan / Ask"}
       </button>
       <div onDragOver={e => e.preventDefault()} onDrop={doFile} onClick={() => fRef.current?.click()} style={{ border: `1.5px dashed ${T.border}`, borderRadius: "12px", padding: "14px", textAlign: "center", cursor: "pointer", marginTop: "14px", background: "transparent" }}>
         <input ref={fRef} type="file" onChange={doFile} style={{ display: "none" }} />
@@ -461,7 +461,7 @@ export default function App() {
     </>
   ) : (
     <>
-      <button onClick={() => { setRes(null); setText(""); }} style={{ background: "none", border: `1.5px solid ${T.border}`, color: T.sub, borderRadius: "10px", padding: "8px 18px", cursor: "pointer", fontSize: "13px", marginBottom: "12px" }}>← Scan again</button>
+      <button onClick={() => { setRes(null); setText(""); }} style={{ background: "none", border: `1.5px solid ${T.border}`, color: T.sub, borderRadius: "10px", padding: "8px 18px", cursor: "pointer", fontSize: "13px", marginBottom: "12px" }}>← New scan</button>
       {res.aiPowered && <div style={{ textAlign: "center", marginBottom: "8px" }}><span style={css.tag(T.green)}>✨ AI-Powered</span></div>}
 
       {/* CHAT MODE */}
