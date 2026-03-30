@@ -1,4 +1,5 @@
 import { useState, useEffect, useRef } from "react";
+import { useScreenViewport } from "./useScreenViewport";
 
 // ===== COMPANY DATA =====
 const COMPANIES = [
@@ -215,12 +216,16 @@ export default function App() {
   const [shareConsent, setShareConsent] = useState(true);
   const [dossierSaved, setDossierSaved] = useState(false);
 
+  const topSafeInset = "env(safe-area-inset-top)";
+
+  useScreenViewport();
+
   // Splash screen timer
   useEffect(() => { const t = setTimeout(() => setSplash(false), 2200); return () => clearTimeout(t); }, []);
 
   // Splash Screen
   if (splash) return (
-    <div style={{ minHeight: "100vh", background: "#0A0E14", display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", fontFamily: "-apple-system, 'SF Pro Display', 'Segoe UI', sans-serif" }}>
+    <div style={{ height: "100%", minHeight: "100%", background: "#0A0E14", display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", fontFamily: "-apple-system, 'SF Pro Display', 'Segoe UI', sans-serif" }}>
       <img src="/logo.png" alt="RentScan" style={{ width: "160px", height: "160px", borderRadius: "32px", marginBottom: "28px", animation: "pulse 1.5s ease-in-out infinite" }} />
       <div style={{ fontSize: "42px", fontWeight: 800, color: "#F5EDD6", letterSpacing: "-1px" }}>RentScan</div>
       <div style={{ fontSize: "15px", color: "#C8962E", letterSpacing: "4px", textTransform: "uppercase", marginTop: "8px" }}>Rent safely!</div>
@@ -237,7 +242,7 @@ export default function App() {
   ];
 
   if (onboard) return (
-    <div style={{ minHeight: "100vh", background: T.bg, display: "flex", flexDirection: "column", fontFamily: "-apple-system, 'SF Pro Display', 'Segoe UI', sans-serif" }}>
+    <div style={{ height: "100%", minHeight: "100%", background: T.bg, display: "flex", flexDirection: "column", fontFamily: "-apple-system, 'SF Pro Display', 'Segoe UI', sans-serif" }}>
       <div style={{ flex: 1, display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", padding: "40px 32px", textAlign: "center" }}>
         <div style={{ fontSize: "80px", marginBottom: "32px" }}>{onboardScreens[onboardStep].icon}</div>
         <h1 style={{ fontSize: "28px", fontWeight: 800, color: T.text, margin: "0 0 16px", letterSpacing: "-0.5px" }}>{onboardScreens[onboardStep].title}</h1>
@@ -319,12 +324,12 @@ export default function App() {
 
   // ===== STYLES (Light theme) =====
   const css = {
-    page: { minHeight: "100vh", background: T.bg, fontFamily: "-apple-system, 'SF Pro Display', 'Segoe UI', sans-serif", color: T.text, WebkitFontSmoothing: "antialiased" },
-    wrap: { maxWidth: "720px", margin: "0 auto", padding: "16px 16px 100px" },
+    page: { minHeight: "100%", height: "100%", display: "flex", flexDirection: "column", background: T.bg, fontFamily: "-apple-system, 'SF Pro Display', 'Segoe UI', sans-serif", color: T.text, WebkitFontSmoothing: "antialiased", paddingTop: topSafeInset, boxSizing: "border-box", width: "100%", maxWidth: "100%", overflow: "hidden" },
+    wrap: { flex: 1, maxWidth: "720px", width: "100%", margin: "0 auto", padding: "16px 16px calc(84px + env(safe-area-inset-bottom))", overflowX: "hidden", overflowY: "auto", WebkitOverflowScrolling: "touch" },
     card: { background: T.card, borderRadius: "16px", padding: "18px", marginBottom: "12px", boxShadow: "0 1px 3px rgba(0,0,0,0.06), 0 1px 2px rgba(0,0,0,0.04)" },
     btn: { background: `linear-gradient(135deg, ${T.accent}, ${T.accent2})`, color: "#fff", border: "none", borderRadius: "12px", padding: "14px", fontSize: "15px", fontWeight: 700, cursor: "pointer", width: "100%", letterSpacing: "0.2px" },
     btnSm: { background: `linear-gradient(135deg, ${T.accent}, ${T.accent2})`, color: "#fff", border: "none", borderRadius: "10px", padding: "10px 18px", fontSize: "13px", fontWeight: 600, cursor: "pointer" },
-    input: { width: "100%", background: T.card, border: `1.5px solid ${T.border}`, borderRadius: "12px", padding: "12px 14px", color: T.text, fontSize: "14px", fontFamily: "inherit", outline: "none", boxSizing: "border-box" },
+    input: { width: "100%", background: T.card, border: `1.5px solid ${T.border}`, borderRadius: "12px", padding: "12px 14px", color: T.text, fontSize: "16px", fontFamily: "inherit", outline: "none", boxSizing: "border-box" },
     tag: (c) => ({ display: "inline-flex", background: `${c}10`, color: c, border: `1px solid ${c}25`, borderRadius: "6px", padding: "3px 8px", fontSize: "10px", fontWeight: 700, letterSpacing: "0.3px", textTransform: "uppercase" }),
     pill: (on) => ({ background: on ? T.accent : T.card, color: on ? "#fff" : T.sub, border: on ? "none" : `1.5px solid ${T.border}`, borderRadius: "10px", padding: "8px 16px", fontSize: "13px", fontWeight: 600, cursor: "pointer" }),
     h2: { fontSize: "26px", fontWeight: 800, letterSpacing: "-0.5px", lineHeight: 1.2, margin: "0 0 10px", color: T.text },
