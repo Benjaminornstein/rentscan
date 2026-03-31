@@ -198,6 +198,9 @@ export default function App() {
   const [tab, setTab] = useState("scan");
   const [text, setText] = useState("");
   const [res, setRes] = useState(null);
+  const [chatMessages, setChatMessages] = useState([]);
+  const [followUp, setFollowUp] = useState("");
+  const [followUpLoading, setFollowUpLoading] = useState(false);
   const [loading, setLoading] = useState(false);
   const [leads, setLeads] = useState({});
   const [carF, setCarF] = useState("All");
@@ -273,8 +276,35 @@ export default function App() {
     try { if (window.OneSignal) window.OneSignal.push(function() { window.OneSignal.sendTag(name, "true"); }); } catch {}
   };
 
+  // ===== FOLLOW-UP CHAT =====
+  const handleFollowUp = async () => {
+    if (!followUp.trim() || followUpLoading) return;
+    const newMessages = [...chatMessages, { role: "user", content: followUp.trim() }];
+    setChatMessages(newMessages);
+    setFollowUp("");
+    setFollowUpLoading(true);
+    try {
+      const resp = await fetch("https://rentscan.ae/api/scan", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ messages: newMessages }),
+      });
+      const data = await resp.json();
+      if (data.answer) {
+        const clean = data.answer.replace(/```json\s*null\s*```/g, "").trim();
+        setChatMessages([...newMessages, { role: "assistant", content: clean }]);
+      }
+    } catch (err) {
+      setChatMessages([...newMessages, { role: "assistant", content: "Sorry, something went wrong. Please try again." }]);
+    } finally {
+      setFollowUpLoading(false);
+    }
+  };
+
   // ===== SCAN with API =====
   const doScan = async () => {
+    setChatMessages([]);
+    setFollowUp("");
     if (!text.trim()) return;
     setLoading(true);
     trackEvent("scan_started", { length: text.length });
@@ -287,6 +317,8 @@ export default function App() {
       const data = await resp.json();
       if (data.answer) {
         setRes({ mode: "chat", answer: data.answer, tips: data.tips || [], aiPowered: true });
+          setChatMessages([{ role: "user", content: text }, { role: "assistant", content: data.answer }]);
+          if (data.termsUsed) setRes(prev => ({ ...prev, termsUsed: data.termsUsed }));
       } else if (data.error) {
         setRes({ mode: "chat", answer: "Sorry, something went wrong. Please try again.", tips: [], aiPowered: false });
       } else {
@@ -301,7 +333,7 @@ export default function App() {
   // Extract data from contract photo
   const extractContract = async (imageData) => {
     try {
-      const resp = await fetch("https://rentscan.ae/api/extract", {
+      const resp = await fetch("/api/extract", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ image: imageData }),
@@ -353,7 +385,7 @@ export default function App() {
         const imageData = ev.target.result;
         setContractP(p => [...p, { id: Date.now() + Math.random(), data: imageData, time: new Date().toLocaleString("en-AE", { timeZone: "Asia/Dubai", dateStyle: "medium", timeStyle: "short" }), label: "Contract" }]);
         setExtracting(true);
-        fetch("https://rentscan.ae/api/extract", {
+        fetch("/api/extract", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ image: imageData }),
@@ -542,7 +574,86 @@ export default function App() {
       {/* CHAT MODE */}
       {res.mode === "chat" && <>
         <div style={{ ...css.card, padding: "22px" }}>
-          <div style={{ fontSize: "15px", lineHeight: 1.7, color: T.text, whiteSpace: "pre-wrap" }}>{res.answer}</div>
+          <div style={{ fontSize: "15px", lineHeight: 1.7, color: T.text, whiteSpace: "pre-wrap" }}>{res.answer.replace(/```json\s*null\s*```/g, "").trim()}</div>
+
+            {res.termsUsed && (
+              <div style={{
+                marginTop: "14px", padding: "12px 16px", borderRadius: "10px",
+                backgroundColor: res.termsUsed.ageDays > 60 ? "rgba(255,100,50,0.1)" : res.termsUsed.ageDays > 14 ? "rgba(255,200,50,0.1)" : "rgba(100,200,100,0.07)",
+                border: res.termsUsed.ageDays > 60 ? "1px solid rgba(255,100,50,0.25)" : res.termsUsed.ageDays > 14 ? "1px solid rgba(255,200,50,0.2)" : "1px solid rgba(100,200,100,0.15)",
+                fontSize: "12px", lineHeight: 1.5, color: "#999",
+              }}>
+                <span style={{ fontWeight: 700, color: res.termsUsed.ageDays > 60 ? "#ff6432" : res.termsUsed.ageDays > 14 ? "#e8b930" : "#7cb87c" }}>
+                  {res.termsUsed.ageDays > 60 ? "\u26A0\uFE0F Data may be outdated" : res.termsUsed.ageDays > 14 ? "\u26A0\uFE0F Verify with company" : "\u2705 Recently reviewed"}
+                </span>
+                {" \u2014 Based on "}{res.termsUsed.company}{"'s terms, reviewed "}{res.termsUsed.date}
+                {". Terms can change \u2014 verify with the company before signing."}
+                {res.termsUsed.url && (<>{" "}<a href={res.termsUsed.url} target="_blank" rel="noopener noreferrer" style={{ color: "#C9A227", textDecoration: "underline" }}>View source</a></>)}
+              </div>
+            )}
+
+            {/* Follow-up messages */}
+            {chatMessages.slice(2).map((msg, i) => (
+              <div key={i} style={{
+                padding: "12px 16px",
+                marginTop: "12px",
+                borderRadius: "12px",
+                backgroundColor: msg.role === "user" ? "rgba(255, 204, 0, 0.12)" : "rgba(255,255,255,0.04)",
+                border: msg.role === "user" ? "1px solid rgba(255,204,0,0.25)" : "1px solid rgba(255,255,255,0.08)",
+                whiteSpace: "pre-wrap",
+                fontSize: "14px",
+                lineHeight: 1.7,
+                color: T.text,
+              }}>
+                <div style={{ fontSize: "11px", color: msg.role === "user" ? T.accent : "#888", marginBottom: "4px", fontWeight: 700, textTransform: "uppercase" }}>
+                  {msg.role === "user" ? "You" : "RentScan AI"}
+                </div>
+                {msg.content}
+              </div>
+            ))}
+
+            {/* Follow-up input */}
+            {res && res.aiPowered && (
+              <div style={{ marginTop: "16px", display: "flex", gap: "8px" }}>
+                <input
+                  type="text"
+                  value={followUp}
+                  onChange={(e) => setFollowUp(e.target.value)}
+                  onKeyDown={(e) => e.key === "Enter" && handleFollowUp()}
+                  placeholder="Ask a follow-up question..."
+                  disabled={followUpLoading}
+                  style={{
+                    flex: 1,
+                    padding: "12px 16px",
+                    borderRadius: "12px",
+                    border: "1px solid rgba(255,255,255,0.15)",
+                    backgroundColor: "rgba(255,255,255,0.05)",
+                    color: T.text,
+                    fontSize: "14px",
+                    outline: "none",
+                    fontFamily: "inherit",
+                  }}
+                />
+                <button
+                  onClick={handleFollowUp}
+                  disabled={followUpLoading || !followUp.trim()}
+                  style={{
+                    padding: "12px 20px",
+                    borderRadius: "12px",
+                    border: "none",
+                    background: followUpLoading ? "#555" : "linear-gradient(135deg, " + T.accent + ", " + T.accent2 + ")",
+                    color: "#fff",
+                    fontWeight: 700,
+                    fontSize: "14px",
+                    cursor: followUpLoading ? "not-allowed" : "pointer",
+                    whiteSpace: "nowrap",
+                    fontFamily: "inherit",
+                  }}
+                >
+                  {followUpLoading ? "..." : "Ask"}
+                </button>
+              </div>
+            )}
         </div>
         {res.tips?.length > 0 && <div style={css.card}>
           <h3 style={{ fontSize: "15px", fontWeight: 700, margin: "0 0 12px" }}>💡 Quick tips</h3>
@@ -735,7 +846,7 @@ export default function App() {
 
           <button onClick={() => {
             if (rental.company) {
-              fetch("https://rentscan.ae/api/market", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ company: rental.company, car: rental.car, dailyPrice: rental.dailyPrice, insurance: rental.insurance, excess: rental.excess, mileage: rental.mileage, fuel: rental.fuel, deposit: rental.deposit }) }).catch(() => {}); trackEvent("rental_data", {
+              trackEvent("rental_data", {
                 company: rental.company, car: rental.car, dailyPrice: rental.dailyPrice || "",
                 insurance: rental.insurance, mileage: rental.mileage, fuel: rental.fuel,
                 deposit: rental.deposit, start: rental.start, end: rental.end, pickupPhotos: pickupP.length,
