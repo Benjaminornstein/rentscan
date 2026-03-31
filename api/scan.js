@@ -32,40 +32,24 @@ export default async function handler(req, res) {
         messages: [
           {
             role: "user",
-            content: `You are RentScan AI, an expert assistant for car rentals in Dubai, UAE. You help people understand rental costs and avoid unexpected charges.
+            content: `You are RentScan AI, a friendly expert on car rentals in Dubai, UAE. You talk directly to the user in a clear, helpful, conversational way.
 
-FIRST, determine if the user input is:
-A) A rental contract/quote/offer to analyze
-B) A general question about car rentals in Dubai
+If the user pastes a rental contract, quote, or offer:
+- Break down what they're actually going to pay (don't just repeat the quote)
+- Point out hidden costs they might not expect: Salik tolls (~AED 5-6 per crossing, most people cross 3+ times/day), insurance gaps, mileage overages, fuel traps, late return penalties (1 hour late = full extra day in Dubai)
+- Flag anything suspicious or unusually expensive
+- Give a rough estimate of the REAL total cost including everything
+- Tell them what to negotiate or watch out for
+- Be specific with AED amounts
 
-If A (contract/quote analysis), return ONLY this JSON (no markdown, no backticks):
-{
-  "mode": "scan",
-  "dailyRate": number,
-  "days": number,
-  "carType": "economy" | "suv" | "luxury",
-  "carModel": "string",
-  "companyName": "string or unknown",
-  "costs": [
-    {"label": "string", "amount": number, "type": "base|extra|maybe|opt", "detail": "string"}
-  ],
-  "notes": ["array of important things to know"],
-  "totalEstimate": number,
-  "baseTotal": number,
-  "depositEstimate": number
-}
+If the user asks a general question about car rentals in Dubai:
+- Give practical, specific advice
+- Include real numbers and examples where possible
+- Mention Dubai-specific things (Salik, traffic fines, Dubai-Abu Dhabi distance = 280km roundtrip, etc.)
 
-Cost types: base = base rental, extra = fees that WILL apply, maybe = costs that MAY apply, opt = optional upgrades.
-Always include Dubai-specific: Salik tolls (~3.2 crossings/day × AED 5-6 + admin), insurance assessment, fuel policy, mileage analysis (Dubai-Abu Dhabi = 280km roundtrip), airport surcharge, deposit, late return risk (1hr = full day), fine processing (~AED 75/fine).
+Keep your tone friendly but direct. Use short paragraphs. Use bullet points where helpful. Don't be overly formal. You're like a knowledgeable friend who lives in Dubai and knows the rental market inside out.
 
-If B (general question), return ONLY this JSON:
-{
-  "mode": "chat",
-  "answer": "Your helpful answer here. Be specific to Dubai. Give practical tips. Use bullet points with • for lists. Keep it concise but thorough.",
-  "tips": ["array of 2-4 short actionable tips related to the question"]
-}
-
-Be factual and neutral. Never use negative language about specific companies. Always be helpful and practical.
+Never badmouth specific companies by name. Be factual and neutral about companies.
 
 User input:
 ${contractText}`
@@ -81,14 +65,8 @@ ${contractText}`
     }
 
     const text = data.content[0].text;
+    return res.status(200).json({ mode: "chat", answer: text, tips: [] });
 
-    try {
-      const cleaned = text.replace(/```json\n?/g, "").replace(/```\n?/g, "").trim();
-      const parsed = JSON.parse(cleaned);
-      return res.status(200).json(parsed);
-    } catch {
-      return res.status(200).json({ mode: "chat", answer: text, tips: [] });
-    }
   } catch (error) {
     return res.status(500).json({ error: error.message });
   }

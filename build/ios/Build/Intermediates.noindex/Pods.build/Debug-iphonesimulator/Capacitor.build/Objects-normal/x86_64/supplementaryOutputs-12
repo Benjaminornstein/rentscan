@@ -1,0 +1,23 @@
+{
+  "/Users/abhinay/Documents/Fiverr/Upload/benjaminornstei/Code/node_modules/@capacitor/ios/Capacitor/Capacitor/WKWebView+Capacitor.swift" : {
+    "const-values" : "/Users/abhinay/Documents/Fiverr/Upload/benjaminornstei/Code/build/ios/Build/Intermediates.noindex/Pods.build/Debug-iphonesimulator/Capacitor.build/Objects-normal/x86_64/WKWebView+Capacitor-87d1daaca6535f7e75fb0b91f4b6251f.swiftconstvalues",
+    "dependencies" : "/Users/abhinay/Documents/Fiverr/Upload/benjaminornstei/Code/build/ios/Build/Intermediates.noindex/Pods.build/Debug-iphonesimulator/Capacitor.build/Objects-normal/x86_64/WKWebView+Capacitor-87d1daaca6535f7e75fb0b91f4b6251f.d",
+    "diagnostics" : "/Users/abhinay/Documents/Fiverr/Upload/benjaminornstei/Code/build/ios/Build/Intermediates.noindex/Pods.build/Debug-iphonesimulator/Capacitor.build/Objects-normal/x86_64/WKWebView+Capacitor-87d1daaca6535f7e75fb0b91f4b6251f.dia",
+    "object" : "/Users/abhinay/Documents/Fiverr/Upload/benjaminornstei/Code/build/ios/Build/Intermediates.noindex/Pods.build/Debug-iphonesimulator/Capacitor.build/Objects-normal/x86_64/WKWebView+Capacitor-87d1daaca6535f7e75fb0b91f4b6251f.o",
+    "swift-dependencies" : "/Users/abhinay/Documents/Fiverr/Upload/benjaminornstei/Code/build/ios/Build/Intermediates.noindex/Pods.build/Debug-iphonesimulator/Capacitor.build/Objects-normal/x86_64/WKWebView+Capacitor-87d1daaca6535f7e75fb0b91f4b6251f.swiftdeps"
+  },
+  "/Users/abhinay/Documents/Fiverr/Upload/benjaminornstei/Code/node_modules/@capacitor/ios/Capacitor/Capacitor/WebViewAssetHandler.swift" : {
+    "const-values" : "/Users/abhinay/Documents/Fiverr/Upload/benjaminornstei/Code/build/ios/Build/Intermediates.noindex/Pods.build/Debug-iphonesimulator/Capacitor.build/Objects-normal/x86_64/WebViewAssetHandler.swiftconstvalues",
+    "dependencies" : "/Users/abhinay/Documents/Fiverr/Upload/benjaminornstei/Code/build/ios/Build/Intermediates.noindex/Pods.build/Debug-iphonesimulator/Capacitor.build/Objects-normal/x86_64/WebViewAssetHandler.d",
+    "diagnostics" : "/Users/abhinay/Documents/Fiverr/Upload/benjaminornstei/Code/build/ios/Build/Intermediates.noindex/Pods.build/Debug-iphonesimulator/Capacitor.build/Objects-normal/x86_64/WebViewAssetHandler.dia",
+    "object" : "/Users/abhinay/Documents/Fiverr/Upload/benjaminornstei/Code/build/ios/Build/Intermediates.noindex/Pods.build/Debug-iphonesimulator/Capacitor.build/Objects-normal/x86_64/WebViewAssetHandler.o",
+    "swift-dependencies" : "/Users/abhinay/Documents/Fiverr/Upload/benjaminornstei/Code/build/ios/Build/Intermediates.noindex/Pods.build/Debug-iphonesimulator/Capacitor.build/Objects-normal/x86_64/WebViewAssetHandler.swiftdeps"
+  },
+  "/Users/abhinay/Documents/Fiverr/Upload/benjaminornstei/Code/node_modules/@capacitor/ios/Capacitor/Capacitor/WebViewDelegationHandler.swift" : {
+    "const-values" : "/Users/abhinay/Documents/Fiverr/Upload/benjaminornstei/Code/build/ios/Build/Intermediates.noindex/Pods.build/Debug-iphonesimulator/Capacitor.build/Objects-normal/x86_64/WebViewDelegationHandler.swiftconstvalues",
+    "dependencies" : "/Users/abhinay/Documents/Fiverr/Upload/benjaminornstei/Code/build/ios/Build/Intermediates.noindex/Pods.build/Debug-iphonesimulator/Capacitor.build/Objects-normal/x86_64/WebViewDelegationHandler.d",
+    "diagnostics" : "/Users/abhinay/Documents/Fiverr/Upload/benjaminornstei/Code/build/ios/Build/Intermediates.noindex/Pods.build/Debug-iphonesimulator/Capacitor.build/Objects-normal/x86_64/WebViewDelegationHandler.dia",
+    "object" : "/Users/abhinay/Documents/Fiverr/Upload/benjaminornstei/Code/build/ios/Build/Intermediates.noindex/Pods.build/Debug-iphonesimulator/Capacitor.build/Objects-normal/x86_64/WebViewDelegationHandler.o",
+    "swift-dependencies" : "/Users/abhinay/Documents/Fiverr/Upload/benjaminornstei/Code/build/ios/Build/Intermediates.noindex/Pods.build/Debug-iphonesimulator/Capacitor.build/Objects-normal/x86_64/WebViewDelegationHandler.swiftdeps"
+  }
+}

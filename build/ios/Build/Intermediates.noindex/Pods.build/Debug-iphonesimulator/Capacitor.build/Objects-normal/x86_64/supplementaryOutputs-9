@@ -1,0 +1,30 @@
+{
+  "/Users/abhinay/Documents/Fiverr/Upload/benjaminornstei/Code/node_modules/@capacitor/ios/Capacitor/Capacitor/KeyPath.swift" : {
+    "const-values" : "/Users/abhinay/Documents/Fiverr/Upload/benjaminornstei/Code/build/ios/Build/Intermediates.noindex/Pods.build/Debug-iphonesimulator/Capacitor.build/Objects-normal/x86_64/KeyPath.swiftconstvalues",
+    "dependencies" : "/Users/abhinay/Documents/Fiverr/Upload/benjaminornstei/Code/build/ios/Build/Intermediates.noindex/Pods.build/Debug-iphonesimulator/Capacitor.build/Objects-normal/x86_64/KeyPath.d",
+    "diagnostics" : "/Users/abhinay/Documents/Fiverr/Upload/benjaminornstei/Code/build/ios/Build/Intermediates.noindex/Pods.build/Debug-iphonesimulator/Capacitor.build/Objects-normal/x86_64/KeyPath.dia",
+    "object" : "/Users/abhinay/Documents/Fiverr/Upload/benjaminornstei/Code/build/ios/Build/Intermediates.noindex/Pods.build/Debug-iphonesimulator/Capacitor.build/Objects-normal/x86_64/KeyPath.o",
+    "swift-dependencies" : "/Users/abhinay/Documents/Fiverr/Upload/benjaminornstei/Code/build/ios/Build/Intermediates.noindex/Pods.build/Debug-iphonesimulator/Capacitor.build/Objects-normal/x86_64/KeyPath.swiftdeps"
+  },
+  "/Users/abhinay/Documents/Fiverr/Upload/benjaminornstei/Code/node_modules/@capacitor/ios/Capacitor/Capacitor/KeyValueStore.swift" : {
+    "const-values" : "/Users/abhinay/Documents/Fiverr/Upload/benjaminornstei/Code/build/ios/Build/Intermediates.noindex/Pods.build/Debug-iphonesimulator/Capacitor.build/Objects-normal/x86_64/KeyValueStore.swiftconstvalues",
+    "dependencies" : "/Users/abhinay/Documents/Fiverr/Upload/benjaminornstei/Code/build/ios/Build/Intermediates.noindex/Pods.build/Debug-iphonesimulator/Capacitor.build/Objects-normal/x86_64/KeyValueStore.d",
+    "diagnostics" : "/Users/abhinay/Documents/Fiverr/Upload/benjaminornstei/Code/build/ios/Build/Intermediates.noindex/Pods.build/Debug-iphonesimulator/Capacitor.build/Objects-normal/x86_64/KeyValueStore.dia",
+    "object" : "/Users/abhinay/Documents/Fiverr/Upload/benjaminornstei/Code/build/ios/Build/Intermediates.noindex/Pods.build/Debug-iphonesimulator/Capacitor.build/Objects-normal/x86_64/KeyValueStore.o",
+    "swift-dependencies" : "/Users/abhinay/Documents/Fiverr/Upload/benjaminornstei/Code/build/ios/Build/Intermediates.noindex/Pods.build/Debug-iphonesimulator/Capacitor.build/Objects-normal/x86_64/KeyValueStore.swiftdeps"
+  },
+  "/Users/abhinay/Documents/Fiverr/Upload/benjaminornstei/Code/node_modules/@capacitor/ios/Capacitor/Capacitor/NotificationHandlerProtocol.swift" : {
+    "const-values" : "/Users/abhinay/Documents/Fiverr/Upload/benjaminornstei/Code/build/ios/Build/Intermediates.noindex/Pods.build/Debug-iphonesimulator/Capacitor.build/Objects-normal/x86_64/NotificationHandlerProtocol.swiftconstvalues",
+    "dependencies" : "/Users/abhinay/Documents/Fiverr/Upload/benjaminornstei/Code/build/ios/Build/Intermediates.noindex/Pods.build/Debug-iphonesimulator/Capacitor.build/Objects-normal/x86_64/NotificationHandlerProtocol.d",
+    "diagnostics" : "/Users/abhinay/Documents/Fiverr/Upload/benjaminornstei/Code/build/ios/Build/Intermediates.noindex/Pods.build/Debug-iphonesimulator/Capacitor.build/Objects-normal/x86_64/NotificationHandlerProtocol.dia",
+    "object" : "/Users/abhinay/Documents/Fiverr/Upload/benjaminornstei/Code/build/ios/Build/Intermediates.noindex/Pods.build/Debug-iphonesimulator/Capacitor.build/Objects-normal/x86_64/NotificationHandlerProtocol.o",
+    "swift-dependencies" : "/Users/abhinay/Documents/Fiverr/Upload/benjaminornstei/Code/build/ios/Build/Intermediates.noindex/Pods.build/Debug-iphonesimulator/Capacitor.build/Objects-normal/x86_64/NotificationHandlerProtocol.swiftdeps"
+  },
+  "/Users/abhinay/Documents/Fiverr/Upload/benjaminornstei/Code/node_modules/@capacitor/ios/Capacitor/Capacitor/NotificationRouter.swift" : {
+    "const-values" : "/Users/abhinay/Documents/Fiverr/Upload/benjaminornstei/Code/build/ios/Build/Intermediates.noindex/Pods.build/Debug-iphonesimulator/Capacitor.build/Objects-normal/x86_64/NotificationRouter.swiftconstvalues",
+    "dependencies" : "/Users/abhinay/Documents/Fiverr/Upload/benjaminornstei/Code/build/ios/Build/Intermediates.noindex/Pods.build/Debug-iphonesimulator/Capacitor.build/Objects-normal/x86_64/NotificationRouter.d",
+    "diagnostics" : "/Users/abhinay/Documents/Fiverr/Upload/benjaminornstei/Code/build/ios/Build/Intermediates.noindex/Pods.build/Debug-iphonesimulator/Capacitor.build/Objects-normal/x86_64/NotificationRouter.dia",
+    "object" : "/Users/abhinay/Documents/Fiverr/Upload/benjaminornstei/Code/build/ios/Build/Intermediates.noindex/Pods.build/Debug-iphonesimulator/Capacitor.build/Objects-normal/x86_64/NotificationRouter.o",
+    "swift-dependencies" : "/Users/abhinay/Documents/Fiverr/Upload/benjaminornstei/Code/build/ios/Build/Intermediates.noindex/Pods.build/Debug-iphonesimulator/Capacitor.build/Objects-normal/x86_64/NotificationRouter.swiftdeps"
+  }
+}

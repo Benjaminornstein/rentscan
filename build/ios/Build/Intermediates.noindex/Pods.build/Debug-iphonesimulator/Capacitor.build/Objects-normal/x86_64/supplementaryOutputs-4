@@ -1,0 +1,30 @@
+{
+  "/Users/abhinay/Documents/Fiverr/Upload/benjaminornstei/Code/node_modules/@capacitor/ios/Capacitor/Capacitor/CAPBridgeProtocol.swift" : {
+    "const-values" : "/Users/abhinay/Documents/Fiverr/Upload/benjaminornstei/Code/build/ios/Build/Intermediates.noindex/Pods.build/Debug-iphonesimulator/Capacitor.build/Objects-normal/x86_64/CAPBridgeProtocol.swiftconstvalues",
+    "dependencies" : "/Users/abhinay/Documents/Fiverr/Upload/benjaminornstei/Code/build/ios/Build/Intermediates.noindex/Pods.build/Debug-iphonesimulator/Capacitor.build/Objects-normal/x86_64/CAPBridgeProtocol.d",
+    "diagnostics" : "/Users/abhinay/Documents/Fiverr/Upload/benjaminornstei/Code/build/ios/Build/Intermediates.noindex/Pods.build/Debug-iphonesimulator/Capacitor.build/Objects-normal/x86_64/CAPBridgeProtocol.dia",
+    "object" : "/Users/abhinay/Documents/Fiverr/Upload/benjaminornstei/Code/build/ios/Build/Intermediates.noindex/Pods.build/Debug-iphonesimulator/Capacitor.build/Objects-normal/x86_64/CAPBridgeProtocol.o",
+    "swift-dependencies" : "/Users/abhinay/Documents/Fiverr/Upload/benjaminornstei/Code/build/ios/Build/Intermediates.noindex/Pods.build/Debug-iphonesimulator/Capacitor.build/Objects-normal/x86_64/CAPBridgeProtocol.swiftdeps"
+  },
+  "/Users/abhinay/Documents/Fiverr/Upload/benjaminornstei/Code/node_modules/@capacitor/ios/Capacitor/Capacitor/CAPBridgeViewController.swift" : {
+    "const-values" : "/Users/abhinay/Documents/Fiverr/Upload/benjaminornstei/Code/build/ios/Build/Intermediates.noindex/Pods.build/Debug-iphonesimulator/Capacitor.build/Objects-normal/x86_64/CAPBridgeViewController.swiftconstvalues",
+    "dependencies" : "/Users/abhinay/Documents/Fiverr/Upload/benjaminornstei/Code/build/ios/Build/Intermediates.noindex/Pods.build/Debug-iphonesimulator/Capacitor.build/Objects-normal/x86_64/CAPBridgeViewController.d",
+    "diagnostics" : "/Users/abhinay/Documents/Fiverr/Upload/benjaminornstei/Code/build/ios/Build/Intermediates.noindex/Pods.build/Debug-iphonesimulator/Capacitor.build/Objects-normal/x86_64/CAPBridgeViewController.dia",
+    "object" : "/Users/abhinay/Documents/Fiverr/Upload/benjaminornstei/Code/build/ios/Build/Intermediates.noindex/Pods.build/Debug-iphonesimulator/Capacitor.build/Objects-normal/x86_64/CAPBridgeViewController.o",
+    "swift-dependencies" : "/Users/abhinay/Documents/Fiverr/Upload/benjaminornstei/Code/build/ios/Build/Intermediates.noindex/Pods.build/Debug-iphonesimulator/Capacitor.build/Objects-normal/x86_64/CAPBridgeViewController.swiftdeps"
+  },
+  "/Users/abhinay/Documents/Fiverr/Upload/benjaminornstei/Code/node_modules/@capacitor/ios/Capacitor/Capacitor/CAPFile.swift" : {
+    "const-values" : "/Users/abhinay/Documents/Fiverr/Upload/benjaminornstei/Code/build/ios/Build/Intermediates.noindex/Pods.build/Debug-iphonesimulator/Capacitor.build/Objects-normal/x86_64/CAPFile.swiftconstvalues",
+    "dependencies" : "/Users/abhinay/Documents/Fiverr/Upload/benjaminornstei/Code/build/ios/Build/Intermediates.noindex/Pods.build/Debug-iphonesimulator/Capacitor.build/Objects-normal/x86_64/CAPFile.d",
+    "diagnostics" : "/Users/abhinay/Documents/Fiverr/Upload/benjaminornstei/Code/build/ios/Build/Intermediates.noindex/Pods.build/Debug-iphonesimulator/Capacitor.build/Objects-normal/x86_64/CAPFile.dia",
+    "object" : "/Users/abhinay/Documents/Fiverr/Upload/benjaminornstei/Code/build/ios/Build/Intermediates.noindex/Pods.build/Debug-iphonesimulator/Capacitor.build/Objects-normal/x86_64/CAPFile.o",
+    "swift-dependencies" : "/Users/abhinay/Documents/Fiverr/Upload/benjaminornstei/Code/build/ios/Build/Intermediates.noindex/Pods.build/Debug-iphonesimulator/Capacitor.build/Objects-normal/x86_64/CAPFile.swiftdeps"
+  },
+  "/Users/abhinay/Documents/Fiverr/Upload/benjaminornstei/Code/node_modules/@capacitor/ios/Capacitor/Capacitor/CAPInstanceConfiguration.swift" : {
+    "const-values" : "/Users/abhinay/Documents/Fiverr/Upload/benjaminornstei/Code/build/ios/Build/Intermediates.noindex/Pods.build/Debug-iphonesimulator/Capacitor.build/Objects-normal/x86_64/CAPInstanceConfiguration-1e8c0a3c9420696a6f7d4c80ef7856a6.swiftconstvalues",
+    "dependencies" : "/Users/abhinay/Documents/Fiverr/Upload/benjaminornstei/Code/build/ios/Build/Intermediates.noindex/Pods.build/Debug-iphonesimulator/Capacitor.build/Objects-normal/x86_64/CAPInstanceConfiguration-1e8c0a3c9420696a6f7d4c80ef7856a6.d",
+    "diagnostics" : "/Users/abhinay/Documents/Fiverr/Upload/benjaminornstei/Code/build/ios/Build/Intermediates.noindex/Pods.build/Debug-iphonesimulator/Capacitor.build/Objects-normal/x86_64/CAPInstanceConfiguration-1e8c0a3c9420696a6f7d4c80ef7856a6.dia",
+    "object" : "/Users/abhinay/Documents/Fiverr/Upload/benjaminornstei/Code/build/ios/Build/Intermediates.noindex/Pods.build/Debug-iphonesimulator/Capacitor.build/Objects-normal/x86_64/CAPInstanceConfiguration-1e8c0a3c9420696a6f7d4c80ef7856a6.o",
+    "swift-dependencies" : "/Users/abhinay/Documents/Fiverr/Upload/benjaminornstei/Code/build/ios/Build/Intermediates.noindex/Pods.build/Debug-iphonesimulator/Capacitor.build/Objects-normal/x86_64/CAPInstanceConfiguration-1e8c0a3c9420696a6f7d4c80ef7856a6.swiftdeps"
+  }
+}

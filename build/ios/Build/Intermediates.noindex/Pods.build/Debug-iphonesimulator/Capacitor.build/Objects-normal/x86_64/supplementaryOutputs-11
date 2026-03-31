@@ -1,0 +1,23 @@
+{
+  "/Users/abhinay/Documents/Fiverr/Upload/benjaminornstei/Code/node_modules/@capacitor/ios/Capacitor/Capacitor/Plugins/WebView.swift" : {
+    "const-values" : "/Users/abhinay/Documents/Fiverr/Upload/benjaminornstei/Code/build/ios/Build/Intermediates.noindex/Pods.build/Debug-iphonesimulator/Capacitor.build/Objects-normal/x86_64/WebView.swiftconstvalues",
+    "dependencies" : "/Users/abhinay/Documents/Fiverr/Upload/benjaminornstei/Code/build/ios/Build/Intermediates.noindex/Pods.build/Debug-iphonesimulator/Capacitor.build/Objects-normal/x86_64/WebView.d",
+    "diagnostics" : "/Users/abhinay/Documents/Fiverr/Upload/benjaminornstei/Code/build/ios/Build/Intermediates.noindex/Pods.build/Debug-iphonesimulator/Capacitor.build/Objects-normal/x86_64/WebView.dia",
+    "object" : "/Users/abhinay/Documents/Fiverr/Upload/benjaminornstei/Code/build/ios/Build/Intermediates.noindex/Pods.build/Debug-iphonesimulator/Capacitor.build/Objects-normal/x86_64/WebView.o",
+    "swift-dependencies" : "/Users/abhinay/Documents/Fiverr/Upload/benjaminornstei/Code/build/ios/Build/Intermediates.noindex/Pods.build/Debug-iphonesimulator/Capacitor.build/Objects-normal/x86_64/WebView.swiftdeps"
+  },
+  "/Users/abhinay/Documents/Fiverr/Upload/benjaminornstei/Code/node_modules/@capacitor/ios/Capacitor/Capacitor/TmpViewController.swift" : {
+    "const-values" : "/Users/abhinay/Documents/Fiverr/Upload/benjaminornstei/Code/build/ios/Build/Intermediates.noindex/Pods.build/Debug-iphonesimulator/Capacitor.build/Objects-normal/x86_64/TmpViewController.swiftconstvalues",
+    "dependencies" : "/Users/abhinay/Documents/Fiverr/Upload/benjaminornstei/Code/build/ios/Build/Intermediates.noindex/Pods.build/Debug-iphonesimulator/Capacitor.build/Objects-normal/x86_64/TmpViewController.d",
+    "diagnostics" : "/Users/abhinay/Documents/Fiverr/Upload/benjaminornstei/Code/build/ios/Build/Intermediates.noindex/Pods.build/Debug-iphonesimulator/Capacitor.build/Objects-normal/x86_64/TmpViewController.dia",
+    "object" : "/Users/abhinay/Documents/Fiverr/Upload/benjaminornstei/Code/build/ios/Build/Intermediates.noindex/Pods.build/Debug-iphonesimulator/Capacitor.build/Objects-normal/x86_64/TmpViewController.o",
+    "swift-dependencies" : "/Users/abhinay/Documents/Fiverr/Upload/benjaminornstei/Code/build/ios/Build/Intermediates.noindex/Pods.build/Debug-iphonesimulator/Capacitor.build/Objects-normal/x86_64/TmpViewController.swiftdeps"
+  },
+  "/Users/abhinay/Documents/Fiverr/Upload/benjaminornstei/Code/node_modules/@capacitor/ios/Capacitor/Capacitor/UIColor.swift" : {
+    "const-values" : "/Users/abhinay/Documents/Fiverr/Upload/benjaminornstei/Code/build/ios/Build/Intermediates.noindex/Pods.build/Debug-iphonesimulator/Capacitor.build/Objects-normal/x86_64/UIColor.swiftconstvalues",
+    "dependencies" : "/Users/abhinay/Documents/Fiverr/Upload/benjaminornstei/Code/build/ios/Build/Intermediates.noindex/Pods.build/Debug-iphonesimulator/Capacitor.build/Objects-normal/x86_64/UIColor.d",
+    "diagnostics" : "/Users/abhinay/Documents/Fiverr/Upload/benjaminornstei/Code/build/ios/Build/Intermediates.noindex/Pods.build/Debug-iphonesimulator/Capacitor.build/Objects-normal/x86_64/UIColor.dia",
+    "object" : "/Users/abhinay/Documents/Fiverr/Upload/benjaminornstei/Code/build/ios/Build/Intermediates.noindex/Pods.build/Debug-iphonesimulator/Capacitor.build/Objects-normal/x86_64/UIColor.o",
+    "swift-dependencies" : "/Users/abhinay/Documents/Fiverr/Upload/benjaminornstei/Code/build/ios/Build/Intermediates.noindex/Pods.build/Debug-iphonesimulator/Capacitor.build/Objects-normal/x86_64/UIColor.swiftdeps"
+  }
+}

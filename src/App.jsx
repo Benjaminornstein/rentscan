@@ -1,4 +1,5 @@
 import { useState, useEffect, useRef } from "react";
+import { useScreenViewport } from "./useScreenViewport";
 
 // ===== COMPANY DATA =====
 const COMPANIES = [
@@ -215,12 +216,16 @@ export default function App() {
   const [shareConsent, setShareConsent] = useState(true);
   const [dossierSaved, setDossierSaved] = useState(false);
 
+  const topSafeInset = "env(safe-area-inset-top)";
+
+  useScreenViewport();
+
   // Splash screen timer
   useEffect(() => { const t = setTimeout(() => setSplash(false), 2200); return () => clearTimeout(t); }, []);
 
   // Splash Screen
   if (splash) return (
-    <div style={{ minHeight: "100vh", background: "#0A0E14", display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", fontFamily: "-apple-system, 'SF Pro Display', 'Segoe UI', sans-serif" }}>
+    <div style={{ height: "100%", minHeight: "100%", background: "#0A0E14", display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", fontFamily: "-apple-system, 'SF Pro Display', 'Segoe UI', sans-serif" }}>
       <img src="/logo.png" alt="RentScan" style={{ width: "160px", height: "160px", borderRadius: "32px", marginBottom: "28px", animation: "pulse 1.5s ease-in-out infinite" }} />
       <div style={{ fontSize: "42px", fontWeight: 800, color: "#F5EDD6", letterSpacing: "-1px" }}>RentScan</div>
       <div style={{ fontSize: "15px", color: "#C8962E", letterSpacing: "4px", textTransform: "uppercase", marginTop: "8px" }}>Rent safely!</div>
@@ -237,7 +242,7 @@ export default function App() {
   ];
 
   if (onboard) return (
-    <div style={{ minHeight: "100vh", background: T.bg, display: "flex", flexDirection: "column", fontFamily: "-apple-system, 'SF Pro Display', 'Segoe UI', sans-serif" }}>
+    <div style={{ height: "100%", minHeight: "100%", background: T.bg, display: "flex", flexDirection: "column", fontFamily: "-apple-system, 'SF Pro Display', 'Segoe UI', sans-serif" }}>
       <div style={{ flex: 1, display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", padding: "40px 32px", textAlign: "center" }}>
         <div style={{ fontSize: "80px", marginBottom: "32px" }}>{onboardScreens[onboardStep].icon}</div>
         <h1 style={{ fontSize: "28px", fontWeight: 800, color: T.text, margin: "0 0 16px", letterSpacing: "-0.5px" }}>{onboardScreens[onboardStep].title}</h1>
@@ -279,15 +284,15 @@ export default function App() {
         body: JSON.stringify({ contractText: text })
       });
       const data = await resp.json();
-      if (data.mode === "chat") {
+      if (data.answer) {
         setRes({ mode: "chat", answer: data.answer, tips: data.tips || [], aiPowered: true });
-      } else if (data.costs) {
-        setRes({ mode: "scan", costs: data.costs.map(c => ({ label: c.label, amount: c.amount, type: c.type, detail: c.detail })), notes: data.notes || [], totalEstimate: data.totalEstimate, baseTotal: data.baseTotal, depositEstimate: data.depositEstimate || 2000, aiPowered: true });
+      } else if (data.error) {
+        setRes({ mode: "chat", answer: "Sorry, something went wrong. Please try again.", tips: [], aiPowered: false });
       } else {
-        setRes({ ...localAnalyze(text), mode: "scan", aiPowered: false });
+        setRes({ mode: "chat", answer: "Sorry, I couldn't analyze that. Try pasting a rental quote or asking a question about car rentals in Dubai.", tips: [], aiPowered: false });
       }
     } catch {
-      setRes({ ...localAnalyze(text), mode: "scan", aiPowered: false });
+      setRes({ mode: "chat", answer: "Could not connect to the AI. Please check your internet connection and try again.", tips: [], aiPowered: false });
     }
     setLoading(false);
   };
@@ -319,12 +324,12 @@ export default function App() {
 
   // ===== STYLES (Light theme) =====
   const css = {
-    page: { minHeight: "100vh", background: T.bg, fontFamily: "-apple-system, 'SF Pro Display', 'Segoe UI', sans-serif", color: T.text, WebkitFontSmoothing: "antialiased" },
-    wrap: { maxWidth: "720px", margin: "0 auto", padding: "16px 16px 100px" },
+    page: { minHeight: "100%", height: "100%", display: "flex", flexDirection: "column", background: T.bg, fontFamily: "-apple-system, 'SF Pro Display', 'Segoe UI', sans-serif", color: T.text, WebkitFontSmoothing: "antialiased", paddingTop: topSafeInset, boxSizing: "border-box", width: "100%", maxWidth: "100%", overflow: "hidden" },
+    wrap: { flex: 1, maxWidth: "720px", width: "100%", margin: "0 auto", padding: "16px 16px calc(84px + env(safe-area-inset-bottom))", overflowX: "hidden", overflowY: "auto", WebkitOverflowScrolling: "touch" },
     card: { background: T.card, borderRadius: "16px", padding: "18px", marginBottom: "12px", boxShadow: "0 1px 3px rgba(0,0,0,0.06), 0 1px 2px rgba(0,0,0,0.04)" },
     btn: { background: `linear-gradient(135deg, ${T.accent}, ${T.accent2})`, color: "#fff", border: "none", borderRadius: "12px", padding: "14px", fontSize: "15px", fontWeight: 700, cursor: "pointer", width: "100%", letterSpacing: "0.2px" },
     btnSm: { background: `linear-gradient(135deg, ${T.accent}, ${T.accent2})`, color: "#fff", border: "none", borderRadius: "10px", padding: "10px 18px", fontSize: "13px", fontWeight: 600, cursor: "pointer" },
-    input: { width: "100%", background: T.card, border: `1.5px solid ${T.border}`, borderRadius: "12px", padding: "12px 14px", color: T.text, fontSize: "14px", fontFamily: "inherit", outline: "none", boxSizing: "border-box" },
+    input: { width: "100%", background: T.card, border: `1.5px solid ${T.border}`, borderRadius: "12px", padding: "12px 14px", color: T.text, fontSize: "16px", fontFamily: "inherit", outline: "none", boxSizing: "border-box" },
     tag: (c) => ({ display: "inline-flex", background: `${c}10`, color: c, border: `1px solid ${c}25`, borderRadius: "6px", padding: "3px 8px", fontSize: "10px", fontWeight: 700, letterSpacing: "0.3px", textTransform: "uppercase" }),
     pill: (on) => ({ background: on ? T.accent : T.card, color: on ? "#fff" : T.sub, border: on ? "none" : `1.5px solid ${T.border}`, borderRadius: "10px", padding: "8px 16px", fontSize: "13px", fontWeight: 600, cursor: "pointer" }),
     h2: { fontSize: "26px", fontWeight: 800, letterSpacing: "-0.5px", lineHeight: 1.2, margin: "0 0 10px", color: T.text },
@@ -478,40 +483,6 @@ export default function App() {
             </div>
           ))}
         </div>}
-      </>}
-
-      {/* SCAN MODE */}
-      {res.mode === "scan" && <>
-      <div style={{ background: T.card, border: `1px solid ${T.accent}25`, borderRadius: "20px", padding: "28px", textAlign: "center", marginBottom: "20px", boxShadow: "0 2px 12px rgba(200,150,46,0.08)" }}>
-        <div style={{ fontSize: "11px", color: T.accent, textTransform: "uppercase", letterSpacing: "2px", marginBottom: "8px", fontWeight: 600 }}>Estimated total cost</div>
-        <div style={{ fontSize: "44px", fontWeight: 800, letterSpacing: "-2px" }}>AED <AnimN value={res.totalEstimate} /></div>
-        <div style={{ fontSize: "13px", color: T.sub, marginTop: "6px" }}>Base: AED {res.baseTotal?.toLocaleString()} · <span style={{ color: T.accent2 }}>+{Math.round(((res.totalEstimate - res.baseTotal) / res.baseTotal) * 100)}% additional</span></div>
-      </div>
-      <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "10px", marginBottom: "20px" }}>
-        {[["Additional fees", res.costs?.filter(c => c.type === "extra").reduce((s, c) => s + c.amount, 0), T.accent2],
-          ["Possible costs", res.costs?.filter(c => c.type === "maybe").reduce((s, c) => s + c.amount, 0), T.red],
-          ["Optional upgrades", res.costs?.filter(c => c.type === "opt").reduce((s, c) => s + c.amount, 0), T.blue],
-          ["Deposit (refundable)", res.depositEstimate, "#60A5FA"]
-        ].map(([l, a, c]) => (
-          <div key={l} style={{ ...css.card, borderLeft: `3px solid ${c}`, padding: "14px" }}>
-            <div style={{ fontSize: "10px", color: T.dim, textTransform: "uppercase", letterSpacing: "1px" }}>{l}</div>
-            <div style={{ fontSize: "19px", fontWeight: 800, color: c, marginTop: "4px" }}>AED {(a || 0).toLocaleString()}</div>
-          </div>
-        ))}
-      </div>
-      <h3 style={{ fontSize: "16px", fontWeight: 700, marginBottom: "12px" }}>💰 Breakdown</h3>
-      {res.costs?.map((c, i) => (
-        <div key={i} style={{ display: "flex", justifyContent: "space-between", padding: "12px 16px", background: T.card, borderRadius: "12px", marginBottom: "6px", borderLeft: `3px solid ${costColor[c.type] || T.sub}`, boxShadow: "0 1px 2px rgba(0,0,0,0.1)" }}>
-          <div style={{ flex: 1 }}><div style={{ fontSize: "14px", fontWeight: 600 }}>{c.label}</div><div style={{ fontSize: "11px", color: T.dim, marginTop: "2px" }}>{c.detail}</div></div>
-          <div style={{ fontSize: "15px", fontWeight: 700, color: costColor[c.type] || T.sub, whiteSpace: "nowrap" }}>AED {c.amount?.toLocaleString()}</div>
-        </div>
-      ))}
-      {res.notes?.length > 0 && <>
-        <h3 style={{ fontSize: "16px", fontWeight: 700, margin: "20px 0 12px" }}>ℹ️ Good to Know</h3>
-        <div style={{ background: `${T.accent}06`, border: `1px solid ${T.accent}15`, borderRadius: "16px", padding: "16px" }}>
-          {res.notes.map((n, i) => <div key={i} style={{ fontSize: "13px", color: T.sub, padding: "6px 0", borderBottom: i < res.notes.length - 1 ? `1px solid ${T.border}` : "none", lineHeight: 1.5 }}>{n}</div>)}
-        </div>
-      </>}
       </>}
     </>
   );
@@ -1025,4 +996,6 @@ ${pickupP.length > 0 ? `<h2>Vehicle Condition at Pickup</h2>
     </div>
   );
 }
+
+
 

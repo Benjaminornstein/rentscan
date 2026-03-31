@@ -1,0 +1,30 @@
+{
+  "/Users/abhinay/Documents/Fiverr/Upload/benjaminornstei/Code/node_modules/@capacitor/ios/Capacitor/Capacitor/CAPPlugin+LoadInstance.swift" : {
+    "const-values" : "/Users/abhinay/Documents/Fiverr/Upload/benjaminornstei/Code/build/ios/Build/Intermediates.noindex/Pods.build/Debug-iphonesimulator/Capacitor.build/Objects-normal/arm64/CAPPlugin+LoadInstance.swiftconstvalues",
+    "dependencies" : "/Users/abhinay/Documents/Fiverr/Upload/benjaminornstei/Code/build/ios/Build/Intermediates.noindex/Pods.build/Debug-iphonesimulator/Capacitor.build/Objects-normal/arm64/CAPPlugin+LoadInstance.d",
+    "diagnostics" : "/Users/abhinay/Documents/Fiverr/Upload/benjaminornstei/Code/build/ios/Build/Intermediates.noindex/Pods.build/Debug-iphonesimulator/Capacitor.build/Objects-normal/arm64/CAPPlugin+LoadInstance.dia",
+    "object" : "/Users/abhinay/Documents/Fiverr/Upload/benjaminornstei/Code/build/ios/Build/Intermediates.noindex/Pods.build/Debug-iphonesimulator/Capacitor.build/Objects-normal/arm64/CAPPlugin+LoadInstance.o",
+    "swift-dependencies" : "/Users/abhinay/Documents/Fiverr/Upload/benjaminornstei/Code/build/ios/Build/Intermediates.noindex/Pods.build/Debug-iphonesimulator/Capacitor.build/Objects-normal/arm64/CAPPlugin+LoadInstance.swiftdeps"
+  },
+  "/Users/abhinay/Documents/Fiverr/Upload/benjaminornstei/Code/node_modules/@capacitor/ios/Capacitor/Capacitor/CAPPluginCall.swift" : {
+    "const-values" : "/Users/abhinay/Documents/Fiverr/Upload/benjaminornstei/Code/build/ios/Build/Intermediates.noindex/Pods.build/Debug-iphonesimulator/Capacitor.build/Objects-normal/arm64/CAPPluginCall-1378a9a652c3625105e2b94e0fbe85a5.swiftconstvalues",
+    "dependencies" : "/Users/abhinay/Documents/Fiverr/Upload/benjaminornstei/Code/build/ios/Build/Intermediates.noindex/Pods.build/Debug-iphonesimulator/Capacitor.build/Objects-normal/arm64/CAPPluginCall-1378a9a652c3625105e2b94e0fbe85a5.d",
+    "diagnostics" : "/Users/abhinay/Documents/Fiverr/Upload/benjaminornstei/Code/build/ios/Build/Intermediates.noindex/Pods.build/Debug-iphonesimulator/Capacitor.build/Objects-normal/arm64/CAPPluginCall-1378a9a652c3625105e2b94e0fbe85a5.dia",
+    "object" : "/Users/abhinay/Documents/Fiverr/Upload/benjaminornstei/Code/build/ios/Build/Intermediates.noindex/Pods.build/Debug-iphonesimulator/Capacitor.build/Objects-normal/arm64/CAPPluginCall-1378a9a652c3625105e2b94e0fbe85a5.o",
+    "swift-dependencies" : "/Users/abhinay/Documents/Fiverr/Upload/benjaminornstei/Code/build/ios/Build/Intermediates.noindex/Pods.build/Debug-iphonesimulator/Capacitor.build/Objects-normal/arm64/CAPPluginCall-1378a9a652c3625105e2b94e0fbe85a5.swiftdeps"
+  },
+  "/Users/abhinay/Documents/Fiverr/Upload/benjaminornstei/Code/node_modules/@capacitor/ios/Capacitor/Capacitor/CAPPluginMethod.swift" : {
+    "const-values" : "/Users/abhinay/Documents/Fiverr/Upload/benjaminornstei/Code/build/ios/Build/Intermediates.noindex/Pods.build/Debug-iphonesimulator/Capacitor.build/Objects-normal/arm64/CAPPluginMethod-0fc18d8a5d59b4b9590e9c764d0ee216.swiftconstvalues",
+    "dependencies" : "/Users/abhinay/Documents/Fiverr/Upload/benjaminornstei/Code/build/ios/Build/Intermediates.noindex/Pods.build/Debug-iphonesimulator/Capacitor.build/Objects-normal/arm64/CAPPluginMethod-0fc18d8a5d59b4b9590e9c764d0ee216.d",
+    "diagnostics" : "/Users/abhinay/Documents/Fiverr/Upload/benjaminornstei/Code/build/ios/Build/Intermediates.noindex/Pods.build/Debug-iphonesimulator/Capacitor.build/Objects-normal/arm64/CAPPluginMethod-0fc18d8a5d59b4b9590e9c764d0ee216.dia",
+    "object" : "/Users/abhinay/Documents/Fiverr/Upload/benjaminornstei/Code/build/ios/Build/Intermediates.noindex/Pods.build/Debug-iphonesimulator/Capacitor.build/Objects-normal/arm64/CAPPluginMethod-0fc18d8a5d59b4b9590e9c764d0ee216.o",
+    "swift-dependencies" : "/Users/abhinay/Documents/Fiverr/Upload/benjaminornstei/Code/build/ios/Build/Intermediates.noindex/Pods.build/Debug-iphonesimulator/Capacitor.build/Objects-normal/arm64/CAPPluginMethod-0fc18d8a5d59b4b9590e9c764d0ee216.swiftdeps"
+  },
+  "/Users/abhinay/Documents/Fiverr/Upload/benjaminornstei/Code/node_modules/@capacitor/ios/Capacitor/Capacitor/Plugins/Console.swift" : {
+    "const-values" : "/Users/abhinay/Documents/Fiverr/Upload/benjaminornstei/Code/build/ios/Build/Intermediates.noindex/Pods.build/Debug-iphonesimulator/Capacitor.build/Objects-normal/arm64/Console.swiftconstvalues",
+    "dependencies" : "/Users/abhinay/Documents/Fiverr/Upload/benjaminornstei/Code/build/ios/Build/Intermediates.noindex/Pods.build/Debug-iphonesimulator/Capacitor.build/Objects-normal/arm64/Console.d",
+    "diagnostics" : "/Users/abhinay/Documents/Fiverr/Upload/benjaminornstei/Code/build/ios/Build/Intermediates.noindex/Pods.build/Debug-iphonesimulator/Capacitor.build/Objects-normal/arm64/Console.dia",
+    "object" : "/Users/abhinay/Documents/Fiverr/Upload/benjaminornstei/Code/build/ios/Build/Intermediates.noindex/Pods.build/Debug-iphonesimulator/Capacitor.build/Objects-normal/arm64/Console.o",
+    "swift-dependencies" : "/Users/abhinay/Documents/Fiverr/Upload/benjaminornstei/Code/build/ios/Build/Intermediates.noindex/Pods.build/Debug-iphonesimulator/Capacitor.build/Objects-normal/arm64/Console.swiftdeps"
+  }
+}
