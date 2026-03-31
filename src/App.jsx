@@ -886,7 +886,7 @@ ${pickupP.length > 0 ? `<h2>Vehicle Condition at Pickup</h2>
       • Contact information submitted via "Get Quote" forms (name, phone number)<br/>
       • Rental details entered in the "My Rental" dossier</p>
       <p><strong style={{ color: T.text }}>Information collected automatically:</strong></p>
-      <p>• <strong style={{ color: T.text }}>Anonymous rental market data:</strong> When you scan a contract or submit rental details, RentScan automatically extracts non-personal market data including company names, vehicle models, daily rates, insurance terms, mileage limits, fuel policies, and fee structures. This data cannot identify you.<br/>
+      <p>• <strong style={{ color: T.text }}>Anonymous rental market data:</strong> When you scan a contract or submit rental details, RentScan automatically extracts non-personal market data including company names, vehicle models, daily rates, insurance terms, mileage limits, fuel policies, and fee structures. This data cannot identify you.</p>
       <p>• Basic analytics data (page views, device type, country) via cookies or analytics tools<br/>
       • IP address (anonymized)<br/>
       • Browser type and operating system</p>
