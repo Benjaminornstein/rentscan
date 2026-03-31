@@ -660,7 +660,7 @@ export default function App() {
 
         {!hasStarted && (
           <div style={{ ...css.card, border: `1px solid ${T.accent}30`, marginBottom: "20px" }}>
-            <div style={{ display: "grid", gap: "16px" }}>
+            <div style={{ display: "grid", gap: "16px", textAlign: "left" }}>
               {[
                 ["📝", "Upload your contract", "Take a photo of your contract. Our AI reads it and fills in all details automatically."],
                 ["📸", "Take guided photos at pickup", "16 shots covering every angle. Timestamped proof."],
