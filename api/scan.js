@@ -233,6 +233,9 @@ export default async function handler(req, res) {
       getMarketContext(),
       findRelevantTerms(searchText),
     ]);
+    const termsContext = termsResult.text;
+    const termsMeta = termsResult.meta;
+
 
     // Build the system context (injected into first user message)
     const systemContext = `${SYSTEM_PROMPT}
