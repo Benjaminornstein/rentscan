@@ -662,7 +662,7 @@ export default function App() {
           <div style={{ ...css.card, border: `1px solid ${T.accent}30`, marginBottom: "20px" }}>
             <div style={{ display: "grid", gap: "16px" }}>
               {[
-                ["📝", "Fill in your rental details", "Company, car, dates, insurance — everything in one place."],
+                ["📝", "Upload your contract", "Take a photo of your contract. Our AI reads it and fills in all details automatically."],
                 ["📸", "Take guided photos at pickup", "16 shots covering every angle. Timestamped proof."],
                 ["📋", "Generate your dossier", "One PDF with all details and photos. Your protection."],
               ].map(([ico, title, desc]) => (
@@ -683,16 +683,6 @@ export default function App() {
         </div>}
 
         <div style={css.card}>
-          <h3 style={{ fontSize: "16px", fontWeight: 700, margin: "0 0 14px" }}>🚗 Rental Details</h3>
-          <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "10px" }}>
-            {[["company", "Company"], ["car", "Car model"], ["plate", "Plate number"], ["emirate", "Emirate"], ["start", "Start date"], ["end", "End date"], ["dailyPrice", "Daily price (AED)"], ["deposit", "Deposit (AED)"], ["insurance", "Insurance"], ["excess", "Excess (AED)"], ["mileage", "Mileage limit"], ["fuel", "Fuel policy"]].map(([k, l]) => (
-              <div key={k}><input value={rental[k]} onChange={e => setRental(p => ({ ...p, [k]: e.target.value }))} placeholder={l} style={{ ...css.input, height: "48px", lineHeight: "48px", padding: "0 14px", WebkitAppearance: "none" }} type="text" /></div>
-            ))}
-          </div>
-          <div style={{ marginTop: "10px" }}><textarea value={rental.notes} onChange={e => setRental(p => ({ ...p, notes: e.target.value }))} placeholder="Notes..." style={{ ...css.input, minHeight: "50px", resize: "vertical" }} /></div>
-        </div>
-
-        <div style={css.card}>
           <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "14px" }}>
             <span style={{ fontSize: "15px", fontWeight: 700 }}>📄 Contract & Documents</span>
             <span style={{ fontSize: "11px", fontWeight: 600, color: contractP.length > 0 ? T.green : T.dim, background: contractP.length > 0 ? T.green + "10" : T.card, padding: "4px 12px", borderRadius: "8px" }}>{contractP.length} photos</span>
@@ -704,7 +694,18 @@ export default function App() {
                 <div style={{ fontSize: "8px", color: "#fff", textAlign: "center", fontWeight: 600 }}>{p.label}</div>
                 <div style={{ fontSize: "7px", color: "#bbb", textAlign: "center" }}>{p.time}</div>
               </div>
-              <button onClick={() => setContractP(pr => pr.filter(x => x.id !== p.id))} style={{ position: "absolute", top: 3, right: 3, background: "rgba(0,0,0,0.5)", color: "#fff", border: "none", borderRadius: "50%", width: "20px", height: "20px", fontSize: "11px", cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center" }}>×</button>
+
+        <div style={css.card}>
+          <h3 style={{ fontSize: "16px", fontWeight: 700, margin: "0 0 14px" }}>🚗 Rental Details</h3>
+          <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "10px" }}>
+            {[["company", "Company"], ["car", "Car model"], ["plate", "Plate number"], ["emirate", "Emirate"], ["start", "Start date"], ["end", "End date"], ["dailyPrice", "Daily price (AED)"], ["deposit", "Deposit (AED)"], ["insurance", "Insurance"], ["excess", "Excess (AED)"], ["mileage", "Mileage limit"], ["fuel", "Fuel policy"]].map(([k, l]) => (
+              <div key={k}><input value={rental[k]} onChange={e => setRental(p => ({ ...p, [k]: e.target.value }))} placeholder={l} style={{ ...css.input, height: "48px", lineHeight: "48px", padding: "0 14px", WebkitAppearance: "none" }} type="text" /></div>
+            ))}
+          </div>
+          <div style={{ marginTop: "10px" }}><textarea value={rental.notes} onChange={e => setRental(p => ({ ...p, notes: e.target.value }))} placeholder="Notes..." style={{ ...css.input, minHeight: "50px", resize: "vertical" }} /></div>
+        </div>
+
+        <button onClick={() => setContractP(pr => pr.filter(x => x.id !== p.id))} style={{ position: "absolute", top: 3, right: 3, background: "rgba(0,0,0,0.5)", color: "#fff", border: "none", borderRadius: "50%", width: "20px", height: "20px", fontSize: "11px", cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center" }}>×</button>
             </div>)}
           </div>}
           {extracting && <div style={{ background: T.accent + "15", border: "1px solid " + T.accent, borderRadius: "12px", padding: "12px", marginBottom: "12px", textAlign: "center" }}>
@@ -1097,6 +1098,3 @@ ${pickupP.length > 0 ? `<h2>Vehicle Condition at Pickup</h2>
     </div>
   );
 }
-
-
-
