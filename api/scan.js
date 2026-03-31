@@ -1,4 +1,3 @@
-// Upstash Redis helper (no SDK needed)
 const UPSTASH_URL = process.env.KV_REST_API_URL || process.env.kv_KV_REST_API_URL;
 const UPSTASH_TOKEN = process.env.KV_REST_API_TOKEN || process.env.kv_KV_REST_API_TOKEN;
 
@@ -27,13 +26,7 @@ async function storeMarketData(data) {
 async function storeTerms(company, url, termsText) {
   if (!company || !termsText) return;
   const key = `terms:${company.toLowerCase().replace(/[^a-z0-9]/g, "_")}`;
-  const entry = {
-    company,
-    url,
-    terms: termsText.substring(0, 80000),
-    timestamp: new Date().toISOString(),
-  };
-  await redis(["SET", key, JSON.stringify(entry)]);
+  await redis(["SET", key, JSON.stringify({ company, url, terms: termsText.substring(0, 80000), timestamp: new Date().toISOString() })]);
   await redis(["SADD", "terms:companies", company]);
 }
 
@@ -52,21 +45,18 @@ async function getMarketContext() {
       const rates = entries.filter(e => e.dailyRate > 0).map(e => e.dailyRate);
       const avgRate = rates.length ? Math.round(rates.reduce((a, b) => a + b, 0) / rates.length) : null;
       const hiddenCosts = [...new Set(entries.flatMap(e => e.hiddenCosts || []))];
-      const insuranceTypes = [...new Set(entries.map(e => e.insurance).filter(Boolean))];
       let summary = `${company}: ${entries.length} reports`;
       if (avgRate) summary += `, avg AED ${avgRate}/day`;
-      if (hiddenCosts.length) summary += `, known costs: ${hiddenCosts.join(", ")}`;
-      if (insuranceTypes.length) summary += `, insurance: ${insuranceTypes.join(", ")}`;
+      if (hiddenCosts.length) summary += `, known costs: ${hiddenCosts.join("; ")}`;
       insights.push(summary);
     }
-    if (!insights.length) return "";
-    return `\n\nMARKET INTELLIGENCE FROM PREVIOUS SCANS (use this to give better advice):\n${insights.join("\n")}`;
+    return insights.length ? `\n\nMARKET INTELLIGENCE FROM PREVIOUS SCANS:\n${insights.join("\n")}` : "";
   } catch { return ""; }
 }
 
 function extractUrl(text) {
-  const urlMatch = text.match(/https?:\/\/[^\s<>"{}|\\^`\[\]]+/i);
-  return urlMatch ? urlMatch[0] : null;
+  const m = text.match(/https?:\/\/[^\s<>"{}|\\^`\[\]]+/i);
+  return m ? m[0] : null;
 }
 
 async function fetchUrlContent(url) {
@@ -80,35 +70,29 @@ async function fetchUrlContent(url) {
       signal: AbortSignal.timeout(15000),
     });
     if (!res.ok) return null;
-    const html = await res.text();
-    
-    // Try to find main content area first (skip navigation/menus)
-    let contentHtml = html;
-    const mainMatch = html.match(/<main[^>]*>([\s\S]*?)<\/main>/i)
-      || html.match(/<article[^>]*>([\s\S]*?)<\/article>/i)
-      || html.match(/<div[^>]*class="[^"]*(?:entry-content|post-content|page-content|main-content|terms|content-area)[^"]*"[^>]*>([\s\S]*?)<\/div>/i);
-    if (mainMatch) {
-      contentHtml = mainMatch[1];
-    }
-    
-    // Strip non-content HTML
-    let text = contentHtml
+    let html = await res.text();
+
+    // Strip all non-content elements
+    html = html
       .replace(/<script[^>]*>[\s\S]*?<\/script>/gi, "")
       .replace(/<style[^>]*>[\s\S]*?<\/style>/gi, "")
       .replace(/<nav[^>]*>[\s\S]*?<\/nav>/gi, "")
-      .replace(/<footer[^>]*>[\s\S]*?<\/footer>/gi, "")
       .replace(/<header[^>]*>[\s\S]*?<\/header>/gi, "")
+      .replace(/<footer[^>]*>[\s\S]*?<\/footer>/gi, "")
       .replace(/<aside[^>]*>[\s\S]*?<\/aside>/gi, "")
       .replace(/<form[^>]*>[\s\S]*?<\/form>/gi, "")
       .replace(/<select[^>]*>[\s\S]*?<\/select>/gi, "")
       .replace(/<svg[^>]*>[\s\S]*?<\/svg>/gi, "")
-      .replace(/<img[^>]*>/gi, "")
-      .replace(/<link[^>]*>/gi, "")
-      .replace(/<meta[^>]*>/gi, "")
-      .replace(/<input[^>]*>/gi, "")
       .replace(/<button[^>]*>[\s\S]*?<\/button>/gi, "")
       .replace(/<iframe[^>]*>[\s\S]*?<\/iframe>/gi, "")
       .replace(/<!--[\s\S]*?-->/g, "")
+      .replace(/<img[^>]*>/gi, "")
+      .replace(/<link[^>]*>/gi, "")
+      .replace(/<meta[^>]*>/gi, "")
+      .replace(/<input[^>]*>/gi, "");
+
+    // Convert remaining HTML to text
+    let text = html
       .replace(/<[^>]+>/g, " ")
       .replace(/&nbsp;/g, " ")
       .replace(/&amp;/g, "&")
@@ -118,24 +102,23 @@ async function fetchUrlContent(url) {
       .replace(/&#39;/g, "'")
       .replace(/\s+/g, " ")
       .trim();
-    
-    // Remove Arabic text (bilingual pages double the content)
-    const sentences = text.split(". ");
+
+    // Remove lines that are mostly Arabic (bilingual Dubai sites)
+    const parts = text.split(/(?<=[.!?])\s+/);
     const seen = new Set();
-    const result = [];
-    for (const s of sentences) {
-      const trimmed = s.trim();
-      if (trimmed.length < 3) continue;
-      if (seen.has(trimmed)) continue;
-      seen.add(trimmed);
-      // Skip lines that are mostly Arabic (>30% Arabic characters)
-      const arabicChars = (trimmed.match(/[\u0600-\u06FF]/g) || []).length;
-      if (arabicChars > trimmed.length * 0.3) continue;
-      result.push(trimmed);
+    const filtered = [];
+    for (const part of parts) {
+      const t = part.trim();
+      if (t.length < 3) continue;
+      if (seen.has(t)) continue;
+      seen.add(t);
+      const arabicCount = (t.match(/[\u0600-\u06FF]/g) || []).length;
+      if (arabicCount > t.length * 0.3) continue;
+      filtered.push(t);
     }
-    text = result.join(". ");
-    
-    return text.substring(0, 60000);
+    text = filtered.join(" ");
+
+    return text.length > 100 ? text.substring(0, 60000) : null;
   } catch { return null; }
 }
 
@@ -158,9 +141,9 @@ export default async function handler(req, res) {
     isUrlScan = true;
     fetchedContent = await fetchUrlContent(url);
     if (fetchedContent) {
-      contractText = `The user shared this URL: ${url}\n\nHere is the content from that page:\n\n${fetchedContent}\n\nUser's message: ${contractText}`;
+      contractText = `The user shared this URL: ${url}\n\nContent from the page:\n\n${fetchedContent}\n\nOriginal message: ${contractText}`;
     } else {
-      contractText = `The user shared this URL: ${url} but the content could not be loaded. Please let them know and answer based on the URL/company name if recognizable.\n\nUser's message: ${contractText}`;
+      contractText = `The user shared this URL: ${url} but the page could not be loaded. Answer based on the URL/company name if recognizable.\n\nOriginal message: ${contractText}`;
     }
   }
 
@@ -180,45 +163,28 @@ export default async function handler(req, res) {
         messages: [
           {
             role: "user",
-            content: `You are RentScan AI, a forensic expert on car rental contracts in Dubai, UAE. Your job is to find EVERY concrete cost, fee, penalty and rule that could cost a renter money. You talk directly to the user in a clear, helpful, conversational way.
+            content: `You are RentScan AI, a forensic expert on car rental contracts in Dubai, UAE. Your job is to find EVERY concrete cost, fee, penalty and rule that could cost a renter money. You talk directly to the user in a clear, helpful way.
 
-CRITICAL RULES FOR ANALYSIS:
-1. Find EVERY specific AED amount mentioned — late fees, admin fees, penalties, deposits, Salik charges, fine processing fees, black point fees, cancellation fees, etc.
-2. Find EVERY policy that could cost money — mileage limits, fuel policy, grace periods, insurance exclusions, age surcharges, geographic restrictions
-3. Be SPECIFIC — always quote the exact AED amount and the exact clause/condition
-4. NEVER say "amounts not specified" if the document DOES contain specific amounts — read carefully
-5. For terms & conditions pages: these contain the REAL rules, not marketing — dig deep into every clause
+LANGUAGE RULE: Always respond in English only. Never mix languages.
 
-If the user pastes a rental contract, quote, or offer:
-- List EVERY specific fee with its exact AED amount
-- Calculate the real total cost including all extras
-- Point out what's NOT covered by insurance
-- Flag unusual or harsh terms
-- Compare with Dubai market norms if possible
+ANALYSIS RULES:
+1. Find EVERY specific AED amount — late fees, admin fees, penalties, deposits, Salik charges, fine processing fees, black point fees, cancellation fees, damage excess, early termination, etc.
+2. Find EVERY policy that could cost money — mileage limits, fuel policy, grace periods, insurance exclusions, age surcharges, geographic restrictions, vehicle tracking/immobilization
+3. Be SPECIFIC — always quote the exact AED amount and the condition that triggers it
+4. NEVER say "amounts not specified" if the document DOES contain specific amounts — read the ENTIRE document carefully
+5. Group findings by category: Fees & Penalties, Insurance & Liability, Restrictions & Rules, Cancellation & Refunds
 
-If the user shared a URL with terms and conditions:
-- Extract EVERY specific fee, charge, and penalty with exact AED amounts
-- List insurance exclusions (what's NOT covered)
-- Explain the late return policy with exact fees
-- Explain the damage/accident policy with exact excess amounts
-- Note age restrictions and surcharges
-- Highlight cancellation and refund policies
-- Flag any unusually harsh or one-sided terms
-- Summarize the most expensive surprises a renter could face
+For contracts/quotes: calculate real total cost with all extras.
+For terms & conditions URLs: extract EVERY fee, penalty, rule and noteworthy clause from the ENTIRE document.
+For general questions: give practical advice with real Dubai numbers.
 
-If the user asks a general question about car rentals in Dubai:
-- Give practical, specific advice with real numbers
-- Mention Dubai-specific things (Salik, traffic fines, distances, etc.)
-
-Keep your tone friendly but thorough. Be the most detailed rental contract analyst possible. Use bullet points for fees and penalties. Group them by category.
-
-Never badmouth specific companies by name. Be factual and neutral.
+Be factual and neutral about companies. Never badmouth by name.
 ${marketContext}
 
-IMPORTANT: After your response, add market data extraction on a new line. For the company name, use the company name exactly as it appears on their website or branding (e.g. "Octane Club Premium Rental" not just "Octane", "Hertz UAE" not "Hertz International LLC"). Extract ALL fees and penalties found as hiddenCosts entries.
+IMPORTANT: After your response, extract market data as JSON on a new line. Use the company name exactly as it appears on their website branding. Extract ALL fees and penalties as hiddenCosts — include both AED amounts AND noteworthy rules (e.g. "GPS tracking active", "car can be remotely immobilized", "reported stolen if not returned").
 
 ---MARKET_DATA---
-{"company":"short company name or null","car":"car model or null","dailyRate":number or 0,"insurance":"insurance type or null","mileage":"mileage limit or null","fuel":"fuel policy or null","deposit":number or 0,"excess":number or 0,"hiddenCosts":["list every specific fee/penalty with AED amounts AND every unusual/noteworthy rule or clause e.g. GPS tracking, remote immobilization, car reported stolen if late, age restrictions, geographic limits, insurance exclusions, cancellation rules, deposit forfeiture"],"rentalDays":number or 0}
+{"company":"company name or null","car":"car model or null","dailyRate":number or 0,"insurance":"insurance type or null","mileage":"mileage limit or null","fuel":"fuel policy or null","deposit":number or 0,"excess":number or 0,"hiddenCosts":["every fee/penalty with AED amounts AND every unusual rule or clause"],"rentalDays":number or 0}
 ---END_MARKET_DATA---
 
 User input:
@@ -229,10 +195,7 @@ ${contractText}`
     });
 
     const data = await response.json();
-
-    if (data.error) {
-      return res.status(500).json({ error: data.error.message });
-    }
+    if (data.error) return res.status(500).json({ error: data.error.message });
 
     let text = data.content[0].text;
 
@@ -251,7 +214,6 @@ ${contractText}`
     }
 
     return res.status(200).json({ mode: "chat", answer: text, tips: [] });
-
   } catch (error) {
     return res.status(500).json({ error: error.message });
   }
