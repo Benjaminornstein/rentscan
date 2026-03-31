@@ -324,7 +324,7 @@ export default function App() {
 
   // ===== STYLES (Light theme) =====
   const css = {
-    page: { minHeight: "100%", height: "100%", display: "flex", flexDirection: "column", background: T.bg, fontFamily: "-apple-system, 'SF Pro Display', 'Segoe UI', sans-serif", color: T.text, WebkitFontSmoothing: "antialiased", paddingTop: topSafeInset, boxSizing: "border-box", width: "100%", maxWidth: "720px", overflow: "hidden" },
+    page: { minHeight: "100%", minHeight: "100vh", display: "flex", flexDirection: "column", background: T.bg, fontFamily: "-apple-system, 'SF Pro Display', 'Segoe UI', sans-serif", color: T.text, WebkitFontSmoothing: "antialiased", paddingTop: topSafeInset, boxSizing: "border-box", width: "100%", maxWidth: "720px", overflow: "visible" },
     wrap: { flex: 1, maxWidth: "720px", width: "100%", margin: "0 auto", padding: "16px 16px calc(84px + env(safe-area-inset-bottom))", overflowX: "hidden", overflowY: "auto", WebkitOverflowScrolling: "touch" },
     card: { background: T.card, borderRadius: "16px", padding: "18px", marginBottom: "12px", boxShadow: "0 1px 3px rgba(0,0,0,0.06), 0 1px 2px rgba(0,0,0,0.04)" },
     btn: { background: `linear-gradient(135deg, ${T.accent}, ${T.accent2})`, color: "#fff", border: "none", borderRadius: "12px", padding: "14px", fontSize: "15px", fontWeight: 700, cursor: "pointer", width: "100%", letterSpacing: "0.2px" },
@@ -425,7 +425,7 @@ export default function App() {
         <span style={{ fontSize: "11px", fontWeight: 600, color: photos.length > 0 ? T.green : T.dim, background: photos.length > 0 ? `${T.green}10` : T.card, padding: "4px 12px", borderRadius: "8px" }}>{photos.length} photos</span>
       </div>
       {photos.length > 0 && <div style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: "6px", marginBottom: "14px" }}>
-        {photos.map(p => <div key={p.id} style={{ position: "relative", borderRadius: "10px", overflow: "hidden", aspectRatio: "1" }}>
+        {photos.map(p => <div key={p.id} style={{ position: "relative", borderRadius: "10px", overflow: "visible", aspectRatio: "1" }}>
           <img src={p.data} alt="" style={{ width: "100%", height: "100%", objectFit: "cover" }} />
           <div style={{ position: "absolute", bottom: 0, left: 0, right: 0, background: "linear-gradient(transparent, rgba(0,0,0,0.8))", padding: "8px 4px 3px" }}>
             <div style={{ fontSize: "8px", color: "#fff", textAlign: "center", fontWeight: 600 }}>{p.label}</div>
@@ -518,7 +518,7 @@ export default function App() {
         {list.map((co, idx) => {
           const isExp = exp === co.id; const extra = co.tt - co.cheapest.perDay * cDays;
           return (
-            <div key={co.id} style={{ ...css.card, padding: 0, overflow: "hidden", border: idx === 0 ? `2px solid ${T.accent}` : `1px solid ${T.border}` }}>
+            <div key={co.id} style={{ ...css.card, padding: 0, overflow: "visible", border: idx === 0 ? `2px solid ${T.accent}` : `1px solid ${T.border}` }}>
               {idx === 0 && <div style={{ background: `linear-gradient(135deg, ${T.accent}, ${T.accent2})`, padding: "5px", textAlign: "center", fontSize: "11px", fontWeight: 700, letterSpacing: "1px", color: "#fff" }}>🏆 BEST DEAL</div>}
               <div style={{ padding: "16px", cursor: "pointer" }} onClick={() => setExp(isExp ? null : co.id)}>
                 <div style={{ display: "flex", alignItems: "center", gap: "12px" }}>
