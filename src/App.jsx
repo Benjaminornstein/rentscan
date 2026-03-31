@@ -1082,6 +1082,33 @@ ${pickupP.length > 0 ? `<h2>Vehicle Condition at Pickup</h2>
     </div>
   );
 
+  const handleFollowUp = async () => {
+    if (!followUp.trim() || followUpLoading) return;
+    
+    const newMessages = [...chatMessages, { role: "user", content: followUp.trim() }];
+    setChatMessages(newMessages);
+    setFollowUp("");
+    setFollowUpLoading(true);
+
+    try {
+      const res = await fetch("/api/scan", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ messages: newMessages }),
+      });
+      const data = await res.json();
+      if (data.answer) {
+        setChatMessages([...newMessages, { role: "assistant", content: data.answer }]);
+        setResult(data.answer);
+      }
+    } catch (err) {
+      console.error("Follow-up error:", err);
+    } finally {
+      setFollowUpLoading(false);
+    }
+  };
+
+
   return (
     <div style={css.page}>
       {photoMode === "pickup" && <GuidedPhotoFlow setter={setPickupP} />}

@@ -30,7 +30,6 @@ async function storeTerms(company, url, termsText) {
   await redis(["SADD", "terms:companies", company]);
 }
 
-// Get stored terms for a specific company
 async function getTermsForCompany(companyName) {
   if (!companyName) return "";
   const key = `terms:${companyName.toLowerCase().replace(/[^a-z0-9]/g, "_")}`;
@@ -42,21 +41,17 @@ async function getTermsForCompany(companyName) {
   } catch { return ""; }
 }
 
-// Check if user's message mentions any known company, return matching terms
 async function findRelevantTerms(userText) {
   if (!UPSTASH_URL || !UPSTASH_TOKEN) return "";
   try {
     const termsCompanies = await redis(["SMEMBERS", "terms:companies"]);
     if (!termsCompanies?.result?.length) return "";
-
     const textLower = userText.toLowerCase();
-
     for (const company of termsCompanies.result) {
-      const companyLower = company.toLowerCase();
-      if (textLower.includes(companyLower)) {
+      if (textLower.includes(company.toLowerCase())) {
         const terms = await getTermsForCompany(company);
         if (terms) {
-          return `\n\nSTORED TERMS & CONDITIONS FOR ${company.toUpperCase()} (from our database - use this to answer the user's question with specific AED amounts and exact clauses):\n\n${terms.substring(0, 40000)}`;
+          return `\n\nSTORED TERMS & CONDITIONS FOR ${company.toUpperCase()} (from our database - use this to answer with specific AED amounts and exact clauses):\n\n${terms.substring(0, 40000)}`;
         }
       }
     }
@@ -105,7 +100,6 @@ async function fetchUrlContent(url) {
     });
     if (!res.ok) return null;
     let html = await res.text();
-
     html = html
       .replace(/<script[^>]*>[\s\S]*?<\/script>/gi, "")
       .replace(/<style[^>]*>[\s\S]*?<\/style>/gi, "")
@@ -123,82 +117,27 @@ async function fetchUrlContent(url) {
       .replace(/<link[^>]*>/gi, "")
       .replace(/<meta[^>]*>/gi, "")
       .replace(/<input[^>]*>/gi, "");
-
     let text = html
       .replace(/<[^>]+>/g, " ")
-      .replace(/&nbsp;/g, " ")
-      .replace(/&amp;/g, "&")
-      .replace(/&lt;/g, "<")
-      .replace(/&gt;/g, ">")
-      .replace(/&quot;/g, '"')
-      .replace(/&#39;/g, "'")
-      .replace(/\s+/g, " ")
-      .trim();
-
+      .replace(/&nbsp;/g, " ").replace(/&amp;/g, "&").replace(/&lt;/g, "<").replace(/&gt;/g, ">").replace(/&quot;/g, '"').replace(/&#39;/g, "'")
+      .replace(/\s+/g, " ").trim();
     const parts = text.split(/(?<=[.!?])\s+/);
     const seen = new Set();
     const filtered = [];
     for (const part of parts) {
       const t = part.trim();
-      if (t.length < 3) continue;
-      if (seen.has(t)) continue;
+      if (t.length < 3 || seen.has(t)) continue;
       seen.add(t);
       const arabicCount = (t.match(/[\u0600-\u06FF]/g) || []).length;
       if (arabicCount > t.length * 0.3) continue;
       filtered.push(t);
     }
     text = filtered.join(" ");
-
     return text.length > 100 ? text.substring(0, 60000) : null;
   } catch { return null; }
 }
 
-export default async function handler(req, res) {
-  res.setHeader("Access-Control-Allow-Origin", "*");
-  res.setHeader("Access-Control-Allow-Methods", "POST, OPTIONS");
-  res.setHeader("Access-Control-Allow-Headers", "Content-Type");
-
-  if (req.method === "OPTIONS") return res.status(200).end();
-  if (req.method !== "POST") return res.status(405).json({ error: "Method not allowed" });
-
-  let { contractText } = req.body;
-  if (!contractText) return res.status(400).json({ error: "No text provided" });
-
-  const url = extractUrl(contractText);
-  let fetchedContent = null;
-  let isUrlScan = false;
-
-  if (url) {
-    isUrlScan = true;
-    fetchedContent = await fetchUrlContent(url);
-    if (fetchedContent) {
-      contractText = `The user shared this URL: ${url}\n\nContent from the page:\n\n${fetchedContent}\n\nOriginal message: ${contractText}`;
-    } else {
-      contractText = `The user shared this URL: ${url} but the page could not be loaded. Answer based on the URL/company name if recognizable.\n\nOriginal message: ${contractText}`;
-    }
-  }
-
-  try {
-    // Fetch market context AND stored terms for any mentioned company in parallel
-    const [marketContext, termsContext] = await Promise.all([
-      getMarketContext(),
-      findRelevantTerms(contractText),
-    ]);
-
-    const response = await fetch("https://api.anthropic.com/v1/messages", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        "x-api-key": process.env.ANTHROPIC_API_KEY,
-        "anthropic-version": "2023-06-01",
-      },
-      body: JSON.stringify({
-        model: "claude-sonnet-4-20250514",
-        max_tokens: 3000,
-        messages: [
-          {
-            role: "user",
-            content: `You are RentScan AI, a forensic expert on car rental contracts in Dubai, UAE. Your job is to find EVERY concrete cost, fee, penalty and rule that could cost a renter money. You talk directly to the user in a clear, helpful way.
+const SYSTEM_PROMPT = `You are RentScan AI, a forensic expert on car rental contracts in Dubai, UAE. Your job is to find EVERY concrete cost, fee, penalty and rule that could cost a renter money. You talk directly to the user in a clear, helpful way.
 
 LANGUAGE RULE: Always respond in English only. Never mix languages.
 
@@ -214,20 +153,99 @@ IMPORTANT: If you have STORED TERMS & CONDITIONS for a company below, USE THEM t
 For contracts/quotes: calculate real total cost with all extras.
 For terms & conditions: extract EVERY fee, penalty, rule and noteworthy clause.
 For general questions: give practical advice with real Dubai numbers. If you have stored terms for a mentioned company, cite specific fees from those terms.
+For follow-up questions: answer based on the conversation context and any stored data you have.
 
-Be factual and neutral about companies. Never badmouth by name.
-${marketContext}${termsContext}
+Be factual and neutral about companies. Never badmouth by name.`;
 
-IMPORTANT: After your response, extract market data as JSON on a new line. Use the company name exactly as it appears on their website branding. Extract ALL fees and penalties as hiddenCosts — include both AED amounts AND noteworthy rules.
+const MARKET_DATA_INSTRUCTION = `
+
+IMPORTANT: After your response, extract market data as JSON on a new line. Use the company name exactly as it appears on their website branding. Extract ALL fees and penalties as hiddenCosts. If this is a follow-up question with no new data to extract, output null.
 
 ---MARKET_DATA---
 {"company":"company name or null","car":"car model or null","dailyRate":number or 0,"insurance":"insurance type or null","mileage":"mileage limit or null","fuel":"fuel policy or null","deposit":number or 0,"excess":number or 0,"hiddenCosts":["every fee/penalty with AED amounts AND every unusual rule or clause"],"rentalDays":number or 0}
----END_MARKET_DATA---
+---END_MARKET_DATA---`;
 
-User input:
-${contractText}`
-          }
-        ]
+export default async function handler(req, res) {
+  res.setHeader("Access-Control-Allow-Origin", "*");
+  res.setHeader("Access-Control-Allow-Methods", "POST, OPTIONS");
+  res.setHeader("Access-Control-Allow-Headers", "Content-Type");
+
+  if (req.method === "OPTIONS") return res.status(200).end();
+  if (req.method !== "POST") return res.status(405).json({ error: "Method not allowed" });
+
+  let { contractText, messages } = req.body;
+
+  // Need either contractText (first message) or messages (conversation)
+  if (!contractText && (!messages || !messages.length)) {
+    return res.status(400).json({ error: "No text provided" });
+  }
+
+  // Build the full text to search for URLs and company names
+  // Use contractText for first message, or the last user message for follow-ups
+  let searchText = contractText || "";
+  if (messages && messages.length) {
+    // Combine all user messages for context search (terms lookup, URL detection)
+    searchText = messages.filter(m => m.role === "user").map(m => m.content).join(" ");
+  }
+
+  // URL detection and fetching (only on first message)
+  const url = contractText ? extractUrl(contractText) : null;
+  let fetchedContent = null;
+  let isUrlScan = false;
+  let firstUserContent = contractText || "";
+
+  if (url) {
+    isUrlScan = true;
+    fetchedContent = await fetchUrlContent(url);
+    if (fetchedContent) {
+      firstUserContent = `The user shared this URL: ${url}\n\nContent from the page:\n\n${fetchedContent}\n\nOriginal message: ${contractText}`;
+    } else {
+      firstUserContent = `The user shared this URL: ${url} but the page could not be loaded. Answer based on the URL/company name if recognizable.\n\nOriginal message: ${contractText}`;
+    }
+  }
+
+  try {
+    const [marketContext, termsContext] = await Promise.all([
+      getMarketContext(),
+      findRelevantTerms(searchText),
+    ]);
+
+    // Build the system context (injected into first user message)
+    const systemContext = `${SYSTEM_PROMPT}
+${marketContext}${termsContext}
+${MARKET_DATA_INSTRUCTION}
+
+`;
+
+    // Build messages array for Claude
+    let claudeMessages;
+
+    if (messages && messages.length) {
+      // Conversation mode: prepend system context to the first user message
+      claudeMessages = messages.map((msg, i) => {
+        if (i === 0 && msg.role === "user") {
+          return { role: "user", content: systemContext + msg.content };
+        }
+        return { role: msg.role, content: msg.content };
+      });
+    } else {
+      // First message mode (backwards compatible)
+      claudeMessages = [
+        { role: "user", content: systemContext + "User input:\n" + firstUserContent }
+      ];
+    }
+
+    const response = await fetch("https://api.anthropic.com/v1/messages", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "x-api-key": process.env.ANTHROPIC_API_KEY,
+        "anthropic-version": "2023-06-01",
+      },
+      body: JSON.stringify({
+        model: "claude-sonnet-4-20250514",
+        max_tokens: 3000,
+        messages: claudeMessages,
       })
     });
 
@@ -236,6 +254,7 @@ ${contractText}`
 
     let text = data.content[0].text;
 
+    // Extract and store market data
     const marketMatch = text.match(/---MARKET_DATA---\s*([\s\S]*?)\s*---END_MARKET_DATA---/);
     if (marketMatch) {
       text = text.replace(/\s*---MARKET_DATA---[\s\S]*?---END_MARKET_DATA---\s*/, "").trim();
