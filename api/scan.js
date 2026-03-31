@@ -1,24 +1,75 @@
+// Upstash Redis helper (no SDK needed)
+const UPSTASH_URL = process.env.KV_REST_API_URL || process.env.kv_KV_REST_API_URL;
+const UPSTASH_TOKEN = process.env.KV_REST_API_TOKEN || process.env.kv_KV_REST_API_TOKEN;
+
+async function redis(command) {
+  if (!UPSTASH_URL || !UPSTASH_TOKEN) return null;
+  try {
+    const res = await fetch(UPSTASH_URL, {
+      method: "POST",
+      headers: { Authorization: `Bearer ${UPSTASH_TOKEN}`, "Content-Type": "application/json" },
+      body: JSON.stringify(command),
+    });
+    return await res.json();
+  } catch { return null; }
+}
+
+async function storeMarketData(data) {
+  if (!data || !data.company) return;
+  const entry = { ...data, timestamp: new Date().toISOString(), id: Date.now().toString(36) };
+  const key = `market:${data.company.toLowerCase().replace(/[^a-z0-9]/g, "_")}`;
+  // Store individual entry in a list per company
+  await redis(["LPUSH", key, JSON.stringify(entry)]);
+  // Keep max 100 entries per company
+  await redis(["LTRIM", key, "0", "99"]);
+  // Add company to the set of known companies
+  await redis(["SADD", "market:companies", data.company]);
+  // Increment total scan counter
+  await redis(["INCR", "market:total_scans"]);
+}
+
+async function getMarketContext() {
+  if (!UPSTASH_URL || !UPSTASH_TOKEN) return "";
+  try {
+    const companiesRes = await redis(["SMEMBERS", "market:companies"]);
+    if (!companiesRes?.result?.length) return "";
+    const insights = [];
+    for (const company of companiesRes.result.slice(0, 20)) {
+      const key = `market:${company.toLowerCase().replace(/[^a-z0-9]/g, "_")}`;
+      const entriesRes = await redis(["LRANGE", key, "0", "9"]);
+      if (!entriesRes?.result?.length) continue;
+      const entries = entriesRes.result.map(e => { try { return JSON.parse(e); } catch { return null; } }).filter(Boolean);
+      if (!entries.length) continue;
+      const rates = entries.filter(e => e.dailyRate > 0).map(e => e.dailyRate);
+      const avgRate = rates.length ? Math.round(rates.reduce((a, b) => a + b, 0) / rates.length) : null;
+      const hiddenCosts = [...new Set(entries.flatMap(e => e.hiddenCosts || []))];
+      const insuranceTypes = [...new Set(entries.map(e => e.insurance).filter(Boolean))];
+      let summary = `${company}: ${entries.length} reports`;
+      if (avgRate) summary += `, avg AED ${avgRate}/day`;
+      if (hiddenCosts.length) summary += `, common hidden costs: ${hiddenCosts.join(", ")}`;
+      if (insuranceTypes.length) summary += `, insurance: ${insuranceTypes.join(", ")}`;
+      insights.push(summary);
+    }
+    if (!insights.length) return "";
+    return `\n\nMARKET INTELLIGENCE FROM PREVIOUS SCANS (use this to give better advice):\n${insights.join("\n")}`;
+  } catch { return ""; }
+}
+
 export default async function handler(req, res) {
-  // CORS headers for Capacitor app
   res.setHeader("Access-Control-Allow-Origin", "*");
   res.setHeader("Access-Control-Allow-Methods", "POST, OPTIONS");
   res.setHeader("Access-Control-Allow-Headers", "Content-Type");
 
-  if (req.method === "OPTIONS") {
-    return res.status(200).end();
-  }
-
-  if (req.method !== "POST") {
-    return res.status(405).json({ error: "Method not allowed" });
-  }
+  if (req.method === "OPTIONS") return res.status(200).end();
+  if (req.method !== "POST") return res.status(405).json({ error: "Method not allowed" });
 
   const { contractText } = req.body;
-
-  if (!contractText) {
-    return res.status(400).json({ error: "No text provided" });
-  }
+  if (!contractText) return res.status(400).json({ error: "No text provided" });
 
   try {
+    // Get market context from previous scans
+    const marketContext = await getMarketContext();
+
     const response = await fetch("https://api.anthropic.com/v1/messages", {
       method: "POST",
       headers: {
@@ -28,7 +79,7 @@ export default async function handler(req, res) {
       },
       body: JSON.stringify({
         model: "claude-sonnet-4-20250514",
-        max_tokens: 1500,
+        max_tokens: 2000,
         messages: [
           {
             role: "user",
@@ -41,6 +92,7 @@ If the user pastes a rental contract, quote, or offer:
 - Give a rough estimate of the REAL total cost including everything
 - Tell them what to negotiate or watch out for
 - Be specific with AED amounts
+- If you have market intelligence data about this company, use it to compare and give better advice
 
 If the user asks a general question about car rentals in Dubai:
 - Give practical, specific advice
@@ -50,6 +102,13 @@ If the user asks a general question about car rentals in Dubai:
 Keep your tone friendly but direct. Use short paragraphs. Use bullet points where helpful. Don't be overly formal. You're like a knowledgeable friend who lives in Dubai and knows the rental market inside out.
 
 Never badmouth specific companies by name. Be factual and neutral about companies.
+${marketContext}
+
+IMPORTANT: After your response to the user, you MUST add the following on a new line. Extract any rental market data from the user's input and output it as JSON. If no specific rental data can be extracted (e.g. just a general question), output null.
+
+---MARKET_DATA---
+{"company":"company name or null","car":"car model or null","dailyRate":number or 0,"insurance":"insurance type or null","mileage":"mileage limit or null","fuel":"fuel policy or null","deposit":number or 0,"excess":number or 0,"hiddenCosts":["list of hidden costs found"],"rentalDays":number or 0}
+---END_MARKET_DATA---
 
 User input:
 ${contractText}`
@@ -64,7 +123,21 @@ ${contractText}`
       return res.status(500).json({ error: data.error.message });
     }
 
-    const text = data.content[0].text;
+    let text = data.content[0].text;
+
+    // Extract and store market data
+    const marketMatch = text.match(/---MARKET_DATA---\s*([\s\S]*?)\s*---END_MARKET_DATA---/);
+    if (marketMatch) {
+      // Remove market data block from user-facing response
+      text = text.replace(/\s*---MARKET_DATA---[\s\S]*?---END_MARKET_DATA---\s*/, "").trim();
+      try {
+        const marketData = JSON.parse(marketMatch[1].trim());
+        if (marketData && marketData.company) {
+          await storeMarketData(marketData);
+        }
+      } catch {}
+    }
+
     return res.status(200).json({ mode: "chat", answer: text, tips: [] });
 
   } catch (error) {

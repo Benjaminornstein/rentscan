@@ -1,5 +1,7 @@
 {
   "rewrites": [
-    { "source": "/api/scan", "destination": "/api/scan.js" }
+    { "source": "/api/scan", "destination": "/api/scan.js" },
+    { "source": "/api/market", "destination": "/api/market.js" },
+    { "source": "/api/extract", "destination": "/api/extract.js" }
   ]
 }
