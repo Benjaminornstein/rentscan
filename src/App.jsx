@@ -318,6 +318,7 @@ export default function App() {
       if (data.answer) {
         setRes({ mode: "chat", answer: data.answer, tips: data.tips || [], aiPowered: true });
           setChatMessages([{ role: "user", content: text }, { role: "assistant", content: data.answer }]);
+          if (data.termsUsed) setRes(prev => ({ ...prev, termsUsed: data.termsUsed }));
       } else if (data.error) {
         setRes({ mode: "chat", answer: "Sorry, something went wrong. Please try again.", tips: [], aiPowered: false });
       } else {
@@ -574,6 +575,22 @@ export default function App() {
       {res.mode === "chat" && <>
         <div style={{ ...css.card, padding: "22px" }}>
           <div style={{ fontSize: "15px", lineHeight: 1.7, color: T.text, whiteSpace: "pre-wrap" }}>{res.answer.replace(/```json\s*null\s*```/g, "").trim()}</div>
+
+            {res.termsUsed && (
+              <div style={{
+                marginTop: "14px", padding: "12px 16px", borderRadius: "10px",
+                backgroundColor: res.termsUsed.ageDays > 60 ? "rgba(255,100,50,0.1)" : res.termsUsed.ageDays > 14 ? "rgba(255,200,50,0.1)" : "rgba(100,200,100,0.07)",
+                border: res.termsUsed.ageDays > 60 ? "1px solid rgba(255,100,50,0.25)" : res.termsUsed.ageDays > 14 ? "1px solid rgba(255,200,50,0.2)" : "1px solid rgba(100,200,100,0.15)",
+                fontSize: "12px", lineHeight: 1.5, color: "#999",
+              }}>
+                <span style={{ fontWeight: 700, color: res.termsUsed.ageDays > 60 ? "#ff6432" : res.termsUsed.ageDays > 14 ? "#e8b930" : "#7cb87c" }}>
+                  {res.termsUsed.ageDays > 60 ? "\u26A0\uFE0F Data may be outdated" : res.termsUsed.ageDays > 14 ? "\u26A0\uFE0F Verify with company" : "\u2705 Recently reviewed"}
+                </span>
+                {" \u2014 Based on "}{res.termsUsed.company}{"'s terms, reviewed "}{res.termsUsed.date}
+                {". Terms can change \u2014 verify with the company before signing."}
+                {res.termsUsed.url && (<>{" "}<a href={res.termsUsed.url} target="_blank" rel="noopener noreferrer" style={{ color: "#C9A227", textDecoration: "underline" }}>View source</a></>)}
+              </div>
+            )}
 
             {/* Follow-up messages */}
             {chatMessages.slice(2).map((msg, i) => (

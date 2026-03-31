@@ -42,21 +42,38 @@ async function getTermsForCompany(companyName) {
 }
 
 async function findRelevantTerms(userText) {
-  if (!UPSTASH_URL || !UPSTASH_TOKEN) return "";
+  if (!UPSTASH_URL || !UPSTASH_TOKEN) return { text: "", meta: null };
   try {
     const termsCompanies = await redis(["SMEMBERS", "terms:companies"]);
-    if (!termsCompanies?.result?.length) return "";
+    if (!termsCompanies?.result?.length) return { text: "", meta: null };
     const textLower = userText.toLowerCase();
     for (const company of termsCompanies.result) {
       if (textLower.includes(company.toLowerCase())) {
-        const terms = await getTermsForCompany(company);
-        if (terms) {
-          return `\n\nSTORED TERMS & CONDITIONS FOR ${company.toUpperCase()} (from our database - use this to answer with specific AED amounts and exact clauses):\n\n${terms.substring(0, 40000)}`;
-        }
+        const key = `terms:${company.toLowerCase().replace(/[^a-z0-9]/g, "_")}`;
+        const result = await redis(["GET", key]);
+        if (!result?.result) continue;
+        try {
+          const data = JSON.parse(result.result);
+          if (!data.terms) continue;
+          const storedDate = data.timestamp ? new Date(data.timestamp) : null;
+          const ageDays = storedDate ? Math.floor((Date.now() - storedDate.getTime()) / 86400000) : null;
+          const dateStr = storedDate ? storedDate.toLocaleDateString("en-GB", { day: "numeric", month: "long", year: "numeric" }) : "unknown date";
+
+          let ageNote = "";
+          if (ageDays !== null && ageDays > 60) {
+            ageNote = " (WARNING: " + ageDays + " days old, may be outdated)";
+          } else if (ageDays !== null && ageDays > 14) {
+            ageNote = " (" + ageDays + " days ago, user should verify)";
+          }
+
+          const ctx = `\n\nSTORED TERMS & CONDITIONS FOR ${company.toUpperCase()}\nReviewed on ${dateStr}${ageNote}.${data.url ? " Source: " + data.url : ""}\nTHIS DATA HAS PRIORITY over your general knowledge. Use exact AED amounts from these terms. Always tell the user the review date and that they should verify with the company.\n\n${data.terms.substring(0, 40000)}`;
+
+          return { text: ctx, meta: { company, date: dateStr, url: data.url || null, ageDays: ageDays || 0 } };
+        } catch { continue; }
       }
     }
-    return "";
-  } catch { return ""; }
+    return { text: "", meta: null };
+  } catch { return { text: "", meta: null }; }
 }
 
 async function getMarketContext() {
@@ -155,7 +172,14 @@ For terms & conditions: extract EVERY fee, penalty, rule and noteworthy clause.
 For general questions: give practical advice with real Dubai numbers. If you have stored terms for a mentioned company, cite specific fees from those terms.
 For follow-up questions: answer based on the conversation context and any stored data you have.
 
-Be factual and neutral about companies. Never badmouth by name.`;
+Be factual and neutral about companies. Never badmouth by name.
+
+TERMS DATA RULES:
+- Stored terms have PRIORITY over your general knowledge. Use exact AED amounts from the terms.
+- Always state: "Based on [Company]'s terms as published on their website, reviewed on [date]."
+- Always end terms-based answers with: "Terms can change at any time. Verify directly with the company before signing."
+- NEVER present stored terms as "current" — frame as "as of [date]".
+- Never invent AED amounts. If unsure, say so.`;
 
 const MARKET_DATA_INSTRUCTION = `
 
@@ -205,7 +229,7 @@ export default async function handler(req, res) {
   }
 
   try {
-    const [marketContext, termsContext] = await Promise.all([
+    const [marketContext, termsResult] = await Promise.all([
       getMarketContext(),
       findRelevantTerms(searchText),
     ]);
@@ -270,7 +294,7 @@ ${MARKET_DATA_INSTRUCTION}
       } catch {}
     }
 
-    return res.status(200).json({ mode: "chat", answer: text, tips: [] });
+    return res.status(200).json({ mode: "chat", answer: text, tips: [], termsUsed: termsMeta || null });
   } catch (error) {
     return res.status(500).json({ error: error.message });
   }
