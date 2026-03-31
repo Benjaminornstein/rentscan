@@ -198,6 +198,9 @@ export default function App() {
   const [tab, setTab] = useState("scan");
   const [text, setText] = useState("");
   const [res, setRes] = useState(null);
+  const [chatMessages, setChatMessages] = useState([]);
+  const [followUp, setFollowUp] = useState("");
+  const [followUpLoading, setFollowUpLoading] = useState(false);
   const [loading, setLoading] = useState(false);
   const [leads, setLeads] = useState({});
   const [carF, setCarF] = useState("All");
@@ -273,8 +276,35 @@ export default function App() {
     try { if (window.OneSignal) window.OneSignal.push(function() { window.OneSignal.sendTag(name, "true"); }); } catch {}
   };
 
+  // ===== FOLLOW-UP CHAT =====
+  const handleFollowUp = async () => {
+    if (!followUp.trim() || followUpLoading) return;
+    const newMessages = [...chatMessages, { role: "user", content: followUp.trim() }];
+    setChatMessages(newMessages);
+    setFollowUp("");
+    setFollowUpLoading(true);
+    try {
+      const resp = await fetch("/api/scan", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ messages: newMessages }),
+      });
+      const data = await resp.json();
+      if (data.answer) {
+        const clean = data.answer.replace(/```json\s*null\s*```/g, "").trim();
+        setChatMessages([...newMessages, { role: "assistant", content: clean }]);
+      }
+    } catch (err) {
+      setChatMessages([...newMessages, { role: "assistant", content: "Sorry, something went wrong. Please try again." }]);
+    } finally {
+      setFollowUpLoading(false);
+    }
+  };
+
   // ===== SCAN with API =====
   const doScan = async () => {
+    setChatMessages([]);
+    setFollowUp("");
     if (!text.trim()) return;
     setLoading(true);
     trackEvent("scan_started", { length: text.length });
@@ -287,6 +317,7 @@ export default function App() {
       const data = await resp.json();
       if (data.answer) {
         setRes({ mode: "chat", answer: data.answer, tips: data.tips || [], aiPowered: true });
+          setChatMessages([{ role: "user", content: text }, { role: "assistant", content: data.answer }]);
       } else if (data.error) {
         setRes({ mode: "chat", answer: "Sorry, something went wrong. Please try again.", tips: [], aiPowered: false });
       } else {
@@ -542,7 +573,70 @@ export default function App() {
       {/* CHAT MODE */}
       {res.mode === "chat" && <>
         <div style={{ ...css.card, padding: "22px" }}>
-          <div style={{ fontSize: "15px", lineHeight: 1.7, color: T.text, whiteSpace: "pre-wrap" }}>{res.answer}</div>
+          <div style={{ fontSize: "15px", lineHeight: 1.7, color: T.text, whiteSpace: "pre-wrap" }}>{res.answer.replace(/```json\s*null\s*```/g, "").trim()}</div>
+
+            {/* Follow-up messages */}
+            {chatMessages.slice(2).map((msg, i) => (
+              <div key={i} style={{
+                padding: "12px 16px",
+                marginTop: "12px",
+                borderRadius: "12px",
+                backgroundColor: msg.role === "user" ? "rgba(255, 204, 0, 0.12)" : "rgba(255,255,255,0.04)",
+                border: msg.role === "user" ? "1px solid rgba(255,204,0,0.25)" : "1px solid rgba(255,255,255,0.08)",
+                whiteSpace: "pre-wrap",
+                fontSize: "14px",
+                lineHeight: 1.7,
+                color: T.text,
+              }}>
+                <div style={{ fontSize: "11px", color: msg.role === "user" ? T.accent : "#888", marginBottom: "4px", fontWeight: 700, textTransform: "uppercase" }}>
+                  {msg.role === "user" ? "You" : "RentScan AI"}
+                </div>
+                {msg.content}
+              </div>
+            ))}
+
+            {/* Follow-up input */}
+            {res && res.aiPowered && (
+              <div style={{ marginTop: "16px", display: "flex", gap: "8px" }}>
+                <input
+                  type="text"
+                  value={followUp}
+                  onChange={(e) => setFollowUp(e.target.value)}
+                  onKeyDown={(e) => e.key === "Enter" && handleFollowUp()}
+                  placeholder="Ask a follow-up question..."
+                  disabled={followUpLoading}
+                  style={{
+                    flex: 1,
+                    padding: "12px 16px",
+                    borderRadius: "12px",
+                    border: "1px solid rgba(255,255,255,0.15)",
+                    backgroundColor: "rgba(255,255,255,0.05)",
+                    color: T.text,
+                    fontSize: "14px",
+                    outline: "none",
+                    fontFamily: "inherit",
+                  }}
+                />
+                <button
+                  onClick={handleFollowUp}
+                  disabled={followUpLoading || !followUp.trim()}
+                  style={{
+                    padding: "12px 20px",
+                    borderRadius: "12px",
+                    border: "none",
+                    background: followUpLoading ? "#555" : "linear-gradient(135deg, " + T.accent + ", " + T.accent2 + ")",
+                    color: "#fff",
+                    fontWeight: 700,
+                    fontSize: "14px",
+                    cursor: followUpLoading ? "not-allowed" : "pointer",
+                    whiteSpace: "nowrap",
+                    fontFamily: "inherit",
+                  }}
+                >
+                  {followUpLoading ? "..." : "Ask"}
+                </button>
+              </div>
+            )}
         </div>
         {res.tips?.length > 0 && <div style={css.card}>
           <h3 style={{ fontSize: "15px", fontWeight: 700, margin: "0 0 12px" }}>💡 Quick tips</h3>
@@ -1081,33 +1175,6 @@ ${pickupP.length > 0 ? `<h2>Vehicle Condition at Pickup</h2>
       <p style={{ fontSize: "10px", color: T.dim, margin: 0, lineHeight: 1.5 }}>© 2026 RentScan · Dubai, UAE<br/>All information is for general guidance only. Not legal or financial advice.</p>
     </div>
   );
-
-  const handleFollowUp = async () => {
-    if (!followUp.trim() || followUpLoading) return;
-    
-    const newMessages = [...chatMessages, { role: "user", content: followUp.trim() }];
-    setChatMessages(newMessages);
-    setFollowUp("");
-    setFollowUpLoading(true);
-
-    try {
-      const res = await fetch("/api/scan", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ messages: newMessages }),
-      });
-      const data = await res.json();
-      if (data.answer) {
-        setChatMessages([...newMessages, { role: "assistant", content: data.answer }]);
-        setResult(data.answer);
-      }
-    } catch (err) {
-      console.error("Follow-up error:", err);
-    } finally {
-      setFollowUpLoading(false);
-    }
-  };
-
 
   return (
     <div style={css.page}>
