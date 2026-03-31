@@ -81,8 +81,18 @@ async function fetchUrlContent(url) {
     });
     if (!res.ok) return null;
     const html = await res.text();
-    // Aggressively strip non-content HTML
-    let text = html
+    
+    // Try to find main content area first (skip navigation/menus)
+    let contentHtml = html;
+    const mainMatch = html.match(/<main[^>]*>([\s\S]*?)<\/main>/i)
+      || html.match(/<article[^>]*>([\s\S]*?)<\/article>/i)
+      || html.match(/<div[^>]*class="[^"]*(?:entry-content|post-content|page-content|main-content|terms|content-area)[^"]*"[^>]*>([\s\S]*?)<\/div>/i);
+    if (mainMatch) {
+      contentHtml = mainMatch[1];
+    }
+    
+    // Strip non-content HTML
+    let text = contentHtml
       .replace(/<script[^>]*>[\s\S]*?<\/script>/gi, "")
       .replace(/<style[^>]*>[\s\S]*?<\/style>/gi, "")
       .replace(/<nav[^>]*>[\s\S]*?<\/nav>/gi, "")
@@ -108,24 +118,24 @@ async function fetchUrlContent(url) {
       .replace(/&#39;/g, "'")
       .replace(/\s+/g, " ")
       .trim();
-    // Remove duplicate lines (menus often repeat)
-    const lines = text.split(". ");
+    
+    // Remove Arabic text (bilingual pages double the content)
+    const sentences = text.split(". ");
     const seen = new Set();
-    const unique = [];
-    for (const line of lines) {
-      const trimmed = line.trim();
-      if (trimmed.length < 5) continue;
+    const result = [];
+    for (const s of sentences) {
+      const trimmed = s.trim();
+      if (trimmed.length < 3) continue;
       if (seen.has(trimmed)) continue;
       seen.add(trimmed);
-      unique.push(trimmed);
+      // Skip lines that are mostly Arabic (>30% Arabic characters)
+      const arabicChars = (trimmed.match(/[\u0600-\u06FF]/g) || []).length;
+      if (arabicChars > trimmed.length * 0.3) continue;
+      result.push(trimmed);
     }
-    // Remove Arabic text (bilingual pages double the content)
-    const filtered = unique.filter(line => {
-      const arabicChars = (line.match(/[\u0600-\u06FF]/g) || []).length;
-      return arabicChars < line.length * 0.3; // Keep lines that are less than 30% Arabic
-    });
-    text = filtered.join(". ");
-    return text.substring(0, 50000);
+    text = result.join(". ");
+    
+    return text.substring(0, 60000);
   } catch { return null; }
 }
 
