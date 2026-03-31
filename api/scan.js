@@ -18,14 +18,34 @@ async function storeMarketData(data) {
   if (!data || !data.company) return;
   const entry = { ...data, timestamp: new Date().toISOString(), id: Date.now().toString(36) };
   const key = `market:${data.company.toLowerCase().replace(/[^a-z0-9]/g, "_")}`;
-  // Store individual entry in a list per company
   await redis(["LPUSH", key, JSON.stringify(entry)]);
-  // Keep max 100 entries per company
   await redis(["LTRIM", key, "0", "99"]);
-  // Add company to the set of known companies
   await redis(["SADD", "market:companies", data.company]);
-  // Increment total scan counter
   await redis(["INCR", "market:total_scans"]);
+}
+
+async function storeTerms(company, url, termsText) {
+  if (!company || !termsText) return;
+  const key = `terms:${company.toLowerCase().replace(/[^a-z0-9]/g, "_")}`;
+  const entry = {
+    company,
+    url,
+    terms: termsText.substring(0, 50000),
+    timestamp: new Date().toISOString(),
+  };
+  await redis(["SET", key, JSON.stringify(entry)]);
+  await redis(["SADD", "terms:companies", company]);
+}
+
+async function getTermsForCompany(companyName) {
+  if (!companyName) return "";
+  const key = `terms:${companyName.toLowerCase().replace(/[^a-z0-9]/g, "_")}`;
+  const result = await redis(["GET", key]);
+  if (!result?.result) return "";
+  try {
+    const data = JSON.parse(result.result);
+    return data.terms || "";
+  } catch { return ""; }
 }
 
 async function getMarketContext() {
@@ -55,6 +75,42 @@ async function getMarketContext() {
   } catch { return ""; }
 }
 
+function extractUrl(text) {
+  const urlMatch = text.match(/https?:\/\/[^\s<>"{}|\\^`\[\]]+/i);
+  return urlMatch ? urlMatch[0] : null;
+}
+
+async function fetchUrlContent(url) {
+  try {
+    const res = await fetch(url, {
+      headers: {
+        "User-Agent": "Mozilla/5.0 (compatible; RentScan/1.0)",
+        "Accept": "text/html,application/xhtml+xml,*/*",
+      },
+      redirect: "follow",
+      signal: AbortSignal.timeout(10000),
+    });
+    if (!res.ok) return null;
+    const html = await res.text();
+    let text = html
+      .replace(/<script[^>]*>[\s\S]*?<\/script>/gi, " ")
+      .replace(/<style[^>]*>[\s\S]*?<\/style>/gi, " ")
+      .replace(/<nav[^>]*>[\s\S]*?<\/nav>/gi, " ")
+      .replace(/<footer[^>]*>[\s\S]*?<\/footer>/gi, " ")
+      .replace(/<header[^>]*>[\s\S]*?<\/header>/gi, " ")
+      .replace(/<[^>]+>/g, " ")
+      .replace(/&nbsp;/g, " ")
+      .replace(/&amp;/g, "&")
+      .replace(/&lt;/g, "<")
+      .replace(/&gt;/g, ">")
+      .replace(/&quot;/g, '"')
+      .replace(/&#39;/g, "'")
+      .replace(/\s+/g, " ")
+      .trim();
+    return text.substring(0, 15000);
+  } catch { return null; }
+}
+
 export default async function handler(req, res) {
   res.setHeader("Access-Control-Allow-Origin", "*");
   res.setHeader("Access-Control-Allow-Methods", "POST, OPTIONS");
@@ -63,11 +119,25 @@ export default async function handler(req, res) {
   if (req.method === "OPTIONS") return res.status(200).end();
   if (req.method !== "POST") return res.status(405).json({ error: "Method not allowed" });
 
-  const { contractText } = req.body;
+  let { contractText } = req.body;
   if (!contractText) return res.status(400).json({ error: "No text provided" });
 
+  // Check if input contains a URL
+  const url = extractUrl(contractText);
+  let fetchedContent = null;
+  let isUrlScan = false;
+
+  if (url) {
+    isUrlScan = true;
+    fetchedContent = await fetchUrlContent(url);
+    if (fetchedContent) {
+      contractText = `The user shared this URL: ${url}\n\nHere is the content from that page:\n\n${fetchedContent}\n\nUser's message: ${contractText}`;
+    } else {
+      contractText = `The user shared this URL: ${url} but the content could not be loaded. Please let them know and answer based on the URL/company name if recognizable.\n\nUser's message: ${contractText}`;
+    }
+  }
+
   try {
-    // Get market context from previous scans
     const marketContext = await getMarketContext();
 
     const response = await fetch("https://api.anthropic.com/v1/messages", {
@@ -93,6 +163,13 @@ If the user pastes a rental contract, quote, or offer:
 - Tell them what to negotiate or watch out for
 - Be specific with AED amounts
 - If you have market intelligence data about this company, use it to compare and give better advice
+
+If the user shared a URL with terms and conditions or a rental policy page:
+- Analyze the key terms thoroughly
+- Highlight important clauses that could cost the renter money
+- Point out unusual or unfair terms
+- Summarize the most important things the renter needs to know
+- Compare with standard Dubai rental practices if possible
 
 If the user asks a general question about car rentals in Dubai:
 - Give practical, specific advice
@@ -128,12 +205,15 @@ ${contractText}`
     // Extract and store market data
     const marketMatch = text.match(/---MARKET_DATA---\s*([\s\S]*?)\s*---END_MARKET_DATA---/);
     if (marketMatch) {
-      // Remove market data block from user-facing response
       text = text.replace(/\s*---MARKET_DATA---[\s\S]*?---END_MARKET_DATA---\s*/, "").trim();
       try {
         const marketData = JSON.parse(marketMatch[1].trim());
         if (marketData && marketData.company) {
           await storeMarketData(marketData);
+          // If this was a URL scan with terms content, store the terms too
+          if (isUrlScan && fetchedContent && marketData.company) {
+            await storeTerms(marketData.company, url, fetchedContent);
+          }
         }
       } catch {}
     }
