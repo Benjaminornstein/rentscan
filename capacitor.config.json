@@ -2,6 +2,9 @@
   "appId": "com.rentscan.app",
   "appName": "RentScan",
   "webDir": "dist",
+  "server": {
+    "allowNavigation": ["rentscan.ae", "*.rentscan.ae", "api.anthropic.com"]
+  },
   "ios": {
     "contentInset": "never",
     "allowsLinkPreview": false,
