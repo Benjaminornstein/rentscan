@@ -119,7 +119,12 @@ async function fetchUrlContent(url) {
       seen.add(trimmed);
       unique.push(trimmed);
     }
-    text = unique.join(". ");
+    // Remove Arabic text (bilingual pages double the content)
+    const filtered = unique.filter(line => {
+      const arabicChars = (line.match(/[\u0600-\u06FF]/g) || []).length;
+      return arabicChars < line.length * 0.3; // Keep lines that are less than 30% Arabic
+    });
+    text = filtered.join(". ");
     return text.substring(0, 50000);
   } catch { return null; }
 }
