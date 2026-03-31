@@ -37,17 +37,6 @@ async function storeTerms(company, url, termsText) {
   await redis(["SADD", "terms:companies", company]);
 }
 
-async function getTermsForCompany(companyName) {
-  if (!companyName) return "";
-  const key = `terms:${companyName.toLowerCase().replace(/[^a-z0-9]/g, "_")}`;
-  const result = await redis(["GET", key]);
-  if (!result?.result) return "";
-  try {
-    const data = JSON.parse(result.result);
-    return data.terms || "";
-  } catch { return ""; }
-}
-
 async function getMarketContext() {
   if (!UPSTASH_URL || !UPSTASH_TOKEN) return "";
   try {
@@ -66,7 +55,7 @@ async function getMarketContext() {
       const insuranceTypes = [...new Set(entries.map(e => e.insurance).filter(Boolean))];
       let summary = `${company}: ${entries.length} reports`;
       if (avgRate) summary += `, avg AED ${avgRate}/day`;
-      if (hiddenCosts.length) summary += `, common hidden costs: ${hiddenCosts.join(", ")}`;
+      if (hiddenCosts.length) summary += `, known costs: ${hiddenCosts.join(", ")}`;
       if (insuranceTypes.length) summary += `, insurance: ${insuranceTypes.join(", ")}`;
       insights.push(summary);
     }
@@ -122,7 +111,6 @@ export default async function handler(req, res) {
   let { contractText } = req.body;
   if (!contractText) return res.status(400).json({ error: "No text provided" });
 
-  // Check if input contains a URL
   const url = extractUrl(contractText);
   let fetchedContent = null;
   let isUrlScan = false;
@@ -149,42 +137,49 @@ export default async function handler(req, res) {
       },
       body: JSON.stringify({
         model: "claude-sonnet-4-20250514",
-        max_tokens: 2000,
+        max_tokens: 3000,
         messages: [
           {
             role: "user",
-            content: `You are RentScan AI, a friendly expert on car rentals in Dubai, UAE. You talk directly to the user in a clear, helpful, conversational way.
+            content: `You are RentScan AI, a forensic expert on car rental contracts in Dubai, UAE. Your job is to find EVERY concrete cost, fee, penalty and rule that could cost a renter money. You talk directly to the user in a clear, helpful, conversational way.
+
+CRITICAL RULES FOR ANALYSIS:
+1. Find EVERY specific AED amount mentioned — late fees, admin fees, penalties, deposits, Salik charges, fine processing fees, black point fees, cancellation fees, etc.
+2. Find EVERY policy that could cost money — mileage limits, fuel policy, grace periods, insurance exclusions, age surcharges, geographic restrictions
+3. Be SPECIFIC — always quote the exact AED amount and the exact clause/condition
+4. NEVER say "amounts not specified" if the document DOES contain specific amounts — read carefully
+5. For terms & conditions pages: these contain the REAL rules, not marketing — dig deep into every clause
 
 If the user pastes a rental contract, quote, or offer:
-- Break down what they're actually going to pay (don't just repeat the quote)
-- Point out hidden costs they might not expect: Salik tolls (~AED 5-6 per crossing, most people cross 3+ times/day), insurance gaps, mileage overages, fuel traps, late return penalties (1 hour late = full extra day in Dubai)
-- Flag anything suspicious or unusually expensive
-- Give a rough estimate of the REAL total cost including everything
-- Tell them what to negotiate or watch out for
-- Be specific with AED amounts
-- If you have market intelligence data about this company, use it to compare and give better advice
+- List EVERY specific fee with its exact AED amount
+- Calculate the real total cost including all extras
+- Point out what's NOT covered by insurance
+- Flag unusual or harsh terms
+- Compare with Dubai market norms if possible
 
-If the user shared a URL with terms and conditions or a rental policy page:
-- Analyze the key terms thoroughly
-- Highlight important clauses that could cost the renter money
-- Point out unusual or unfair terms
-- Summarize the most important things the renter needs to know
-- Compare with standard Dubai rental practices if possible
+If the user shared a URL with terms and conditions:
+- Extract EVERY specific fee, charge, and penalty with exact AED amounts
+- List insurance exclusions (what's NOT covered)
+- Explain the late return policy with exact fees
+- Explain the damage/accident policy with exact excess amounts
+- Note age restrictions and surcharges
+- Highlight cancellation and refund policies
+- Flag any unusually harsh or one-sided terms
+- Summarize the most expensive surprises a renter could face
 
 If the user asks a general question about car rentals in Dubai:
-- Give practical, specific advice
-- Include real numbers and examples where possible
-- Mention Dubai-specific things (Salik, traffic fines, Dubai-Abu Dhabi distance = 280km roundtrip, etc.)
+- Give practical, specific advice with real numbers
+- Mention Dubai-specific things (Salik, traffic fines, distances, etc.)
 
-Keep your tone friendly but direct. Use short paragraphs. Use bullet points where helpful. Don't be overly formal. You're like a knowledgeable friend who lives in Dubai and knows the rental market inside out.
+Keep your tone friendly but thorough. Be the most detailed rental contract analyst possible. Use bullet points for fees and penalties. Group them by category.
 
-Never badmouth specific companies by name. Be factual and neutral about companies.
+Never badmouth specific companies by name. Be factual and neutral.
 ${marketContext}
 
-IMPORTANT: After your response to the user, you MUST add the following on a new line. Extract any rental market data from the user's input and output it as JSON. If no specific rental data can be extracted (e.g. just a general question), output null.
+IMPORTANT: After your response, add market data extraction on a new line. For the company name, use the company name exactly as it appears on their website or branding (e.g. "Octane Club Premium Rental" not just "Octane", "Hertz UAE" not "Hertz International LLC"). Extract ALL fees and penalties found as hiddenCosts entries.
 
 ---MARKET_DATA---
-{"company":"company name or null","car":"car model or null","dailyRate":number or 0,"insurance":"insurance type or null","mileage":"mileage limit or null","fuel":"fuel policy or null","deposit":number or 0,"excess":number or 0,"hiddenCosts":["list of hidden costs found"],"rentalDays":number or 0}
+{"company":"short company name or null","car":"car model or null","dailyRate":number or 0,"insurance":"insurance type or null","mileage":"mileage limit or null","fuel":"fuel policy or null","deposit":number or 0,"excess":number or 0,"hiddenCosts":["list every specific fee/penalty with AED amounts AND every unusual/noteworthy rule or clause e.g. GPS tracking, remote immobilization, car reported stolen if late, age restrictions, geographic limits, insurance exclusions, cancellation rules, deposit forfeiture"],"rentalDays":number or 0}
 ---END_MARKET_DATA---
 
 User input:
@@ -202,7 +197,6 @@ ${contractText}`
 
     let text = data.content[0].text;
 
-    // Extract and store market data
     const marketMatch = text.match(/---MARKET_DATA---\s*([\s\S]*?)\s*---END_MARKET_DATA---/);
     if (marketMatch) {
       text = text.replace(/\s*---MARKET_DATA---[\s\S]*?---END_MARKET_DATA---\s*/, "").trim();
@@ -210,7 +204,6 @@ ${contractText}`
         const marketData = JSON.parse(marketMatch[1].trim());
         if (marketData && marketData.company) {
           await storeMarketData(marketData);
-          // If this was a URL scan with terms content, store the terms too
           if (isUrlScan && fetchedContent && marketData.company) {
             await storeTerms(marketData.company, url, fetchedContent);
           }
