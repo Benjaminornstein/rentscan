@@ -258,7 +258,6 @@ ${MARKET_DATA_INSTRUCTION}
     text = text.replace(/```json\s*null\s*```/g, "").replace(/\bnull\b\s*$/g, "").trim();
     const marketMatch = text.match(/---MARKET_DATA---\s*([\s\S]*?)\s*---END_MARKET_DATA---/);
     if (marketMatch) {
-      text = text.replace(/\\\json\s*null\s*\\\/g, '').replace(/\bnull\b\s*$/g, '').trim();
       text = text.replace(/\s*---MARKET_DATA---[\s\S]*?---END_MARKET_DATA---\s*/, "").trim();
       try {
         const marketData = JSON.parse(marketMatch[1].trim());
