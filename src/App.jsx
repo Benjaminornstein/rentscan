@@ -325,7 +325,7 @@ export default function App() {
   // ===== STYLES (Light theme) =====
   const css = {
     page: { minHeight: "100%", height: "100%", display: "flex", flexDirection: "column", background: T.bg, fontFamily: "-apple-system, 'SF Pro Display', 'Segoe UI', sans-serif", color: T.text, WebkitFontSmoothing: "antialiased", paddingTop: topSafeInset, boxSizing: "border-box", width: "100%", maxWidth: "100%", overflow: "hidden" },
-    wrap: { flex: 1, maxWidth: "720px", width: "100%", margin: "0 auto", padding: "16px 16px calc(84px + env(safe-area-inset-bottom))", overflowX: "hidden", overflowY: "auto", WebkitOverflowScrolling: "touch" },
+    wrap: { flex: 1, maxWidth: "100%", width: "100%", margin: "0 auto", padding: "16px 16px calc(84px + env(safe-area-inset-bottom))", overflowX: "hidden", overflowY: "auto", WebkitOverflowScrolling: "touch" },
     card: { background: T.card, borderRadius: "16px", padding: "18px", marginBottom: "12px", boxShadow: "0 1px 3px rgba(0,0,0,0.06), 0 1px 2px rgba(0,0,0,0.04)" },
     btn: { background: `linear-gradient(135deg, ${T.accent}, ${T.accent2})`, color: "#fff", border: "none", borderRadius: "12px", padding: "14px", fontSize: "15px", fontWeight: 700, cursor: "pointer", width: "100%", letterSpacing: "0.2px" },
     btnSm: { background: `linear-gradient(135deg, ${T.accent}, ${T.accent2})`, color: "#fff", border: "none", borderRadius: "10px", padding: "10px 18px", fontSize: "13px", fontWeight: 600, cursor: "pointer" },
@@ -340,7 +340,7 @@ export default function App() {
   // ===== BOTTOM NAV (XE-style) =====
   const Nav = () => (
     <div style={{ position: "fixed", bottom: 0, left: 0, right: 0, background: "rgba(10,14,20,0.95)", backdropFilter: "blur(20px)", WebkitBackdropFilter: "blur(20px)", borderTop: `1px solid ${T.border}`, zIndex: 100, padding: "6px 0 max(env(safe-area-inset-bottom), 6px)" }}>
-      <div style={{ display: "flex", maxWidth: "720px", margin: "0 auto", justifyContent: "space-around" }}>
+      <div style={{ display: "flex", maxWidth: "100%", margin: "0 auto", justifyContent: "space-around" }}>
         {[["scan", "🔍", "Scan"], ["rental", "📋", "My Rental"]].map(([k, ico, lbl]) => (
           <button key={k} onClick={() => setTab(k)} style={{ background: "none", border: "none", cursor: "pointer", padding: "6px 24px", display: "flex", flexDirection: "column", alignItems: "center", gap: "2px" }}>
             <span style={{ fontSize: "22px", opacity: tab === k ? 1 : 0.35, transition: "opacity 0.2s" }}>{ico}</span>
