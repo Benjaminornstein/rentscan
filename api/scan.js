@@ -30,7 +30,7 @@ async function storeTerms(company, url, termsText) {
   const entry = {
     company,
     url,
-    terms: termsText.substring(0, 50000),
+    terms: termsText.substring(0, 80000),
     timestamp: new Date().toISOString(),
   };
   await redis(["SET", key, JSON.stringify(entry)]);
@@ -73,20 +73,32 @@ async function fetchUrlContent(url) {
   try {
     const res = await fetch(url, {
       headers: {
-        "User-Agent": "Mozilla/5.0 (compatible; RentScan/1.0)",
+        "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36",
         "Accept": "text/html,application/xhtml+xml,*/*",
       },
       redirect: "follow",
-      signal: AbortSignal.timeout(10000),
+      signal: AbortSignal.timeout(15000),
     });
     if (!res.ok) return null;
     const html = await res.text();
+    // Aggressively strip non-content HTML
     let text = html
-      .replace(/<script[^>]*>[\s\S]*?<\/script>/gi, " ")
-      .replace(/<style[^>]*>[\s\S]*?<\/style>/gi, " ")
-      .replace(/<nav[^>]*>[\s\S]*?<\/nav>/gi, " ")
-      .replace(/<footer[^>]*>[\s\S]*?<\/footer>/gi, " ")
-      .replace(/<header[^>]*>[\s\S]*?<\/header>/gi, " ")
+      .replace(/<script[^>]*>[\s\S]*?<\/script>/gi, "")
+      .replace(/<style[^>]*>[\s\S]*?<\/style>/gi, "")
+      .replace(/<nav[^>]*>[\s\S]*?<\/nav>/gi, "")
+      .replace(/<footer[^>]*>[\s\S]*?<\/footer>/gi, "")
+      .replace(/<header[^>]*>[\s\S]*?<\/header>/gi, "")
+      .replace(/<aside[^>]*>[\s\S]*?<\/aside>/gi, "")
+      .replace(/<form[^>]*>[\s\S]*?<\/form>/gi, "")
+      .replace(/<select[^>]*>[\s\S]*?<\/select>/gi, "")
+      .replace(/<svg[^>]*>[\s\S]*?<\/svg>/gi, "")
+      .replace(/<img[^>]*>/gi, "")
+      .replace(/<link[^>]*>/gi, "")
+      .replace(/<meta[^>]*>/gi, "")
+      .replace(/<input[^>]*>/gi, "")
+      .replace(/<button[^>]*>[\s\S]*?<\/button>/gi, "")
+      .replace(/<iframe[^>]*>[\s\S]*?<\/iframe>/gi, "")
+      .replace(/<!--[\s\S]*?-->/g, "")
       .replace(/<[^>]+>/g, " ")
       .replace(/&nbsp;/g, " ")
       .replace(/&amp;/g, "&")
@@ -96,7 +108,19 @@ async function fetchUrlContent(url) {
       .replace(/&#39;/g, "'")
       .replace(/\s+/g, " ")
       .trim();
-    return text.substring(0, 30000);
+    // Remove duplicate lines (menus often repeat)
+    const lines = text.split(". ");
+    const seen = new Set();
+    const unique = [];
+    for (const line of lines) {
+      const trimmed = line.trim();
+      if (trimmed.length < 5) continue;
+      if (seen.has(trimmed)) continue;
+      seen.add(trimmed);
+      unique.push(trimmed);
+    }
+    text = unique.join(". ");
+    return text.substring(0, 50000);
   } catch { return null; }
 }
 
