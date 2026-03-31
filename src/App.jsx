@@ -284,15 +284,15 @@ export default function App() {
         body: JSON.stringify({ contractText: text })
       });
       const data = await resp.json();
-      if (data.mode === "chat") {
+      if (data.answer) {
         setRes({ mode: "chat", answer: data.answer, tips: data.tips || [], aiPowered: true });
-      } else if (data.costs) {
-        setRes({ mode: "scan", costs: data.costs.map(c => ({ label: c.label, amount: c.amount, type: c.type, detail: c.detail })), notes: data.notes || [], totalEstimate: data.totalEstimate, baseTotal: data.baseTotal, depositEstimate: data.depositEstimate || 2000, aiPowered: true });
+      } else if (data.error) {
+        setRes({ mode: "chat", answer: "Sorry, something went wrong. Please try again.", tips: [], aiPowered: false });
       } else {
-        setRes({ ...localAnalyze(text), mode: "scan", aiPowered: false });
+        setRes({ mode: "chat", answer: "Sorry, I couldn't analyze that. Try pasting a rental quote or asking a question about car rentals in Dubai.", tips: [], aiPowered: false });
       }
     } catch {
-      setRes({ ...localAnalyze(text), mode: "scan", aiPowered: false });
+      setRes({ mode: "chat", answer: "Could not connect to the AI. Please check your internet connection and try again.", tips: [], aiPowered: false });
     }
     setLoading(false);
   };
@@ -483,40 +483,6 @@ export default function App() {
             </div>
           ))}
         </div>}
-      </>}
-
-      {/* SCAN MODE */}
-      {res.mode === "scan" && <>
-      <div style={{ background: T.card, border: `1px solid ${T.accent}25`, borderRadius: "20px", padding: "28px", textAlign: "center", marginBottom: "20px", boxShadow: "0 2px 12px rgba(200,150,46,0.08)" }}>
-        <div style={{ fontSize: "11px", color: T.accent, textTransform: "uppercase", letterSpacing: "2px", marginBottom: "8px", fontWeight: 600 }}>Estimated total cost</div>
-        <div style={{ fontSize: "44px", fontWeight: 800, letterSpacing: "-2px" }}>AED <AnimN value={res.totalEstimate} /></div>
-        <div style={{ fontSize: "13px", color: T.sub, marginTop: "6px" }}>Base: AED {res.baseTotal?.toLocaleString()} · <span style={{ color: T.accent2 }}>+{Math.round(((res.totalEstimate - res.baseTotal) / res.baseTotal) * 100)}% additional</span></div>
-      </div>
-      <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "10px", marginBottom: "20px" }}>
-        {[["Additional fees", res.costs?.filter(c => c.type === "extra").reduce((s, c) => s + c.amount, 0), T.accent2],
-          ["Possible costs", res.costs?.filter(c => c.type === "maybe").reduce((s, c) => s + c.amount, 0), T.red],
-          ["Optional upgrades", res.costs?.filter(c => c.type === "opt").reduce((s, c) => s + c.amount, 0), T.blue],
-          ["Deposit (refundable)", res.depositEstimate, "#60A5FA"]
-        ].map(([l, a, c]) => (
-          <div key={l} style={{ ...css.card, borderLeft: `3px solid ${c}`, padding: "14px" }}>
-            <div style={{ fontSize: "10px", color: T.dim, textTransform: "uppercase", letterSpacing: "1px" }}>{l}</div>
-            <div style={{ fontSize: "19px", fontWeight: 800, color: c, marginTop: "4px" }}>AED {(a || 0).toLocaleString()}</div>
-          </div>
-        ))}
-      </div>
-      <h3 style={{ fontSize: "16px", fontWeight: 700, marginBottom: "12px" }}>💰 Breakdown</h3>
-      {res.costs?.map((c, i) => (
-        <div key={i} style={{ display: "flex", justifyContent: "space-between", padding: "12px 16px", background: T.card, borderRadius: "12px", marginBottom: "6px", borderLeft: `3px solid ${costColor[c.type] || T.sub}`, boxShadow: "0 1px 2px rgba(0,0,0,0.1)" }}>
-          <div style={{ flex: 1 }}><div style={{ fontSize: "14px", fontWeight: 600 }}>{c.label}</div><div style={{ fontSize: "11px", color: T.dim, marginTop: "2px" }}>{c.detail}</div></div>
-          <div style={{ fontSize: "15px", fontWeight: 700, color: costColor[c.type] || T.sub, whiteSpace: "nowrap" }}>AED {c.amount?.toLocaleString()}</div>
-        </div>
-      ))}
-      {res.notes?.length > 0 && <>
-        <h3 style={{ fontSize: "16px", fontWeight: 700, margin: "20px 0 12px" }}>ℹ️ Good to Know</h3>
-        <div style={{ background: `${T.accent}06`, border: `1px solid ${T.accent}15`, borderRadius: "16px", padding: "16px" }}>
-          {res.notes.map((n, i) => <div key={i} style={{ fontSize: "13px", color: T.sub, padding: "6px 0", borderBottom: i < res.notes.length - 1 ? `1px solid ${T.border}` : "none", lineHeight: 1.5 }}>{n}</div>)}
-        </div>
-      </>}
       </>}
     </>
   );
@@ -1030,4 +996,6 @@ ${pickupP.length > 0 ? `<h2>Vehicle Condition at Pickup</h2>
     </div>
   );
 }
+
+
 
