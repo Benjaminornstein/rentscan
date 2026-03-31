@@ -278,7 +278,7 @@ export default function App() {
     setLoading(true);
     trackEvent("scan_started", { length: text.length });
     try {
-      const resp = await fetch("https://rentscan.ae/api/scan", {
+      const resp = await fetch("/api/scan", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ contractText: text })
