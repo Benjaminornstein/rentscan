@@ -324,8 +324,8 @@ export default function App() {
 
   // ===== STYLES (Light theme) =====
   const css = {
-    page: { minHeight: "100%", minHeight: "100vh", display: "flex", flexDirection: "column", background: T.bg, fontFamily: "-apple-system, 'SF Pro Display', 'Segoe UI', sans-serif", color: T.text, WebkitFontSmoothing: "antialiased", paddingTop: topSafeInset, boxSizing: "border-box", width: "100%", maxWidth: "720px", overflow: "visible" },
-    wrap: { flex: 1, maxWidth: "720px", width: "100%", margin: "0 auto", padding: "16px 16px calc(84px + env(safe-area-inset-bottom))", overflowX: "hidden", overflowY: "auto", WebkitOverflowScrolling: "touch" },
+    page: { minHeight: "100%", minHeight: "100vh", display: "flex", flexDirection: "column", background: T.bg, fontFamily: "-apple-system, 'SF Pro Display', 'Segoe UI', sans-serif", color: T.text, WebkitFontSmoothing: "antialiased", paddingTop: topSafeInset, boxSizing: "border-box", width: "100%", maxWidth: "100%", overflow: "visible" },
+    wrap: { flex: 1, maxWidth: "720px", width: "100%", margin: "0 auto", padding: "16px 16px calc(84px + env(safe-area-inset-bottom))", overflowX: "hidden", overflowY: "visible" },
     card: { background: T.card, borderRadius: "16px", padding: "18px", marginBottom: "12px", boxShadow: "0 1px 3px rgba(0,0,0,0.06), 0 1px 2px rgba(0,0,0,0.04)" },
     btn: { background: `linear-gradient(135deg, ${T.accent}, ${T.accent2})`, color: "#fff", border: "none", borderRadius: "12px", padding: "14px", fontSize: "15px", fontWeight: 700, cursor: "pointer", width: "100%", letterSpacing: "0.2px" },
     btnSm: { background: `linear-gradient(135deg, ${T.accent}, ${T.accent2})`, color: "#fff", border: "none", borderRadius: "10px", padding: "10px 18px", fontSize: "13px", fontWeight: 600, cursor: "pointer" },
