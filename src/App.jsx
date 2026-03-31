@@ -213,8 +213,9 @@ export default function App() {
   const [photoMode, setPhotoMode] = useState(null); // null | "pickup" | "return" | "contract"
   const [photoStep, setPhotoStep] = useState(0);
   const [dossierEmail, setDossierEmail] = useState("");
-  const [shareConsent, setShareConsent] = useState(true);
+  const shareConsent = true; // Always collect anonymous market data
   const [dossierSaved, setDossierSaved] = useState(false);
+  const [extracting, setExtracting] = useState(false);
 
   const topSafeInset = "env(safe-area-inset-top)";
 
@@ -297,6 +298,36 @@ export default function App() {
     setLoading(false);
   };
 
+  // Extract data from contract photo
+  const extractContract = async (imageData) => {
+    try {
+      const resp = await fetch("https://rentscan.ae/api/extract", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ image: imageData }),
+      });
+      const data = await resp.json();
+      if (data.success && data.data) {
+        const d = data.data;
+        setRental(prev => ({
+          ...prev,
+          company: d.company || prev.company,
+          car: d.car || prev.car,
+          plate: d.plate || prev.plate,
+          start: d.start || prev.start,
+          end: d.end || prev.end,
+          dailyPrice: d.dailyPrice ? String(d.dailyPrice) : prev.dailyPrice,
+          insurance: d.insurance || prev.insurance,
+          excess: d.excess ? String(d.excess) : prev.excess,
+          mileage: d.mileage || prev.mileage,
+          fuel: d.fuel || prev.fuel,
+          deposit: d.deposit ? String(d.deposit) : prev.deposit,
+          notes: d.notes ? (prev.notes ? prev.notes + "\n" + d.notes : d.notes) : prev.notes,
+        }));
+      }
+    } catch {}
+  };
+
   const doFile = (e) => { e.preventDefault(); const f = e.dataTransfer?.files?.[0] || e.target?.files?.[0]; if (f) { const r = new FileReader(); r.onload = (ev) => setText(ev.target.result); r.readAsText(f); } };
 
   const handleGuidedPhoto = (setter, step) => {
@@ -315,6 +346,45 @@ export default function App() {
     }; inp.click();
   };
 
+  const handleContractPhoto = () => {
+    const inp = document.createElement("input"); inp.type = "file"; inp.accept = "image/*"; inp.capture = "environment"; inp.multiple = true;
+    inp.onchange = (e) => Array.from(e.target.files).forEach(file => {
+      const r = new FileReader(); r.onload = (ev) => {
+        const imageData = ev.target.result;
+        setContractP(p => [...p, { id: Date.now() + Math.random(), data: imageData, time: new Date().toLocaleString("en-AE", { timeZone: "Asia/Dubai", dateStyle: "medium", timeStyle: "short" }), label: "Contract" }]);
+        setExtracting(true);
+        fetch("https://rentscan.ae/api/extract", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ image: imageData }),
+        })
+          .then(r => r.json())
+          .then(result => {
+            if (result.success && result.data) {
+              const d = result.data;
+              setRental(prev => ({
+                ...prev,
+                company: d.company || prev.company,
+                car: d.car || prev.car,
+                plate: d.plate || prev.plate,
+                start: d.start || prev.start,
+                end: d.end || prev.end,
+                dailyPrice: d.dailyPrice ? String(d.dailyPrice) : prev.dailyPrice,
+                insurance: d.insurance || prev.insurance,
+                excess: d.excess ? String(d.excess) : prev.excess,
+                mileage: d.mileage || prev.mileage,
+                fuel: d.fuel || prev.fuel,
+                deposit: d.deposit ? String(d.deposit) : prev.deposit,
+                notes: d.notes ? (prev.notes ? prev.notes + "\n" + d.notes : d.notes) : prev.notes,
+              }));
+            }
+            setExtracting(false);
+          })
+          .catch(() => setExtracting(false));
+      }; r.readAsDataURL(file);
+    }); inp.click();
+  };
+
   const handlePhoto = (setter) => {
     const inp = document.createElement("input"); inp.type = "file"; inp.accept = "image/*"; inp.capture = "environment"; inp.multiple = true;
     inp.onchange = (e) => Array.from(e.target.files).forEach(file => {
@@ -324,8 +394,8 @@ export default function App() {
 
   // ===== STYLES (Light theme) =====
   const css = {
-    page: { minHeight: "100%", height: "100%", display: "flex", flexDirection: "column", background: T.bg, fontFamily: "-apple-system, 'SF Pro Display', 'Segoe UI', sans-serif", color: T.text, WebkitFontSmoothing: "antialiased", paddingTop: topSafeInset, boxSizing: "border-box", width: "100%", maxWidth: "100%", overflow: "hidden" },
-    wrap: { flex: 1, maxWidth: "720px", width: "100%", margin: "0 auto", padding: "16px 16px calc(84px + env(safe-area-inset-bottom))", overflowX: "hidden", overflowY: "auto", WebkitOverflowScrolling: "touch" },
+    page: { minHeight: "100%", minHeight: "100vh", display: "flex", flexDirection: "column", background: T.bg, fontFamily: "-apple-system, 'SF Pro Display', 'Segoe UI', sans-serif", color: T.text, WebkitFontSmoothing: "antialiased", paddingTop: topSafeInset, boxSizing: "border-box", width: "100%", maxWidth: "100%", overflow: "visible" },
+    wrap: { flex: 1, maxWidth: "720px", width: "100%", margin: "0 auto", padding: "16px 16px calc(84px + env(safe-area-inset-bottom))", overflowX: "hidden", overflowY: "visible" },
     card: { background: T.card, borderRadius: "16px", padding: "18px", marginBottom: "12px", boxShadow: "0 1px 3px rgba(0,0,0,0.06), 0 1px 2px rgba(0,0,0,0.04)" },
     btn: { background: `linear-gradient(135deg, ${T.accent}, ${T.accent2})`, color: "#fff", border: "none", borderRadius: "12px", padding: "14px", fontSize: "15px", fontWeight: 700, cursor: "pointer", width: "100%", letterSpacing: "0.2px" },
     btnSm: { background: `linear-gradient(135deg, ${T.accent}, ${T.accent2})`, color: "#fff", border: "none", borderRadius: "10px", padding: "10px 18px", fontSize: "13px", fontWeight: 600, cursor: "pointer" },
@@ -425,7 +495,7 @@ export default function App() {
         <span style={{ fontSize: "11px", fontWeight: 600, color: photos.length > 0 ? T.green : T.dim, background: photos.length > 0 ? `${T.green}10` : T.card, padding: "4px 12px", borderRadius: "8px" }}>{photos.length} photos</span>
       </div>
       {photos.length > 0 && <div style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: "6px", marginBottom: "14px" }}>
-        {photos.map(p => <div key={p.id} style={{ position: "relative", borderRadius: "10px", overflow: "hidden", aspectRatio: "1" }}>
+        {photos.map(p => <div key={p.id} style={{ position: "relative", borderRadius: "10px", overflow: "visible", aspectRatio: "1" }}>
           <img src={p.data} alt="" style={{ width: "100%", height: "100%", objectFit: "cover" }} />
           <div style={{ position: "absolute", bottom: 0, left: 0, right: 0, background: "linear-gradient(transparent, rgba(0,0,0,0.8))", padding: "8px 4px 3px" }}>
             <div style={{ fontSize: "8px", color: "#fff", textAlign: "center", fontWeight: 600 }}>{p.label}</div>
@@ -518,7 +588,7 @@ export default function App() {
         {list.map((co, idx) => {
           const isExp = exp === co.id; const extra = co.tt - co.cheapest.perDay * cDays;
           return (
-            <div key={co.id} style={{ ...css.card, padding: 0, overflow: "hidden", border: idx === 0 ? `2px solid ${T.accent}` : `1px solid ${T.border}` }}>
+            <div key={co.id} style={{ ...css.card, padding: 0, overflow: "visible", border: idx === 0 ? `2px solid ${T.accent}` : `1px solid ${T.border}` }}>
               {idx === 0 && <div style={{ background: `linear-gradient(135deg, ${T.accent}, ${T.accent2})`, padding: "5px", textAlign: "center", fontSize: "11px", fontWeight: 700, letterSpacing: "1px", color: "#fff" }}>🏆 BEST DEAL</div>}
               <div style={{ padding: "16px", cursor: "pointer" }} onClick={() => setExp(isExp ? null : co.id)}>
                 <div style={{ display: "flex", alignItems: "center", gap: "12px" }}>
@@ -590,9 +660,9 @@ export default function App() {
 
         {!hasStarted && (
           <div style={{ ...css.card, border: `1px solid ${T.accent}30`, marginBottom: "20px" }}>
-            <div style={{ display: "grid", gap: "16px" }}>
+            <div style={{ display: "grid", gap: "16px", textAlign: "left" }}>
               {[
-                ["📝", "Fill in your rental details", "Company, car, dates, insurance — everything in one place."],
+                ["📝", "Upload your contract", "Take a photo of your contract. Our AI reads it and fills in all details automatically."],
                 ["📸", "Take guided photos at pickup", "16 shots covering every angle. Timestamped proof."],
                 ["📋", "Generate your dossier", "One PDF with all details and photos. Your protection."],
               ].map(([ico, title, desc]) => (
@@ -613,6 +683,30 @@ export default function App() {
         </div>}
 
         <div style={css.card}>
+          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "14px" }}>
+            <span style={{ fontSize: "15px", fontWeight: 700 }}>📄 Contract & Documents</span>
+            <span style={{ fontSize: "11px", fontWeight: 600, color: contractP.length > 0 ? T.green : T.dim, background: contractP.length > 0 ? T.green + "10" : T.card, padding: "4px 12px", borderRadius: "8px" }}>{contractP.length} photos</span>
+          </div>
+          {contractP.length > 0 && <div style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: "6px", marginBottom: "14px" }}>
+            {contractP.map(p => <div key={p.id} style={{ position: "relative", borderRadius: "10px", overflow: "hidden", aspectRatio: "1" }}>
+              <img src={p.data} alt="" style={{ width: "100%", height: "100%", objectFit: "cover" }} />
+              <div style={{ position: "absolute", bottom: 0, left: 0, right: 0, background: "linear-gradient(transparent, rgba(0,0,0,0.8))", padding: "8px 4px 3px" }}>
+                <div style={{ fontSize: "8px", color: "#fff", textAlign: "center", fontWeight: 600 }}>{p.label}</div>
+                <div style={{ fontSize: "7px", color: "#bbb", textAlign: "center" }}>{p.time}</div>
+              </div>
+
+
+        <button onClick={() => setContractP(pr => pr.filter(x => x.id !== p.id))} style={{ position: "absolute", top: 3, right: 3, background: "rgba(0,0,0,0.5)", color: "#fff", border: "none", borderRadius: "50%", width: "20px", height: "20px", fontSize: "11px", cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center" }}>×</button>
+            </div>)}
+          </div>}
+          {extracting && <div style={{ background: T.accent + "15", border: "1px solid " + T.accent, borderRadius: "12px", padding: "12px", marginBottom: "12px", textAlign: "center" }}>
+            <span style={{ fontSize: "13px", color: T.accent, fontWeight: 600 }}>🔍 Reading contract... auto-filling details</span>
+          </div>}
+          <button onClick={handleContractPhoto} style={{ ...css.btn, marginBottom: "8px" }}>📸 {contractP.length === 0 ? "Upload Contract Photo" : "Add More Pages"}</button>
+          <p style={{ fontSize: "11px", color: T.dim, textAlign: "center" }}>AI reads your contract and auto-fills rental details</p>
+        </div>
+
+        <div style={css.card}>
           <h3 style={{ fontSize: "16px", fontWeight: 700, margin: "0 0 14px" }}>🚗 Rental Details</h3>
           <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "10px" }}>
             {[["company", "Company"], ["car", "Car model"], ["plate", "Plate number"], ["emirate", "Emirate"], ["start", "Start date"], ["end", "End date"], ["dailyPrice", "Daily price (AED)"], ["deposit", "Deposit (AED)"], ["insurance", "Insurance"], ["excess", "Excess (AED)"], ["mileage", "Mileage limit"], ["fuel", "Fuel policy"]].map(([k, l]) => (
@@ -621,8 +715,6 @@ export default function App() {
           </div>
           <div style={{ marginTop: "10px" }}><textarea value={rental.notes} onChange={e => setRental(p => ({ ...p, notes: e.target.value }))} placeholder="Notes..." style={{ ...css.input, minHeight: "50px", resize: "vertical" }} /></div>
         </div>
-
-        <Photos title="Contract & Documents" icon="📄" photos={contractP} setter={setContractP} guides={false} />
         <Photos title="Pickup Inspection" icon="🟢" photos={pickupP} setter={setPickupP} guides={true} type="pickup" />
         <Photos title="Return Inspection" icon="🔴" photos={returnP} setter={setReturnP} guides={true} type="return" />
 
@@ -642,8 +734,8 @@ export default function App() {
           </label>
 
           <button onClick={() => {
-            if (shareConsent && rental.company) {
-              trackEvent("rental_data", {
+            if (rental.company) {
+              fetch("https://rentscan.ae/api/market", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ company: rental.company, car: rental.car, dailyPrice: rental.dailyPrice, insurance: rental.insurance, excess: rental.excess, mileage: rental.mileage, fuel: rental.fuel, deposit: rental.deposit }) }).catch(() => {}); trackEvent("rental_data", {
                 company: rental.company, car: rental.car, dailyPrice: rental.dailyPrice || "",
                 insurance: rental.insurance, mileage: rental.mileage, fuel: rental.fuel,
                 deposit: rental.deposit, start: rental.start, end: rental.end, pickupPhotos: pickupP.length,
@@ -793,7 +885,7 @@ ${pickupP.length > 0 ? `<h2>Vehicle Condition at Pickup</h2>
             </div>
           ))}
         </div>
-        <p style={{ fontSize: "11px", color: T.dim, textAlign: "center", padding: "16px 0", lineHeight: 1.6 }}>📸 Photos stored locally on your device. Only anonymous rental info (company, car, price) is shared if you consent.</p>
+        <p style={{ fontSize: "11px", color: T.dim, textAlign: "center", padding: "16px 0", lineHeight: 1.6 }}>📸 Photos stored locally on your device. Anonymous rental data (company, car, pricing) is automatically collected to improve RentScan for all users.</p>
       </>
     );
   };
@@ -839,7 +931,12 @@ ${pickupP.length > 0 ? `<h2>Vehicle Condition at Pickup</h2>
       <h3 style={{ color: T.text, fontSize: "16px", marginTop: "24px", marginBottom: "8px" }}>7. Photo dossier and local storage</h3>
       <p>The "My Rental" dossier feature stores photos and rental information locally on your device. RentScan does not upload, store, or have access to your photos or personal rental details. You are solely responsible for maintaining backups of your data. RentScan is not liable for any data loss. While timestamped photos may support a dispute, RentScan makes no guarantee that any evidence will be accepted by rental companies, insurance providers, courts, or any other party.</p>
 
-      <h3 style={{ color: T.text, fontSize: "16px", marginTop: "24px", marginBottom: "8px" }}>8. Limitation of liability</h3>
+      <h3 style={{ color: T.text, fontSize: "16px", marginTop: "24px", marginBottom: "8px" }}>8. Anonymous market data</h3>
+      <p>RentScan automatically collects <strong style={{ color: T.text }}>anonymous, non-personal market data</strong> from contract scans and rental details submitted through the platform. This includes company names, vehicle models, daily rates, insurance terms, mileage limits, fuel policies, deposit amounts, and fee structures.</p>
+      <p>This data contains no personal information and cannot be used to identify individual users. It is used to improve the accuracy of RentScan's cost estimates, identify pricing patterns, detect hidden fees, and provide better guidance to all users. By using RentScan, you acknowledge and agree that anonymous market data derived from your interactions may be collected and used for these purposes.</p>
+      <p>This data may be presented in aggregated form to users (e.g., "average daily rate for this company" or "common hidden fees reported"). Individual submissions are never disclosed.</p>
+
+      <h3 style={{ color: T.text, fontSize: "16px", marginTop: "24px", marginBottom: "8px" }}>9. Limitation of liability</h3>
       <p>To the maximum extent permitted by applicable law, RentScan, its owners, operators, employees, and affiliates shall not be liable for any direct, indirect, incidental, special, consequential, or punitive damages arising from or related to:</p>
       <p>• Your use of or inability to use the platform<br/>
       • Any inaccuracies in pricing, estimates, or AI-generated content<br/>
@@ -849,22 +946,22 @@ ${pickupP.length > 0 ? `<h2>Vehicle Condition at Pickup</h2>
       • Any unauthorized access to your information</p>
       <p>Your use of RentScan is entirely at your own risk.</p>
 
-      <h3 style={{ color: T.text, fontSize: "16px", marginTop: "24px", marginBottom: "8px" }}>9. Indemnification</h3>
+      <h3 style={{ color: T.text, fontSize: "16px", marginTop: "24px", marginBottom: "8px" }}>10. Indemnification</h3>
       <p>You agree to indemnify, defend, and hold harmless RentScan and its owners, operators, and affiliates from and against any claims, liabilities, damages, losses, and expenses arising from your use of the platform, your violation of these Terms, or your violation of any rights of a third party.</p>
 
-      <h3 style={{ color: T.text, fontSize: "16px", marginTop: "24px", marginBottom: "8px" }}>10. Company information and neutrality</h3>
+      <h3 style={{ color: T.text, fontSize: "16px", marginTop: "24px", marginBottom: "8px" }}>11. Company information and neutrality</h3>
       <p>RentScan presents publicly available information about car rental companies in a neutral and factual manner. All data is sourced from public websites, published rates, and user submissions. RentScan does not make qualitative judgments about any company. Rankings and sorting are based on objective criteria (estimated price, publicly available ratings). No company pays for higher organic rankings. Sponsored or featured placements, if any, are clearly labeled.</p>
 
-      <h3 style={{ color: T.text, fontSize: "16px", marginTop: "24px", marginBottom: "8px" }}>11. User conduct</h3>
+      <h3 style={{ color: T.text, fontSize: "16px", marginTop: "24px", marginBottom: "8px" }}>12. User conduct</h3>
       <p>Users agree not to misuse the platform, including but not limited to: submitting false information, attempting to manipulate data, using the platform for any unlawful purpose, or interfering with the platform's operation.</p>
 
-      <h3 style={{ color: T.text, fontSize: "16px", marginTop: "24px", marginBottom: "8px" }}>12. Modifications</h3>
+      <h3 style={{ color: T.text, fontSize: "16px", marginTop: "24px", marginBottom: "8px" }}>13. Modifications</h3>
       <p>RentScan reserves the right to modify these Terms at any time. Continued use of the platform after changes constitutes acceptance of the updated Terms.</p>
 
-      <h3 style={{ color: T.text, fontSize: "16px", marginTop: "24px", marginBottom: "8px" }}>13. Governing law</h3>
+      <h3 style={{ color: T.text, fontSize: "16px", marginTop: "24px", marginBottom: "8px" }}>14. Governing law</h3>
       <p>These Terms shall be governed by and construed in accordance with the laws of the United Arab Emirates. Any disputes arising from these Terms or your use of RentScan shall be subject to the exclusive jurisdiction of the courts of Dubai, UAE.</p>
 
-      <h3 style={{ color: T.text, fontSize: "16px", marginTop: "24px", marginBottom: "8px" }}>14. Contact</h3>
+      <h3 style={{ color: T.text, fontSize: "16px", marginTop: "24px", marginBottom: "8px" }}>15. Contact</h3>
       <p>For questions about these Terms, contact us at: <strong style={{ color: T.accent }}>info@rentscan.ae</strong></p>
     </LegalPage>
   );
@@ -881,6 +978,7 @@ ${pickupP.length > 0 ? `<h2>Vehicle Condition at Pickup</h2>
       • Contact information submitted via "Get Quote" forms (name, phone number)<br/>
       • Rental details entered in the "My Rental" dossier</p>
       <p><strong style={{ color: T.text }}>Information collected automatically:</strong></p>
+      <p>• <strong style={{ color: T.text }}>Anonymous rental market data:</strong> When you scan a contract or submit rental details, RentScan automatically extracts non-personal market data including company names, vehicle models, daily rates, insurance terms, mileage limits, fuel policies, and fee structures. This data cannot identify you.</p>
       <p>• Basic analytics data (page views, device type, country) via cookies or analytics tools<br/>
       • IP address (anonymized)<br/>
       • Browser type and operating system</p>
@@ -892,6 +990,7 @@ ${pickupP.length > 0 ? `<h2>Vehicle Condition at Pickup</h2>
       <h3 style={{ color: T.text, fontSize: "16px", marginTop: "24px", marginBottom: "8px" }}>2. How we use your information</h3>
       <p>• <strong style={{ color: T.text }}>Contract analysis:</strong> Text you paste is sent to our AI provider (Anthropic) for analysis and is not stored permanently by RentScan<br/>
       • <strong style={{ color: T.text }}>Lead generation:</strong> If you click "Get Quote", your contact information may be shared with the selected rental company so they can provide you with a quote<br/>
+      • <strong style={{ color: T.text }}>Market intelligence:</strong> Anonymous rental data is aggregated to improve cost estimates, identify pricing patterns, and detect common hidden fees across rental companies in Dubai. This helps all users get more accurate analyses.<br/>
       • <strong style={{ color: T.text }}>Analytics:</strong> Aggregated, anonymous usage data to improve our service<br/>
       • <strong style={{ color: T.text }}>Communication:</strong> If you contact us, we may use your information to respond</p>
 
@@ -906,6 +1005,7 @@ ${pickupP.length > 0 ? `<h2>Vehicle Condition at Pickup</h2>
       <h3 style={{ color: T.text, fontSize: "16px", marginTop: "24px", marginBottom: "8px" }}>4. Data retention</h3>
       <p>• Contract text sent for AI analysis is not permanently stored by RentScan<br/>
       • Lead information (name, phone) is retained until the quote process is completed or for a maximum of 90 days<br/>
+      • Anonymous rental market data is retained indefinitely in aggregated form to improve service quality<br/>
       • Analytics data is retained in aggregated, anonymous form<br/>
       • Photos and dossier data exist only on your device — if you clear your browser data, this information is lost</p>
 
@@ -959,6 +1059,9 @@ ${pickupP.length > 0 ? `<h2>Vehicle Condition at Pickup</h2>
       <h3 style={{ color: T.text, fontSize: "16px", marginTop: "24px", marginBottom: "8px" }}>Photo evidence</h3>
       <p>While the photo dossier feature helps document vehicle condition, RentScan makes no representation that such documentation will be accepted as evidence by any rental company, insurance provider, court, or other party. The effectiveness of photographic evidence depends on many factors outside RentScan's control.</p>
 
+      <h3 style={{ color: T.text, fontSize: "16px", marginTop: "24px", marginBottom: "8px" }}>Market data</h3>
+      <p>RentScan collects anonymous market data from user interactions to improve its service. This data is aggregated and non-personal. While RentScan strives to provide accurate market insights based on this data, it makes no guarantees about the completeness or accuracy of aggregated market information. Market conditions change frequently and past data may not reflect current pricing or policies.</p>
+
       <h3 style={{ color: T.text, fontSize: "16px", marginTop: "24px", marginBottom: "8px" }}>Pricing data</h3>
       <p>All pricing information is collected from publicly available sources and may not reflect current rates, promotions, or special conditions. Prices can change without notice. Always confirm the final price directly with the rental company before committing to any booking.</p>
 
@@ -996,6 +1099,3 @@ ${pickupP.length > 0 ? `<h2>Vehicle Condition at Pickup</h2>
     </div>
   );
 }
-
-
-
