@@ -107,7 +107,7 @@ async function fetchUrlContent(url) {
       .replace(/&#39;/g, "'")
       .replace(/\s+/g, " ")
       .trim();
-    return text.substring(0, 15000);
+    return text.substring(0, 30000);
   } catch { return null; }
 }
 
