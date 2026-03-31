@@ -30,6 +30,40 @@ async function storeTerms(company, url, termsText) {
   await redis(["SADD", "terms:companies", company]);
 }
 
+// Get stored terms for a specific company
+async function getTermsForCompany(companyName) {
+  if (!companyName) return "";
+  const key = `terms:${companyName.toLowerCase().replace(/[^a-z0-9]/g, "_")}`;
+  const result = await redis(["GET", key]);
+  if (!result?.result) return "";
+  try {
+    const data = JSON.parse(result.result);
+    return data.terms || "";
+  } catch { return ""; }
+}
+
+// Check if user's message mentions any known company, return matching terms
+async function findRelevantTerms(userText) {
+  if (!UPSTASH_URL || !UPSTASH_TOKEN) return "";
+  try {
+    const termsCompanies = await redis(["SMEMBERS", "terms:companies"]);
+    if (!termsCompanies?.result?.length) return "";
+
+    const textLower = userText.toLowerCase();
+
+    for (const company of termsCompanies.result) {
+      const companyLower = company.toLowerCase();
+      if (textLower.includes(companyLower)) {
+        const terms = await getTermsForCompany(company);
+        if (terms) {
+          return `\n\nSTORED TERMS & CONDITIONS FOR ${company.toUpperCase()} (from our database - use this to answer the user's question with specific AED amounts and exact clauses):\n\n${terms.substring(0, 40000)}`;
+        }
+      }
+    }
+    return "";
+  } catch { return ""; }
+}
+
 async function getMarketContext() {
   if (!UPSTASH_URL || !UPSTASH_TOKEN) return "";
   try {
@@ -72,7 +106,6 @@ async function fetchUrlContent(url) {
     if (!res.ok) return null;
     let html = await res.text();
 
-    // Strip all non-content elements
     html = html
       .replace(/<script[^>]*>[\s\S]*?<\/script>/gi, "")
       .replace(/<style[^>]*>[\s\S]*?<\/style>/gi, "")
@@ -91,7 +124,6 @@ async function fetchUrlContent(url) {
       .replace(/<meta[^>]*>/gi, "")
       .replace(/<input[^>]*>/gi, "");
 
-    // Convert remaining HTML to text
     let text = html
       .replace(/<[^>]+>/g, " ")
       .replace(/&nbsp;/g, " ")
@@ -103,7 +135,6 @@ async function fetchUrlContent(url) {
       .replace(/\s+/g, " ")
       .trim();
 
-    // Remove lines that are mostly Arabic (bilingual Dubai sites)
     const parts = text.split(/(?<=[.!?])\s+/);
     const seen = new Set();
     const filtered = [];
@@ -148,7 +179,11 @@ export default async function handler(req, res) {
   }
 
   try {
-    const marketContext = await getMarketContext();
+    // Fetch market context AND stored terms for any mentioned company in parallel
+    const [marketContext, termsContext] = await Promise.all([
+      getMarketContext(),
+      findRelevantTerms(contractText),
+    ]);
 
     const response = await fetch("https://api.anthropic.com/v1/messages", {
       method: "POST",
@@ -174,14 +209,16 @@ ANALYSIS RULES:
 4. NEVER say "amounts not specified" if the document DOES contain specific amounts — read the ENTIRE document carefully
 5. Group findings by category: Fees & Penalties, Insurance & Liability, Restrictions & Rules, Cancellation & Refunds
 
+IMPORTANT: If you have STORED TERMS & CONDITIONS for a company below, USE THEM to answer the user's question with specific fees, penalties, and AED amounts from those terms. This is your database — treat it as authoritative data you already know.
+
 For contracts/quotes: calculate real total cost with all extras.
-For terms & conditions URLs: extract EVERY fee, penalty, rule and noteworthy clause from the ENTIRE document.
-For general questions: give practical advice with real Dubai numbers.
+For terms & conditions: extract EVERY fee, penalty, rule and noteworthy clause.
+For general questions: give practical advice with real Dubai numbers. If you have stored terms for a mentioned company, cite specific fees from those terms.
 
 Be factual and neutral about companies. Never badmouth by name.
-${marketContext}
+${marketContext}${termsContext}
 
-IMPORTANT: After your response, extract market data as JSON on a new line. Use the company name exactly as it appears on their website branding. Extract ALL fees and penalties as hiddenCosts — include both AED amounts AND noteworthy rules (e.g. "GPS tracking active", "car can be remotely immobilized", "reported stolen if not returned").
+IMPORTANT: After your response, extract market data as JSON on a new line. Use the company name exactly as it appears on their website branding. Extract ALL fees and penalties as hiddenCosts — include both AED amounts AND noteworthy rules.
 
 ---MARKET_DATA---
 {"company":"company name or null","car":"car model or null","dailyRate":number or 0,"insurance":"insurance type or null","mileage":"mileage limit or null","fuel":"fuel policy or null","deposit":number or 0,"excess":number or 0,"hiddenCosts":["every fee/penalty with AED amounts AND every unusual rule or clause"],"rentalDays":number or 0}
