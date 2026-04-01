@@ -1,4 +1,5 @@
 import { useState, useEffect, useRef } from "react";
+import { Capacitor, CapacitorHttp } from "@capacitor/core";
 import { useScreenViewport } from "./useScreenViewport";
 
 // ===== COMPANY DATA =====
@@ -220,10 +221,64 @@ export default function App() {
   const shareConsent = true; // Always collect anonymous market data
   const [dossierSaved, setDossierSaved] = useState(false);
   const [extracting, setExtracting] = useState(false);
+  const [extractError, setExtractError] = useState("");
 
   const topSafeInset = "env(safe-area-inset-top)";
 
   useScreenViewport();
+
+  const postJson = async (url, payload) => {
+    if (Capacitor.getPlatform() !== "web") {
+      const resp = await CapacitorHttp.post({
+        url,
+        headers: { "Content-Type": "application/json" },
+        data: payload,
+      });
+      let data = resp.data;
+      if (typeof data === "string") {
+        try {
+          data = JSON.parse(data);
+        } catch {
+          data = null;
+        }
+      }
+      return { ok: resp.status >= 200 && resp.status < 300, data };
+    }
+
+    const resp = await fetch(url, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(payload),
+    });
+    let data = null;
+    try {
+      data = await resp.json();
+    } catch {}
+    return { ok: resp.ok, data };
+  };
+
+  const optimizeImageForOCR = (dataUrl) => new Promise((resolve) => {
+    const img = new Image();
+    img.onload = () => {
+      try {
+        const maxSide = 1800;
+        const scale = Math.min(1, maxSide / Math.max(img.width, img.height));
+        const width = Math.max(1, Math.round(img.width * scale));
+        const height = Math.max(1, Math.round(img.height * scale));
+        const canvas = document.createElement("canvas");
+        canvas.width = width;
+        canvas.height = height;
+        const ctx = canvas.getContext("2d");
+        if (!ctx) return resolve(dataUrl);
+        ctx.drawImage(img, 0, 0, width, height);
+        resolve(canvas.toDataURL("image/jpeg", 0.82));
+      } catch {
+        resolve(dataUrl);
+      }
+    };
+    img.onerror = () => resolve(dataUrl);
+    img.src = dataUrl;
+  });
 
   // Splash screen timer
   useEffect(() => { const t = setTimeout(() => setSplash(false), 2200); return () => clearTimeout(t); }, []);
@@ -285,16 +340,8 @@ export default function App() {
     setFollowUp("");
     setFollowUpLoading(true);
     try {
-      const resp = await fetch(`${API_BASE}/api/scan`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ messages: newMessages }),
-      });
-      let data = null;
-      try {
-        data = await resp.json();
-      } catch {}
-      if (resp.ok && data?.answer) {
+      const { ok, data } = await postJson(`${API_BASE}/api/scan`, { messages: newMessages });
+      if (ok && data?.answer) {
         const clean = data.answer.replace(/```json\s*null\s*```/g, "").trim();
         setChatMessages([...newMessages, { role: "assistant", content: clean }]);
       } else {
@@ -315,16 +362,8 @@ export default function App() {
     setLoading(true);
     trackEvent("scan_started", { length: text.length });
     try {
-      const resp = await fetch(`${API_BASE}/api/scan`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ contractText: text })
-      });
-      let data = null;
-      try {
-        data = await resp.json();
-      } catch {}
-      if (resp.ok && data?.answer) {
+      const { ok, data } = await postJson(`${API_BASE}/api/scan`, { contractText: text });
+      if (ok && data?.answer) {
         setRes({ mode: "chat", answer: data.answer, tips: data.tips || [], aiPowered: true });
           setChatMessages([{ role: "user", content: text }, { role: "assistant", content: data.answer }]);
           if (data.termsUsed) setRes(prev => ({ ...prev, termsUsed: data.termsUsed }));
@@ -341,14 +380,10 @@ export default function App() {
 
   // Extract data from contract photo
   const extractContract = async (imageData) => {
+    setExtractError("");
     try {
-      const resp = await fetch("/api/extract", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ image: imageData }),
-      });
-      const data = await resp.json();
-      if (data.success && data.data) {
+      const { ok, data } = await postJson(`${API_BASE}/api/extract`, { image: imageData });
+      if (ok && data?.success && data?.data) {
         const d = data.data;
         setRental(prev => ({
           ...prev,
@@ -365,8 +400,12 @@ export default function App() {
           deposit: d.deposit ? String(d.deposit) : prev.deposit,
           notes: d.notes ? (prev.notes ? prev.notes + "\n" + d.notes : d.notes) : prev.notes,
         }));
+      } else {
+        setExtractError(data?.error || "Could not read this photo. Try a clearer, closer contract image.");
       }
-    } catch {}
+    } catch {
+      setExtractError("Could not connect to contract reader. Please check internet and try again.");
+    }
   };
 
   const doFile = (e) => { e.preventDefault(); const f = e.dataTransfer?.files?.[0] || e.target?.files?.[0]; if (f) { const r = new FileReader(); r.onload = (ev) => setText(ev.target.result); r.readAsText(f); } };
@@ -391,37 +430,12 @@ export default function App() {
     const inp = document.createElement("input"); inp.type = "file"; inp.accept = "image/*"; inp.capture = "environment"; inp.multiple = true;
     inp.onchange = (e) => Array.from(e.target.files).forEach(file => {
       const r = new FileReader(); r.onload = (ev) => {
-        const imageData = ev.target.result;
-        setContractP(p => [...p, { id: Date.now() + Math.random(), data: imageData, time: new Date().toLocaleString("en-AE", { timeZone: "Asia/Dubai", dateStyle: "medium", timeStyle: "short" }), label: "Contract" }]);
+        const rawImageData = ev.target.result;
+        setContractP(p => [...p, { id: Date.now() + Math.random(), data: rawImageData, time: new Date().toLocaleString("en-AE", { timeZone: "Asia/Dubai", dateStyle: "medium", timeStyle: "short" }), label: "Contract" }]);
         setExtracting(true);
-        fetch("/api/extract", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ image: imageData }),
-        })
-          .then(r => r.json())
-          .then(result => {
-            if (result.success && result.data) {
-              const d = result.data;
-              setRental(prev => ({
-                ...prev,
-                company: d.company || prev.company,
-                car: d.car || prev.car,
-                plate: d.plate || prev.plate,
-                start: d.start || prev.start,
-                end: d.end || prev.end,
-                dailyPrice: d.dailyPrice ? String(d.dailyPrice) : prev.dailyPrice,
-                insurance: d.insurance || prev.insurance,
-                excess: d.excess ? String(d.excess) : prev.excess,
-                mileage: d.mileage || prev.mileage,
-                fuel: d.fuel || prev.fuel,
-                deposit: d.deposit ? String(d.deposit) : prev.deposit,
-                notes: d.notes ? (prev.notes ? prev.notes + "\n" + d.notes : d.notes) : prev.notes,
-              }));
-            }
-            setExtracting(false);
-          })
-          .catch(() => setExtracting(false));
+        optimizeImageForOCR(rawImageData)
+          .then(imageData => extractContract(imageData))
+          .finally(() => setExtracting(false));
       }; r.readAsDataURL(file);
     }); inp.click();
   };
@@ -638,7 +652,7 @@ export default function App() {
                     border: "1px solid rgba(255,255,255,0.15)",
                     backgroundColor: "rgba(255,255,255,0.05)",
                     color: T.text,
-                    fontSize: "14px",
+                    fontSize: "16px",
                     outline: "none",
                     fontFamily: "inherit",
                   }}
@@ -821,6 +835,9 @@ export default function App() {
           </div>}
           {extracting && <div style={{ background: T.accent + "15", border: "1px solid " + T.accent, borderRadius: "12px", padding: "12px", marginBottom: "12px", textAlign: "center" }}>
             <span style={{ fontSize: "13px", color: T.accent, fontWeight: 600 }}>🔍 Reading contract... auto-filling details</span>
+          </div>}
+          {extractError && <div style={{ background: T.red + "15", border: "1px solid " + T.red, borderRadius: "12px", padding: "12px", marginBottom: "12px", textAlign: "center" }}>
+            <span style={{ fontSize: "12px", color: T.red, fontWeight: 600 }}>{extractError}</span>
           </div>}
           <button onClick={handleContractPhoto} style={{ ...css.btn, marginBottom: "8px" }}>📸 {contractP.length === 0 ? "Upload Contract Photo" : "Add More Pages"}</button>
           <p style={{ fontSize: "11px", color: T.dim, textAlign: "center" }}>AI reads your contract and auto-fills rental details</p>
