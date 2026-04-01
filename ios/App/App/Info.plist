@@ -5,7 +5,7 @@
 	<key>CFBundleDevelopmentRegion</key>
 	<string>en</string>
 	<key>CFBundleDisplayName</key>
-        <string>RentScan</string>
+	<string>RentScan</string>
 	<key>CFBundleExecutable</key>
 	<string>$(EXECUTABLE_NAME)</string>
 	<key>CFBundleIdentifier</key>
@@ -23,11 +23,11 @@
 	<key>LSRequiresIPhoneOS</key>
 	<true/>
 	<key>NSCameraUsageDescription</key>
-	<string>RentScan needs camera access to scan and upload property photos.</string>
-	<key>NSPhotoLibraryUsageDescription</key>
-	<string>RentScan needs photo library access so you can choose images from your gallery.</string>
+	<string>RentScan needs camera access to photograph the car's condition at pickup and return.</string>
 	<key>NSPhotoLibraryAddUsageDescription</key>
 	<string>RentScan needs permission to save generated or edited images to your gallery.</string>
+	<key>NSPhotoLibraryUsageDescription</key>
+	<string>RentScan needs photo library access to upload car inspection photos.</string>
 	<key>UILaunchStoryboardName</key>
 	<string>LaunchScreen</string>
 	<key>UIMainStoryboardFile</key>

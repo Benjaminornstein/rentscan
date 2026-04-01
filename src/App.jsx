@@ -192,6 +192,7 @@ const costColor = { base: T.green, extra: T.accent, maybe: T.red, opt: T.blue };
 
 // ===== APP =====
 export default function App() {
+  const API_BASE = "https://www.rentscan.ae";
   const [splash, setSplash] = useState(true);
   const [onboard, setOnboard] = useState(() => !localStorage.getItem("rs_onboarded"));
   const [onboardStep, setOnboardStep] = useState(0);
@@ -284,15 +285,20 @@ export default function App() {
     setFollowUp("");
     setFollowUpLoading(true);
     try {
-      const resp = await fetch("https://rentscan.ae/api/scan", {
+      const resp = await fetch(`${API_BASE}/api/scan`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ messages: newMessages }),
       });
-      const data = await resp.json();
-      if (data.answer) {
+      let data = null;
+      try {
+        data = await resp.json();
+      } catch {}
+      if (resp.ok && data?.answer) {
         const clean = data.answer.replace(/```json\s*null\s*```/g, "").trim();
         setChatMessages([...newMessages, { role: "assistant", content: clean }]);
+      } else {
+        setChatMessages([...newMessages, { role: "assistant", content: "Sorry, I couldn't get a response right now. Please try again." }]);
       }
     } catch (err) {
       setChatMessages([...newMessages, { role: "assistant", content: "Sorry, something went wrong. Please try again." }]);
@@ -309,18 +315,21 @@ export default function App() {
     setLoading(true);
     trackEvent("scan_started", { length: text.length });
     try {
-      const resp = await fetch("https://rentscan.ae/api/scan", {
+      const resp = await fetch(`${API_BASE}/api/scan`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ contractText: text })
       });
-      const data = await resp.json();
-      if (data.answer) {
+      let data = null;
+      try {
+        data = await resp.json();
+      } catch {}
+      if (resp.ok && data?.answer) {
         setRes({ mode: "chat", answer: data.answer, tips: data.tips || [], aiPowered: true });
           setChatMessages([{ role: "user", content: text }, { role: "assistant", content: data.answer }]);
           if (data.termsUsed) setRes(prev => ({ ...prev, termsUsed: data.termsUsed }));
-      } else if (data.error) {
-        setRes({ mode: "chat", answer: "Sorry, something went wrong. Please try again.", tips: [], aiPowered: false });
+      } else if (data?.error) {
+        setRes({ mode: "chat", answer: `Sorry, something went wrong: ${data.error}`, tips: [], aiPowered: false });
       } else {
         setRes({ mode: "chat", answer: "Sorry, I couldn't analyze that. Try pasting a rental quote or asking a question about car rentals in Dubai.", tips: [], aiPowered: false });
       }
