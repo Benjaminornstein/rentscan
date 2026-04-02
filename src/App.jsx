@@ -826,8 +826,6 @@ export default function App() {
           </div>
           <div style={{ marginTop: "10px" }}><textarea value={rental.notes} onChange={e => setRental(p => ({ ...p, notes: e.target.value }))} placeholder="Notes..." style={{ ...css.input, minHeight: "50px", resize: "vertical" }} /></div>
         </div>
-        <Photos title="Pickup Inspection" icon="🟢" photos={pickupP} setter={setPickupP} guides={true} type="pickup" />
-        <Photos title="Return Inspection" icon="🔴" photos={returnP} setter={setReturnP} guides={true} type="return" />
 
         {/* DOSSIER GENERATION */}
         <div style={{ ...css.card, border: `2px solid ${T.accent}` }}>
@@ -839,116 +837,10 @@ export default function App() {
             <input value={dossierEmail} onChange={e => setDossierEmail(e.target.value)} placeholder="your@email.com" style={css.input} type="email" />
           </div>
 
-          <label style={{ display: "flex", gap: "10px", alignItems: "flex-start", marginBottom: "16px", cursor: "pointer", fontSize: "13px", color: T.sub, lineHeight: 1.5 }}>
-            <input type="checkbox" checked={shareConsent} onChange={e => setShareConsent(e.target.checked)} style={{ marginTop: "3px", accentColor: T.accent, width: "18px", height: "18px", flexShrink: 0 }} />
+          <label style={{ display: "flex", gap: "10px", alignItems: "flex-start", marginBottom: "16px", cursor: "pointer", fontSize: "13px", color: T.sub, lineHeight: 1.5 }}> setShareConsent(e.target.checked)} style={{ marginTop: "3px", accentColor: T.accent, width: "18px", height: "18px", flexShrink: 0 }} />
           </label>
 
-          <button onClick={() => {
-            if (rental.company) {
-              trackEvent("rental_data", {
-                company: rental.company, car: rental.car, dailyPrice: rental.dailyPrice || "",
-                insurance: rental.insurance, mileage: rental.mileage, fuel: rental.fuel,
-                deposit: rental.deposit, start: rental.start, end: rental.end, pickupPhotos: pickupP.length,
-              });
-            }
 
-            const d = rental;
-            const dossierDate = new Date().toLocaleString("en-AE", { timeZone: "Asia/Dubai", dateStyle: "long", timeStyle: "short" });
-            const html = `<!DOCTYPE html><html><head><meta charset="utf-8"><title>RentScan Pickup Dossier - ${d.company || "Rental"}</title>
-<style>
-*{margin:0;padding:0;box-sizing:border-box}
-body{font-family:-apple-system,sans-serif;color:#1A1A2E;padding:32px;max-width:800px;margin:0 auto}
-h1{font-size:28px;font-weight:800;margin-bottom:4px}
-h2{font-size:18px;font-weight:700;margin:24px 0 12px;padding-bottom:8px;border-bottom:2px solid #C8962E}
-.sub{color:#6B6B80;font-size:13px;margin-bottom:24px}
-.grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:16px}
-.field{background:#141920;border-radius:8px;padding:10px 14px}
-.field .label{font-size:10px;text-transform:uppercase;letter-spacing:1px;color:#9D9DB0;font-weight:600}
-.field .value{font-size:15px;font-weight:600;margin-top:2px}
-.photos{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin:12px 0}
-.photo{border-radius:8px;overflow:hidden}
-.photo img{width:100%;aspect-ratio:1;object-fit:cover;display:block}
-.photo .info{padding:6px;background:#141920;font-size:10px;color:#6B6B80;text-align:center}
-.photo .info strong{display:block;color:#1A1A2E;font-size:11px}
-.notice{background:#C8962E20;border:1px solid #C8962E;border-radius:8px;padding:14px;margin:20px 0;font-size:13px;color:#C8962E;line-height:1.5}
-.footer{margin-top:32px;padding-top:16px;border-top:1px solid #E8E8ED;text-align:center;color:#9D9DB0;font-size:11px}
-.badge{display:inline-block;background:#C8962E;color:#fff;padding:3px 10px;border-radius:6px;font-size:10px;font-weight:700}
-@media print{body{padding:16px}img{page-break-inside:avoid}}
-</style></head><body>
-<div style="display:flex;align-items:center;gap:12px;margin-bottom:6px">
-<div style="width:44px;height:44px;border-radius:10px;background:linear-gradient(135deg,#C8962E,#A67A20);display:flex;align-items:center;justify-content:center;font-size:22px">🔍</div>
-<div><h1>Pickup Dossier</h1><div class="sub" style="margin:0">Generated ${dossierDate}</div></div>
-</div>
-<div class="sub">This document records the condition of the vehicle at the time of pickup.</div>
-
-<h2>Rental Details</h2>
-<div class="grid">
-${[["Company", d.company], ["Car model", d.car], ["Plate number", d.plate], ["Pickup date", d.start], ["Return date", d.end], ["Daily price", d.dailyPrice ? "AED " + d.dailyPrice : "\u2014"], ["Insurance", d.insurance], ["Excess", d.excess ? "AED " + d.excess : "\u2014"], ["Mileage limit", d.mileage], ["Fuel policy", d.fuel], ["Deposit", d.deposit ? "AED " + d.deposit : "\u2014"]].map(([l, v]) => `<div class="field"><div class="label">${l}</div><div class="value">${v || "\u2014"}</div></div>`).join("")}
-</div>
-${d.notes ? `<div class="field" style="margin-bottom:16px"><div class="label">Notes</div><div class="value">${d.notes}</div></div>` : ""}
-
-${contractP.length > 0 ? `<h2>Contract Documents</h2>
-<p style="color:#6B6B80;font-size:12px;margin-bottom:8px">${contractP.length} photo${contractP.length > 1 ? "s" : ""}</p>
-<div class="photos">${contractP.map(p => `<div class="photo"><img src="${p.data}"/><div class="info"><strong>${p.label}</strong>${p.time}</div></div>`).join("")}</div>` : ""}
-
-${pickupP.length > 0 ? `<h2>Vehicle Condition at Pickup</h2>
-<p style="color:#6B6B80;font-size:12px;margin-bottom:8px">${pickupP.length} timestamped photo${pickupP.length > 1 ? "s" : ""}</p>
-<div class="photos">${pickupP.map(p => `<div class="photo"><img src="${p.data}"/><div class="info"><strong>${p.label}</strong>${p.time}</div></div>`).join("")}</div>` : ""}
-
-<div class="notice"><strong>Notice to rental company:</strong> This dossier documents the vehicle condition at pickup with timestamped photographs. Any pre-existing damage shown above was present before the rental period began. The renter reserves the right to use this documentation in case of disputed charges.</div>
-
-<div class="footer">
-<div style="margin-bottom:8px"><span class="badge">RENTSCAN.AE</span></div>
-<div>Pickup Dossier generated by RentScan \u2014 Rent safely!</div>
-<div>www.rentscan.ae</div>
-<div style="margin-top:8px;font-size:10px">Timestamps are based on device time at moment of capture.</div>
-</div>
-</body></html>`;
-
-            const blob = new Blob([html], { type: "text/html" });
-            const file = new File([blob], `RentScan-Dossier-${(d.company || "Rental").replace(/\s+/g, "-")}.html`, { type: "text/html" });
-
-            // Store for sharing
-            window._dossierFile = file;
-            window._dossierHtml = html;
-            window._dossierBlob = blob;
-            setDossierSaved(true);
-            // Save email as lead
-            if (dossierEmail) {
-              fetch("/api/lead", {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ email: dossierEmail, company: rental.company || "" }),
-              }).catch(() => {});
-            }
-            trackEvent("dossier_generated", { company: d.company, photos: pickupP.length + contractP.length });
-          }} disabled={!rental.company && pickupP.length === 0} style={{ ...css.btn, opacity: (!rental.company && pickupP.length === 0) ? 0.4 : 1, marginBottom: "10px" }}>
-            📋 Generate Pickup Dossier
-          </button>
-
-          {dossierSaved && <>
-            <p style={{ fontSize: "13px", color: T.green, textAlign: "center", marginBottom: "12px", fontWeight: 600 }}>✅ Dossier ready! Now share it:</p>
-
-            {/* Send to rental company via Share API or mailto */}
-            <button onClick={async () => {
-              const file = window._dossierFile;
-              if (navigator.share && navigator.canShare && navigator.canShare({ files: [file] })) {
-                try {
-                  await navigator.share({
-                    title: `Pickup Dossier - ${rental.car || "Vehicle"}`,
-                    text: `Pickup dossier for ${rental.car || "vehicle"} from ${rental.company || "rental company"}. Generated by RentScan.ae`,
-                    files: [file],
-                  });
-                  trackEvent("dossier_shared", { method: "share_api", company: rental.company });
-                } catch {}
-              } else {
-                const subject = encodeURIComponent(`Pickup Dossier - ${rental.car || "Vehicle"} - ${rental.start || ""}`);
-                const body = encodeURIComponent(`Dear ${rental.company || "Rental Company"},\n\nPlease find the pickup dossier for my rental:\n\nVehicle: ${rental.car || "-"}\nPlate: ${rental.plate || "-"}\nPickup: ${rental.start || "-"}\n\nThis dossier contains ${pickupP.length} timestamped photos.\n\n---\nGenerated by RentScan (www.rentscan.ae)`);
-                window.open(`mailto:?subject=${subject}&body=${body}`, "_self");
-              }
-            }} style={{ background: `linear-gradient(135deg, ${T.accent}, ${T.accent2})`, color: "#fff", border: "none", borderRadius: "12px", padding: "14px", fontSize: "15px", fontWeight: 700, cursor: "pointer", width: "100%", marginBottom: "8px" }}>
-              📧 Send to rental company
-            </button>
 
             <div style={{ display: "flex", gap: "8px", marginBottom: "8px" }}>
               {/* Save as PDF */}
@@ -960,16 +852,14 @@ ${pickupP.length > 0 ? `<h2>Vehicle Condition at Pickup</h2>
                 📥 Save as PDF
               </button>
 
-              {/* Share via WhatsApp */}
               <button onClick={() => {
                 const text = encodeURIComponent(`Pickup Dossier for my ${rental.car || "rental car"} from ${rental.company || "rental company"}.\n\n${pickupP.length} timestamped photos documenting vehicle condition at pickup.\n\nGenerated by RentScan — www.rentscan.ae`);
                 window.open(`https://wa.me/?text=${text}`, "_blank");
               }} style={{ flex: 1, background: "#25D366", border: "none", color: "#fff", borderRadius: "12px", padding: "12px", fontSize: "13px", fontWeight: 600, cursor: "pointer", textAlign: "center" }}>
-                💬 WhatsApp
               </button>
             </div>
 
-            <p style={{ fontSize: "11px", color: T.dim, textAlign: "center" }}>On mobile: "Send to rental company" opens your share menu — choose Email, WhatsApp or any app</p>
+            
           </>}
 
           {!dossierSaved && <p style={{ fontSize: "11px", color: T.dim, textAlign: "center" }}>Generates a professional dossier with all photos and details</p>}
