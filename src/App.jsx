@@ -218,6 +218,8 @@ export default function App() {
   const [dossierEmail, setDossierEmail] = useState("");
   const shareConsent = true; // Always collect anonymous market data
   const [dossierSaved, setDossierSaved] = useState(false);
+  const [dossierSending, setDossierSending] = useState(false);
+  const [dossierSent, setDossierSent] = useState(false);
   const [extracting, setExtracting] = useState(false);
 
   const topSafeInset = "env(safe-area-inset-top)";
@@ -914,12 +916,54 @@ ${pickupP.length > 0 ? `<h2>Vehicle Condition at Pickup</h2>
             window._dossierHtml = html;
             window._dossierBlob = blob;
             setDossierSaved(true);
+            setDossierSent(false);
             trackEvent("dossier_generated", { company: d.company, photos: pickupP.length + contractP.length });
           }} disabled={!rental.company && pickupP.length === 0} style={{ ...css.btn, opacity: (!rental.company && pickupP.length === 0) ? 0.4 : 1, marginBottom: "10px" }}>
             📋 Generate Pickup Dossier
           </button>
 
           {dossierSaved && <>
+            {/* Email dossier to yourself */}
+            {dossierEmail && !dossierSent && (
+              <button onClick={async () => {
+                if (!dossierEmail || !window._dossierBlob) return;
+                setDossierSending(true);
+                try {
+                  const html = await window._dossierBlob.text();
+                  const resp = await fetch("/api/email", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({
+                      to: dossierEmail,
+                      subject: "Your RentScan Pickup Dossier - " + (rental.company || "Rental"),
+                      html: html,
+                    }),
+                  });
+                  const data = await resp.json();
+                  if (data.success) {
+                    setDossierSent(true);
+                  } else {
+                    alert("Could not send email: " + (data.error || "Unknown error"));
+                  }
+                } catch (err) {
+                  alert("Could not send email. Check your internet connection.");
+                } finally {
+                  setDossierSending(false);
+                }
+              }} disabled={dossierSending} style={{
+                width: "100%", padding: "14px", borderRadius: "12px", border: "none",
+                background: dossierSending ? "#555" : "linear-gradient(135deg, #C9A227, #B8860B)",
+                color: "#fff", fontWeight: 700, fontSize: "15px", cursor: dossierSending ? "not-allowed" : "pointer",
+                marginBottom: "10px",
+              }}>
+                {dossierSending ? "Sending..." : "✉️ Email dossier to " + dossierEmail}
+              </button>
+            )}
+            {dossierSent && (
+              <div style={{ padding: "12px", borderRadius: "10px", backgroundColor: "rgba(100,200,100,0.1)", border: "1px solid rgba(100,200,100,0.2)", textAlign: "center", fontSize: "14px", color: "#7cb87c", marginBottom: "10px" }}>
+                ✅ Dossier sent to {dossierEmail}
+              </div>
+            )}
             <p style={{ fontSize: "13px", color: T.green, textAlign: "center", marginBottom: "12px", fontWeight: 600 }}>✅ Dossier ready! Now share it:</p>
 
             {/* Send to rental company via Share API or mailto */}
