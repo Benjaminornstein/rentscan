@@ -848,7 +848,6 @@ export default function App() {
               }} style={{ flex: 1, background: "#0A0E14", border: `1.5px solid ${T.border}`, color: T.sub, borderRadius: "12px", padding: "12px", fontSize: "13px", fontWeight: 600, cursor: "pointer", textAlign: "center" }}>
                 📥 Save as PDF
               </button>
-              </button>
             </div>
 
             
