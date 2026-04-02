@@ -929,14 +929,19 @@ ${pickupP.length > 0 ? `<h2>Vehicle Condition at Pickup</h2>
                 if (!dossierEmail || !window._dossierBlob) return;
                 setDossierSending(true);
                 try {
-                  const html = await window._dossierBlob.text();
+                  const dossierHtml = await window._dossierBlob.text();
+                  const base64 = btoa(unescape(encodeURIComponent(dossierHtml)));
                   const resp = await fetch("/api/email", {
                     method: "POST",
                     headers: { "Content-Type": "application/json" },
                     body: JSON.stringify({
                       to: dossierEmail,
                       subject: "Your RentScan Pickup Dossier - " + (rental.company || "Rental"),
-                      html: html,
+                      html: "<div style=\"font-family:sans-serif;max-width:600px;margin:0 auto;padding:20px\"><h2 style=\"color:#C9A227\">Your RentScan Dossier</h2><p>Your pickup dossier for <strong>" + (rental.company || "your rental") + "</strong> is attached to this email.</p><p>Open the attached HTML file in any browser to view your full dossier with all photos and details.</p><hr style=\"border:none;border-top:1px solid #eee;margin:20px 0\"><p style=\"font-size:12px;color:#999\">RentScan — Rent safely in Dubai.<br>This is an automated email. Do not reply.</p></div>",
+                      attachment: {
+                        content: base64,
+                        filename: "RentScan-Dossier-" + (rental.company || "Rental").replace(/\s+/g, "-") + ".html",
+                      },
                     }),
                   });
                   const data = await resp.json();
