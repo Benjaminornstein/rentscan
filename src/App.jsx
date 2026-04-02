@@ -218,8 +218,6 @@ export default function App() {
   const [dossierEmail, setDossierEmail] = useState("");
   const shareConsent = true; // Always collect anonymous market data
   const [dossierSaved, setDossierSaved] = useState(false);
-  const [dossierSending, setDossierSending] = useState(false);
-  const [dossierSent, setDossierSent] = useState(false);
   const [extracting, setExtracting] = useState(false);
 
   const topSafeInset = "env(safe-area-inset-top)";
@@ -837,13 +835,12 @@ export default function App() {
           <p style={{ ...css.sub, fontSize: "12px", marginBottom: "14px" }}>Generate before you drive away. Proves the car's condition when you received it.</p>
 
           <div style={{ marginBottom: "12px" }}>
-            <div style={css.label}>Your email (optional — to receive a copy)</div>
+            <div style={css.label}>Your email (optional)</div>
             <input value={dossierEmail} onChange={e => setDossierEmail(e.target.value)} placeholder="your@email.com" style={css.input} type="email" />
           </div>
 
           <label style={{ display: "flex", gap: "10px", alignItems: "flex-start", marginBottom: "16px", cursor: "pointer", fontSize: "13px", color: T.sub, lineHeight: 1.5 }}>
             <input type="checkbox" checked={shareConsent} onChange={e => setShareConsent(e.target.checked)} style={{ marginTop: "3px", accentColor: T.accent, width: "18px", height: "18px", flexShrink: 0 }} />
-            <span>Help improve RentScan by sharing <strong style={{ color: T.text }}>anonymous</strong> rental info (company name, car model, price). No personal data is shared.</span>
           </label>
 
           <button onClick={() => {
@@ -916,15 +913,20 @@ ${pickupP.length > 0 ? `<h2>Vehicle Condition at Pickup</h2>
             window._dossierHtml = html;
             window._dossierBlob = blob;
             setDossierSaved(true);
-            setDossierSent(false);
+            // Save email as lead
+            if (dossierEmail) {
+              fetch("/api/lead", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ email: dossierEmail, company: rental.company || "" }),
+              }).catch(() => {});
+            }
             trackEvent("dossier_generated", { company: d.company, photos: pickupP.length + contractP.length });
           }} disabled={!rental.company && pickupP.length === 0} style={{ ...css.btn, opacity: (!rental.company && pickupP.length === 0) ? 0.4 : 1, marginBottom: "10px" }}>
             📋 Generate Pickup Dossier
           </button>
 
           {dossierSaved && <>
-            {/* Email dossier to yourself */}
-            {dossierEmail && !dossierSent && (
               <button onClick={async () => {
                 if (!dossierEmail || !window._dossierBlob) return;
                 setDossierSending(true);
@@ -955,18 +957,12 @@ ${pickupP.length > 0 ? `<h2>Vehicle Condition at Pickup</h2>
                 } finally {
                   setDossierSending(false);
                 }
-              }} disabled={dossierSending} style={{
                 width: "100%", padding: "14px", borderRadius: "12px", border: "none",
-                background: dossierSending ? "#555" : "linear-gradient(135deg, #C9A227, #B8860B)",
-                color: "#fff", fontWeight: 700, fontSize: "15px", cursor: dossierSending ? "not-allowed" : "pointer",
                 marginBottom: "10px",
               }}>
-                {dossierSending ? "Sending..." : "✉️ Email dossier to " + dossierEmail}
               </button>
             )}
-            {dossierSent && (
               <div style={{ padding: "12px", borderRadius: "10px", backgroundColor: "rgba(100,200,100,0.1)", border: "1px solid rgba(100,200,100,0.2)", textAlign: "center", fontSize: "14px", color: "#7cb87c", marginBottom: "10px" }}>
-                ✅ Dossier sent to {dossierEmail}
               </div>
             )}
             <p style={{ fontSize: "13px", color: T.green, textAlign: "center", marginBottom: "12px", fontWeight: 600 }}>✅ Dossier ready! Now share it:</p>
