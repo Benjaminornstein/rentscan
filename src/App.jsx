@@ -837,9 +837,6 @@ export default function App() {
             <input value={dossierEmail} onChange={e => setDossierEmail(e.target.value)} placeholder="your@email.com" style={css.input} type="email" />
           </div>
 
-          <label style={{ display: "flex", gap: "10px", alignItems: "flex-start", marginBottom: "16px", cursor: "pointer", fontSize: "13px", color: T.sub, lineHeight: 1.5 }}> setShareConsent(e.target.checked)} style={{ marginTop: "3px", accentColor: T.accent, width: "18px", height: "18px", flexShrink: 0 }} />
-          </label>
-
 
 
             <div style={{ display: "flex", gap: "8px", marginBottom: "8px" }}>
