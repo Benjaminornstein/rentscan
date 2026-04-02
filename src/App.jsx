@@ -827,7 +827,6 @@ export default function App() {
           <div style={{ marginTop: "10px" }}><textarea value={rental.notes} onChange={e => setRental(p => ({ ...p, notes: e.target.value }))} placeholder="Notes..." style={{ ...css.input, minHeight: "50px", resize: "vertical" }} /></div>
         </div>
         <Photos title="Pickup Inspection" icon="🟢" photos={pickupP} setter={setPickupP} guides={true} type="pickup" />
-        <Photos title="Return Inspection" icon="🔴" photos={returnP} setter={setReturnP} guides={true} type="return" />
 
         {/* DOSSIER GENERATION */}
         <div style={{ ...css.card, border: `2px solid ${T.accent}` }}>
