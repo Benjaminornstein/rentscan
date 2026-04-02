@@ -873,7 +873,7 @@ export default function App() {
   .notes .label { font-size: 8px; text-transform: uppercase; letter-spacing: 1.5px; color: #aaa; font-weight: 700; margin-bottom: 6px; }
   .notes ul { list-style: none; padding: 0; }
   .notes li { font-size: 12px; color: #444; line-height: 1.4; padding: 3px 0; padding-left: 14px; position: relative; }
-  .notes li:before { content: "•"; color: #C8962E; font-weight: 700; position: absolute; left: 0; }
+  .notes li:before { content: "ï¿½"; color: #C8962E; font-weight: 700; position: absolute; left: 0; }
   .notes p { font-size: 12px; color: #444; line-height: 1.5; }
   .photos { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin: 8px 0 16px; }
   .photo { border-radius: 5px; overflow: hidden; border: 1px solid #e5e5e5; }
