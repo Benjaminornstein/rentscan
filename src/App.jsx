@@ -541,291 +541,11 @@ export default function App() {
           <button onClick={() => { setPhotoMode(type); setPhotoStep(0); }} style={{ ...css.btn, marginBottom: "8px" }}>📸 Start guided inspection ({PHOTO_GUIDES.length} shots)</button>
           <button onClick={() => handlePhoto(setter)} style={{ background: "none", border: `1.5px solid ${T.border}`, color: T.sub, borderRadius: "12px", padding: "10px", fontSize: "13px", fontWeight: 600, cursor: "pointer", width: "100%", textAlign: "center" }}>Or add photos manually</button>
         </div>
-      ) : (
-        <button onClick={() => handlePhoto(setter)} style={css.btn}>📸 {photos.length === 0 ? "Take Photos" : "Add More"}</button>
-      )}
-    </div>
-  );
 
-  // ===== SCAN TAB =====
-  const ScanTab = () => !res ? (
-    <>
-      <div style={{ textAlign: "center", marginBottom: "28px" }}>
-        <h2 style={css.h2}><span style={{ color: T.accent }}>Scan</span> your rental<br />contract</h2>
-        <p style={css.sub}>Paste a quote, upload a contract, or ask anything about renting in Dubai.</p>
-      </div>
-      <textarea value={text} onChange={e => setText(e.target.value)} placeholder={'Paste your rental quote here...\n\nExample: "Toyota Corolla, AED 150/day, 7 days, basic CDW, 250km/day, airport pickup"'} style={{ ...css.input, minHeight: "120px", resize: "vertical", lineHeight: 1.6 }} />
-      <button onClick={doScan} disabled={!text.trim() || loading} style={{ ...css.btn, marginTop: "14px", fontSize: "17px", padding: "16px", opacity: text.trim() ? 1 : 0.4 }}>
-        {loading ? "🔍 Scanning..." : "🔍 Scan / Ask"}
-      </button>
-      <div onDragOver={e => e.preventDefault()} onDrop={doFile} onClick={() => fRef.current?.click()} style={{ border: `1.5px dashed ${T.border}`, borderRadius: "12px", padding: "14px", textAlign: "center", cursor: "pointer", marginTop: "14px", background: "transparent" }}>
-        <input ref={fRef} type="file" onChange={doFile} style={{ display: "none" }} />
-        <span style={{ color: T.dim, fontSize: "13px" }}>📄 Or upload a contract file</span>
-      </div>
-      <div style={{ display: "flex", justifyContent: "center", gap: "24px", marginTop: "20px" }}>
-        {["🔒 Private", "⚡ AI-Powered", "🆓 Free"].map(b => <span key={b} style={{ fontSize: "11px", color: T.dim }}>{b}</span>)}
-      </div>
-    </>
-  ) : (
-    <>
-      <button onClick={() => { setRes(null); setText(""); }} style={{ background: "none", border: `1.5px solid ${T.border}`, color: T.sub, borderRadius: "10px", padding: "8px 18px", cursor: "pointer", fontSize: "13px", marginBottom: "12px" }}>← New scan</button>
-      {res.aiPowered && <div style={{ textAlign: "center", marginBottom: "8px" }}><span style={css.tag(T.green)}>✨ AI-Powered</span></div>}
-
-      {/* CHAT MODE */}
-      {res.mode === "chat" && <>
-        <div style={{ ...css.card, padding: "22px" }}>
-          <div style={{ fontSize: "15px", lineHeight: 1.7, color: T.text, whiteSpace: "pre-wrap" }}>{res.answer.replace(/```json\s*null\s*```/g, "").trim()}</div>
-
-            {res.termsUsed && (
-              <div style={{
-                marginTop: "14px", padding: "12px 16px", borderRadius: "10px",
-                backgroundColor: res.termsUsed.ageDays > 60 ? "rgba(255,100,50,0.1)" : res.termsUsed.ageDays > 14 ? "rgba(255,200,50,0.1)" : "rgba(100,200,100,0.07)",
-                border: res.termsUsed.ageDays > 60 ? "1px solid rgba(255,100,50,0.25)" : res.termsUsed.ageDays > 14 ? "1px solid rgba(255,200,50,0.2)" : "1px solid rgba(100,200,100,0.15)",
-                fontSize: "12px", lineHeight: 1.5, color: "#999",
-              }}>
-                <span style={{ fontWeight: 700, color: res.termsUsed.ageDays > 60 ? "#ff6432" : res.termsUsed.ageDays > 14 ? "#e8b930" : "#7cb87c" }}>
-                  {res.termsUsed.ageDays > 60 ? "\u26A0\uFE0F Data may be outdated" : res.termsUsed.ageDays > 14 ? "\u26A0\uFE0F Verify with company" : "\u2705 Recently reviewed"}
-                </span>
-                {" \u2014 Based on "}{res.termsUsed.company}{"'s terms, reviewed "}{res.termsUsed.date}
-                {". Terms can change \u2014 verify with the company before signing."}
-                {res.termsUsed.url && (<>{" "}<a href={res.termsUsed.url} target="_blank" rel="noopener noreferrer" style={{ color: "#C9A227", textDecoration: "underline" }}>View source</a></>)}
-              </div>
-            )}
-
-            {/* Follow-up messages */}
-            {chatMessages.slice(2).map((msg, i) => (
-              <div key={i} style={{
-                padding: "12px 16px",
-                marginTop: "12px",
-                borderRadius: "12px",
-                backgroundColor: msg.role === "user" ? "rgba(255, 204, 0, 0.12)" : "rgba(255,255,255,0.04)",
-                border: msg.role === "user" ? "1px solid rgba(255,204,0,0.25)" : "1px solid rgba(255,255,255,0.08)",
-                whiteSpace: "pre-wrap",
-                fontSize: "14px",
-                lineHeight: 1.7,
-                color: T.text,
-              }}>
-                <div style={{ fontSize: "11px", color: msg.role === "user" ? T.accent : "#888", marginBottom: "4px", fontWeight: 700, textTransform: "uppercase" }}>
-                  {msg.role === "user" ? "You" : "RentScan AI"}
-                </div>
-                {msg.content}
-              </div>
-            ))}
-
-            {/* Follow-up input */}
-            {res && res.aiPowered && (
-              <div style={{ marginTop: "16px", display: "flex", gap: "8px" }}>
-                <input
-                  type="text"
-                  value={followUp}
-                  onChange={(e) => setFollowUp(e.target.value)}
-                  onKeyDown={(e) => e.key === "Enter" && handleFollowUp()}
-                  placeholder="Ask a follow-up question..."
-                  disabled={followUpLoading}
-                  style={{
-                    flex: 1,
-                    padding: "12px 16px",
-                    borderRadius: "12px",
-                    border: "1px solid rgba(255,255,255,0.15)",
-                    backgroundColor: "rgba(255,255,255,0.05)",
-                    color: T.text,
-                    fontSize: "14px",
-                    outline: "none",
-                    fontFamily: "inherit",
-                  }}
-                />
-                <button
-                  onClick={handleFollowUp}
-                  disabled={followUpLoading || !followUp.trim()}
-                  style={{
-                    padding: "12px 20px",
-                    borderRadius: "12px",
-                    border: "none",
-                    background: followUpLoading ? "#555" : "linear-gradient(135deg, " + T.accent + ", " + T.accent2 + ")",
-                    color: "#fff",
-                    fontWeight: 700,
-                    fontSize: "14px",
-                    cursor: followUpLoading ? "not-allowed" : "pointer",
-                    whiteSpace: "nowrap",
-                    fontFamily: "inherit",
-                  }}
-                >
-                  {followUpLoading ? "..." : "Ask"}
-                </button>
-              </div>
-            )}
-        </div>
-        {res.tips?.length > 0 && <div style={css.card}>
-          <h3 style={{ fontSize: "15px", fontWeight: 700, margin: "0 0 12px" }}>💡 Quick tips</h3>
-          {res.tips.map((tip, i) => (
-            <div key={i} style={{ display: "flex", gap: "10px", marginBottom: "10px" }}>
-              <div style={{ minWidth: "24px", height: "24px", borderRadius: "50%", background: `${T.accent}20`, color: T.accent, display: "flex", alignItems: "center", justifyContent: "center", fontSize: "12px", fontWeight: 700, flexShrink: 0 }}>{i + 1}</div>
-              <div style={{ fontSize: "13px", color: T.sub, lineHeight: 1.5, paddingTop: "2px" }}>{tip}</div>
-            </div>
-          ))}
-        </div>}
-      </>}
-    </>
-  );
-
-  // ===== COMPARE TAB =====
-  const CompareTab = () => {
-    const list = COMPANIES.map(co => {
-      const cars = carF === "All" ? co.cars : co.cars.filter(c => c.type === carF);
-      if (!cars.length) return null;
-      const ch = cars.reduce((a, b) => a.perDay < b.perDay ? a : b);
-      return { ...co, matchCars: cars, cheapest: ch, tt: calcTrue(ch, co, cDays) };
-    }).filter(Boolean).sort((a, b) => sort === "price" ? a.tt - b.tt : sort === "rating" ? b.rating - a.rating : (b.allIn ? 1 : 0) - (a.allIn ? 1 : 0));
-
-    const Pill = ({ on, onClick, children }) => <button onClick={onClick} style={css.pill(on)}>{children}</button>;
-    return (
-      <>
-        <div style={{ textAlign: "center", marginBottom: "24px" }}>
-          <h2 style={css.h2}>Compare <span style={{ color: T.accent }}>&amp; rent</span></h2>
-          <p style={css.sub}>Estimated totals including all standard fees.</p>
-        </div>
-        <div style={{ ...css.card, padding: "16px" }}>
-          <div style={{ marginBottom: "14px" }}><div style={css.label}>Car type</div><div style={{ display: "flex", gap: "6px", flexWrap: "wrap" }}>
-            {["All", "Economy", "SUV", "Luxury"].map(c => <Pill key={c} on={carF === c} onClick={() => setCarF(c)}>{c === "All" ? "🚘 All" : c === "Economy" ? "🚗 Economy" : c === "SUV" ? "🚙 SUV" : "🏎️ Luxury"}</Pill>)}
-          </div></div>
-          <div style={{ marginBottom: "14px" }}><div style={css.label}>Duration</div><div style={{ display: "flex", gap: "6px" }}>
-            {[1, 3, 7, 14, 30].map(d => <Pill key={d} on={cDays === d} onClick={() => setCDays(d)}>{d === 30 ? "1 month" : `${d} day${d > 1 ? "s" : ""}`}</Pill>)}
-          </div></div>
-          <div><div style={css.label}>Sort by</div><div style={{ display: "flex", gap: "6px" }}>
-            {[["price", "💰 Price"], ["rating", "⭐ Rating"], ["allIn", "✅ All-in"]].map(([k, l]) => <Pill key={k} on={sort === k} onClick={() => setSort(k)}>{l}</Pill>)}
-          </div></div>
-        </div>
-        <div style={{ fontSize: "12px", color: T.dim, marginBottom: "12px" }}>{list.length} companies</div>
-        {list.map((co, idx) => {
-          const isExp = exp === co.id; const extra = co.tt - co.cheapest.perDay * cDays;
-          return (
-            <div key={co.id} style={{ ...css.card, padding: 0, overflow: "visible", border: idx === 0 ? `2px solid ${T.accent}` : `1px solid ${T.border}` }}>
-              {idx === 0 && <div style={{ background: `linear-gradient(135deg, ${T.accent}, ${T.accent2})`, padding: "5px", textAlign: "center", fontSize: "11px", fontWeight: 700, letterSpacing: "1px", color: "#fff" }}>🏆 BEST DEAL</div>}
-              <div style={{ padding: "16px", cursor: "pointer" }} onClick={() => setExp(isExp ? null : co.id)}>
-                <div style={{ display: "flex", alignItems: "center", gap: "12px" }}>
-                  <div style={{ fontSize: "34px" }}>{co.logo}</div>
-                  <div style={{ flex: 1, minWidth: 0 }}>
-                    <div style={{ display: "flex", alignItems: "center", gap: "6px", flexWrap: "wrap" }}>
-                      <span style={{ fontSize: "16px", fontWeight: 700 }}>{co.name}</span>
-                      {co.verified && <span style={css.tag(T.green)}>✓ Verified</span>}
-                      <span style={css.tag(co.allIn ? T.blue : T.accent2)}>{co.allIn ? "All-in" : "Extras apply"}</span>
-                    </div>
-                    <div style={{ fontSize: "12px", color: T.sub, marginTop: "4px" }}>⭐ {co.rating} ({co.reviews.toLocaleString()}) · 📍 {co.location.split(",")[0]}</div>
-                  </div>
-                  <div style={{ textAlign: "right" }}>
-                    <div style={{ fontSize: "10px", color: T.dim }}>Est. total</div>
-                    <div style={{ fontSize: "22px", fontWeight: 800, color: idx === 0 ? T.green : T.accent }}>{co.tt.toLocaleString()}</div>
-                    <div style={{ fontSize: "10px", color: extra > 50 ? T.accent2 : T.green }}>{extra > 50 ? `+${extra}` : "✓ All-in"}</div>
-                  </div>
-                </div>
-              </div>
-              {isExp && <div style={{ borderTop: `1px solid ${T.border}`, padding: "16px", background: T.card2 }}>
-                <div style={css.label}>Available cars</div>
-                {co.matchCars.map((car, ci) => (
-                  <div key={ci} style={{ display: "flex", alignItems: "center", padding: "12px", background: "#0A0E14", borderRadius: "12px", marginBottom: "8px", gap: "12px", border: `1px solid ${T.border}` }}>
-                    <span style={{ fontSize: "28px" }}>{car.img}</span>
-                    <div style={{ flex: 1 }}>
-                      <div style={{ fontSize: "14px", fontWeight: 600 }}>{car.model}</div>
-                      <div style={{ fontSize: "10px", color: T.sub, marginTop: "3px", display: "flex", gap: "8px", flexWrap: "wrap" }}>
-                        <span>🛡️ {car.insurance}</span><span>📏 {car.mileage}</span>
-                        <span style={{ color: car.fuel.includes("Not") ? T.red : T.sub }}>⛽ {car.fuel}</span>
-                        {car.salikIncl && <span style={{ color: T.green }}>✓ Salik</span>}
-                      </div>
-                    </div>
-                    <div style={{ textAlign: "right" }}>
-                      <div style={{ fontSize: "11px", color: T.dim }}>{car.perDay}/day</div>
-                      <div style={{ fontSize: "17px", fontWeight: 700, color: T.accent }}>AED {calcTrue(car, co, cDays).toLocaleString()}</div>
-                    </div>
-                  </div>
-                ))}
-                <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "12px", margin: "14px 0" }}>
-                  <div><div style={{ fontSize: "11px", color: T.green, fontWeight: 700, marginBottom: "6px" }}>✅ INCLUDES</div>{co.pros.map((p, i) => <div key={i} style={{ fontSize: "11px", color: T.sub, padding: "2px 0" }}>+ {p}</div>)}</div>
-                  <div><div style={{ fontSize: "11px", color: T.accent2, fontWeight: 700, marginBottom: "6px" }}>ℹ️ GOOD TO KNOW</div>{co.cons.map((c, i) => <div key={i} style={{ fontSize: "11px", color: T.dim, padding: "2px 0" }}>• {c}</div>)}</div>
-                </div>
-                <div style={{ display: "flex", gap: "10px", fontSize: "11px", color: T.dim, margin: "10px 0 14px", flexWrap: "wrap" }}>
-                  <span>💳 Deposit: AED {co.deposit.toLocaleString()}</span>
-                  <span>{co.delivery ? "🚗 Free delivery" : "📍 Pickup only"}</span>
-                </div>
-                <button onClick={() => { setLeads(p => ({ ...p, [co.name]: true })); trackEvent("quote_requested", { company: co.name }); }} disabled={leads[co.name]} style={{ ...css.btn, background: leads[co.name] ? T.green : `linear-gradient(135deg, ${T.accent}, ${T.accent2})` }}>
-                  {leads[co.name] ? "✓ Quote requested!" : `Get Free Quote from ${co.name}`}
-                </button>
-                {leads[co.name] && <p style={{ fontSize: "12px", color: T.green, textAlign: "center", marginTop: "8px" }}>📱 They'll contact you within 2 hours</p>}
-              </div>}
-            </div>);
-        })}
-        <p style={{ fontSize: "11px", color: T.dim, textAlign: "center", padding: "20px 0", lineHeight: 1.6 }}>🔍 Estimates include Salik, insurance, mileage and airport fees.<br />Prices are indicative. We may earn a referral fee.</p>
-      </>
-    );
-  };
-
-  // ===== RENTAL TAB =====
-  const RentalTab = () => {
-    const total = pickupP.length + returnP.length + contractP.length;
-    const hasStarted = rental.company || rental.car || total > 0;
-    return (
-      <>
-        <div style={{ textAlign: "center", marginBottom: "24px" }}>
-          <h2 style={css.h2}>My <span style={{ color: T.accent }}>Rental Dossier</span></h2>
-          <p style={css.sub}>Your evidence if anything goes wrong.</p>
-        </div>
-
-        {!hasStarted && (
-          <div style={{ ...css.card, border: `1px solid ${T.accent}30`, marginBottom: "20px" }}>
-            <div style={{ display: "grid", gap: "16px", textAlign: "left" }}>
-              {[
-                ["📝", "Upload your contract", "Take a photo of your contract. Our AI reads it and fills in all details automatically."],
-                ["📸", "Take guided photos at pickup", "16 shots covering every angle. Timestamped proof."],
-                ["📋", "Generate your dossier", "One PDF with all details and photos. Your protection."],
-              ].map(([ico, title, desc]) => (
-                <div key={title} style={{ display: "flex", gap: "12px", alignItems: "flex-start" }}>
-                  <div style={{ fontSize: "24px", flexShrink: 0, marginTop: "2px" }}>{ico}</div>
-                  <div><div style={{ fontSize: "14px", fontWeight: 700, color: T.text, marginBottom: "2px" }}>{title}</div><div style={{ fontSize: "12px", color: T.sub, lineHeight: 1.5 }}>{desc}</div></div>
-                </div>
-              ))}
-            </div>
-          </div>
-        )}
-        {total > 0 && <div style={{ display: "flex", justifyContent: "center", gap: "24px", marginBottom: "24px" }}>
-          {[[`${total}`, "Photos"], [pickupP.length > 0 ? "✓" : "—", "Pickup"], [returnP.length > 0 ? "✓" : "—", "Return"], [contractP.length > 0 ? "✓" : "—", "Docs"]].map(([v, l]) => (
-            <div key={l} style={{ textAlign: "center" }}>
-              <div style={{ fontSize: "18px", fontWeight: 800, color: v === "✓" ? T.green : v === "—" ? T.dim : T.accent }}>{v}</div>
-              <div style={{ fontSize: "9px", color: T.dim, textTransform: "uppercase", letterSpacing: "1px" }}>{l}</div>
-            </div>))}
-        </div>}
-
-        <div style={css.card}>
-          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "14px" }}>
-            <span style={{ fontSize: "15px", fontWeight: 700 }}>📄 Contract & Documents</span>
-            <span style={{ fontSize: "11px", fontWeight: 600, color: contractP.length > 0 ? T.green : T.dim, background: contractP.length > 0 ? T.green + "10" : T.card, padding: "4px 12px", borderRadius: "8px" }}>{contractP.length} photos</span>
-          </div>
-          {contractP.length > 0 && <div style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: "6px", marginBottom: "14px" }}>
-            {contractP.map(p => <div key={p.id} style={{ position: "relative", borderRadius: "10px", overflow: "hidden", aspectRatio: "1" }}>
-              <img src={p.data} alt="" style={{ width: "100%", height: "100%", objectFit: "cover" }} />
-              <div style={{ position: "absolute", bottom: 0, left: 0, right: 0, background: "linear-gradient(transparent, rgba(0,0,0,0.8))", padding: "8px 4px 3px" }}>
-                <div style={{ fontSize: "8px", color: "#fff", textAlign: "center", fontWeight: 600 }}>{p.label}</div>
-                <div style={{ fontSize: "7px", color: "#bbb", textAlign: "center" }}>{p.time}</div>
-              </div>
-
-
-        <button onClick={() => setContractP(pr => pr.filter(x => x.id !== p.id))} style={{ position: "absolute", top: 3, right: 3, background: "rgba(0,0,0,0.5)", color: "#fff", border: "none", borderRadius: "50%", width: "20px", height: "20px", fontSize: "11px", cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center" }}>×</button>
-            </div>)}
-          </div>}
-          {extracting && <div style={{ background: T.accent + "15", border: "1px solid " + T.accent, borderRadius: "12px", padding: "12px", marginBottom: "12px", textAlign: "center" }}>
-            <span style={{ fontSize: "13px", color: T.accent, fontWeight: 600 }}>🔍 Reading contract... auto-filling details</span>
-          </div>}
-          <button onClick={handleContractPhoto} style={{ ...css.btn, marginBottom: "8px" }}>📸 {contractP.length === 0 ? "Upload Contract Photo" : "Add More Pages"}</button>
-          <p style={{ fontSize: "11px", color: T.dim, textAlign: "center" }}>AI reads your contract and auto-fills rental details</p>
-        </div>
-
-        <div style={css.card}>
-          <h3 style={{ fontSize: "16px", fontWeight: 700, margin: "0 0 14px" }}>🚗 Rental Details</h3>
-          <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "10px" }}>
-            {[["company", "Company"], ["car", "Car model"], ["plate", "Plate number"], ["emirate", "Emirate"], ["start", "Start date"], ["end", "End date"], ["dailyPrice", "Daily price (AED)"], ["deposit", "Deposit (AED)"], ["insurance", "Insurance"], ["excess", "Excess (AED)"], ["mileage", "Mileage limit"], ["fuel", "Fuel policy"]].map(([k, l]) => (
-              <div key={k}><input value={rental[k]} onChange={e => setRental(p => ({ ...p, [k]: e.target.value }))} placeholder={l} style={{ ...css.input, height: "48px", lineHeight: "48px", padding: "0 14px", WebkitAppearance: "none" }} type="text" /></div>
-            ))}
-          </div>
           <div style={{ marginTop: "10px" }}><textarea value={rental.notes} onChange={e => setRental(p => ({ ...p, notes: e.target.value }))} placeholder="Notes..." style={{ ...css.input, minHeight: "50px", resize: "vertical" }} /></div>
         </div>
+        <Photos title="Pickup Inspection" icon="🟢" photos={pickupP} setter={setPickupP} guides={true} type="pickup" />
+        <Photos title="Return Inspection" icon="🔴" photos={returnP} setter={setReturnP} guides={true} type="return" />
 
         {/* DOSSIER GENERATION */}
         <div style={{ ...css.card, border: `2px solid ${T.accent}` }}>
@@ -838,17 +558,40 @@ export default function App() {
           </div>
 
 
+          <button onClick={() => {
+            if (rental.company) {
+              trackEvent("rental_data", {
+                company: rental.company, car: rental.car, dailyPrice: rental.dailyPrice || "",
+                insurance: rental.insurance, mileage: rental.mileage, fuel: rental.fuel,
+                deposit: rental.deposit, start: rental.start, end: rental.end, pickupPhotos: pickupP.length,
+              });
+            }
 
-            <div style={{ display: "flex", gap: "8px", marginBottom: "8px" }}>
-              {/* Save as PDF */}
-              <button onClick={() => {
-                const url = URL.createObjectURL(window._dossierBlob);
-                const w = window.open(url, "_blank");
-                if (w) w.onload = () => setTimeout(() => w.print(), 500);
-              }} style={{ flex: 1, background: "#0A0E14", border: `1.5px solid ${T.border}`, color: T.sub, borderRadius: "12px", padding: "12px", fontSize: "13px", fontWeight: 600, cursor: "pointer", textAlign: "center" }}>
-                📥 Save as PDF
-              </button>
-            </div>
+            const d = rental;
+            const dossierDate = new Date().toLocaleString("en-AE", { timeZone: "Asia/Dubai", dateStyle: "long", timeStyle: "short" });
+            const html = `<!DOCTYPE html><html><head><meta charset="utf-8"><title>RentScan Pickup Dossier - ${d.company || "Rental"}</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:-apple-system,sans-serif;color:#1A1A2E;padding:32px;max-width:800px;margin:0 auto}
+h1{font-size:28px;font-weight:800;margin-bottom:4px}
+h2{font-size:18px;font-weight:700;margin:24px 0 12px;padding-bottom:8px;border-bottom:2px solid #C8962E}
+.sub{color:#6B6B80;font-size:13px;margin-bottom:24px}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:16px}
+.field{background:#141920;border-radius:8px;padding:10px 14px}
+.field .label{font-size:10px;text-transform:uppercase;letter-spacing:1px;color:#9D9DB0;font-weight:600}
+.field .value{font-size:15px;font-weight:600;margin-top:2px}
+.photos{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin:12px 0}
+.photo{border-radius:8px;overflow:hidden}
+.photo img{width:100%;aspect-ratio:1;object-fit:cover;display:block}
+.photo .info{padding:6px;background:#141920;font-size:10px;color:#6B6B80;text-align:center}
+.photo .info strong{display:block;color:#1A1A2E;font-size:11px}
+.notice{background:#C8962E20;border:1px solid #C8962E;border-radius:8px;padding:14px;margin:20px 0;font-size:13px;color:#C8962E;line-height:1.5}
+.footer{margin-top:32px;padding-top:16px;border-top:1px solid #E8E8ED;text-align:center;color:#9D9DB0;font-size:11px}
+.badge{display:inline-block;background:#C8962E;color:#fff;padding:3px 10px;border-radius:6px;font-size:10px;font-weight:700}
+@media print{body{padding:16px}img{page-break-inside:avoid}}
+</style></head><body>
+<div style="display:flex;align-items:center;gap:12px;margin-bottom:6px">
+<div style="width:44px;height:44px;border-radius:10px;background:linear-gradient(135deg,#C8962E,#A67A20);display:flex;align-items:center;justify-content:center;font-size:22px">🔍</div>
 <div><h1>Pickup Dossier</h1><div class="sub" style="margin:0">Generated ${dossierDate}</div></div>
 </div>
 <div class="sub">This document records the condition of the vehicle at the time of pickup.</div>
@@ -902,7 +645,7 @@ ${pickupP.length > 0 ? `<h2>Vehicle Condition at Pickup</h2>
             <p style={{ fontSize: "13px", color: T.green, textAlign: "center", marginBottom: "12px", fontWeight: 600 }}>✅ Dossier ready!</p>
 
 
-                          {/* Save as PDF */}
+              {/* Save as PDF */}
               <button onClick={() => {
                 const url = URL.createObjectURL(window._dossierBlob);
                 const w = window.open(url, "_blank");
@@ -910,9 +653,7 @@ ${pickupP.length > 0 ? `<h2>Vehicle Condition at Pickup</h2>
               }} style={{ width: "100%", background: "#0A0E14", border: `1.5px solid ${T.border}`, color: T.sub, borderRadius: "12px", padding: "14px", fontSize: "15px", fontWeight: 600, cursor: "pointer", textAlign: "center" }}>
                 📥 Save as PDF
               </button>
-
-            </div>
-</>}
+          </>}
 
           {!dossierSaved && <p style={{ fontSize: "11px", color: T.dim, textAlign: "center" }}>Generates a professional dossier with all photos and details</p>}
         </div>
