@@ -73,7 +73,7 @@ export default async function handler(req, res) {
   "mileage": "mileage limit",
   "fuel": "fuel policy",
   "deposit": "deposit amount as number",
-  "notes": "any other important terms, fees, or conditions"
+  "notes": "Only fees, penalties, or important rules. Format: short items separated by |. Example: Excess mileage AED 2/km | Late return AED 300/day | No towing | GPS tracked. Max 5 items."
 }
 
 Use null for any field you cannot find. For number fields, use 0 if not found. Extract the actual values from the document.`,

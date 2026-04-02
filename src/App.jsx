@@ -850,70 +850,76 @@ export default function App() {
 
             const d = rental;
             const dossierDate = new Date().toLocaleString("en-AE", { timeZone: "Asia/Dubai", dateStyle: "long", timeStyle: "short" });
-            const html = `<!DOCTYPE html><html><head><meta charset="utf-8"><title>RentScan Pickup Dossier - ${d.company || "Rental"}</title>
+            const html = `<!DOCTYPE html><html><head><meta charset="utf-8"><title>RentScan Dossier - ${d.company || "Rental"}</title>
   <style>
-  @page { size: A4; margin: 20mm; }
-  @media print { body { -webkit-print-color-adjust: exact; print-color-adjust: exact; } .no-print { display: none !important; } }
+  @page { size: A4; margin: 18mm; }
+  @media print { body { -webkit-print-color-adjust: exact; print-color-adjust: exact; } }
   * { margin: 0; padding: 0; box-sizing: border-box; }
-  body { font-family: -apple-system, 'Segoe UI', Roboto, sans-serif; color: #1a1a1a; max-width: 800px; margin: 0 auto; padding: 40px 32px; background: #fff; }
-  .header { display: flex; align-items: center; gap: 16px; margin-bottom: 8px; padding-bottom: 20px; border-bottom: 3px solid #C8962E; }
-  .logo { font-size: 26px; font-weight: 800; color: #C8962E; letter-spacing: -0.5px; }
-  .logo-sub { font-size: 9px; color: #999; letter-spacing: 3px; text-transform: uppercase; }
-  .date { font-size: 13px; color: #888; margin-top: 2px; }
-  .desc { font-size: 13px; color: #666; margin: 12px 0 28px; }
-  h2 { font-size: 16px; font-weight: 700; color: #1a1a1a; margin: 28px 0 14px; padding-bottom: 6px; border-bottom: 1px solid #e0e0e0; text-transform: uppercase; letter-spacing: 0.5px; }
-  .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 20px; }
-  .field { border: 1px solid #e0e0e0; border-radius: 6px; padding: 10px 14px; background: #fafafa; }
-  .field .label { font-size: 9px; text-transform: uppercase; letter-spacing: 1.5px; color: #999; font-weight: 600; margin-bottom: 3px; }
-  .field .value { font-size: 14px; font-weight: 600; color: #1a1a1a; word-break: break-word; }
-  .notes-field { border: 1px solid #e0e0e0; border-radius: 6px; padding: 12px 14px; background: #fafafa; margin-bottom: 20px; }
-  .notes-field .label { font-size: 9px; text-transform: uppercase; letter-spacing: 1.5px; color: #999; font-weight: 600; margin-bottom: 4px; }
-  .notes-field .value { font-size: 13px; color: #333; line-height: 1.6; }
-  .photos { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin: 12px 0 20px; }
-  .photo { border-radius: 6px; overflow: hidden; border: 1px solid #e0e0e0; }
+  body { font-family: -apple-system, 'Segoe UI', Roboto, sans-serif; color: #222; max-width: 780px; margin: 0 auto; padding: 36px 28px; background: #fff; }
+  .header { display: flex; align-items: center; gap: 14px; padding-bottom: 18px; border-bottom: 2px solid #C8962E; margin-bottom: 8px; }
+  .header img { width: 48px; height: 48px; border-radius: 12px; }
+  .header .brand { font-size: 22px; font-weight: 800; color: #C8962E; letter-spacing: -0.5px; }
+  .header .sub { font-size: 8px; color: #aaa; letter-spacing: 3px; text-transform: uppercase; }
+  .header .right { margin-left: auto; text-align: right; }
+  .header .title { font-size: 17px; font-weight: 700; color: #222; }
+  .header .date { font-size: 12px; color: #999; margin-top: 2px; }
+  .desc { font-size: 12px; color: #888; margin: 10px 0 24px; }
+  h2 { font-size: 13px; font-weight: 700; color: #222; margin: 24px 0 10px; padding-bottom: 5px; border-bottom: 1px solid #e5e5e5; text-transform: uppercase; letter-spacing: 1px; }
+  .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 16px; }
+  .field { border: 1px solid #e5e5e5; border-radius: 5px; padding: 8px 12px; }
+  .field .label { font-size: 8px; text-transform: uppercase; letter-spacing: 1.5px; color: #aaa; font-weight: 700; }
+  .field .value { font-size: 13px; font-weight: 600; color: #222; margin-top: 2px; }
+  .notes { border: 1px solid #e5e5e5; border-radius: 5px; padding: 10px 14px; margin-bottom: 16px; }
+  .notes .label { font-size: 8px; text-transform: uppercase; letter-spacing: 1.5px; color: #aaa; font-weight: 700; margin-bottom: 6px; }
+  .notes ul { list-style: none; padding: 0; }
+  .notes li { font-size: 12px; color: #444; line-height: 1.4; padding: 3px 0; padding-left: 14px; position: relative; }
+  .notes li:before { content: "\2022"; color: #C8962E; font-weight: 700; position: absolute; left: 0; }
+  .notes p { font-size: 12px; color: #444; line-height: 1.5; }
+  .photos { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin: 8px 0 16px; }
+  .photo { border-radius: 5px; overflow: hidden; border: 1px solid #e5e5e5; }
   .photo img { width: 100%; aspect-ratio: 1; object-fit: cover; display: block; }
-  .photo .info { padding: 6px 8px; background: #fafafa; text-align: center; }
-  .photo .info strong { display: block; font-size: 10px; color: #333; }
-  .photo .info .time { font-size: 9px; color: #999; }
-  .notice { background: #FFF8EC; border: 1px solid #C8962E; border-left: 4px solid #C8962E; border-radius: 4px; padding: 14px 16px; margin: 28px 0; font-size: 12px; color: #666; line-height: 1.6; }
+  .photo .cap { padding: 5px 6px; background: #fafafa; text-align: center; font-size: 9px; color: #666; }
+  .photo .cap strong { display: block; font-size: 10px; color: #333; }
+  .notice { background: #FFF8EC; border-left: 3px solid #C8962E; border-radius: 3px; padding: 12px 14px; margin: 24px 0; font-size: 11px; color: #777; line-height: 1.5; }
   .notice strong { color: #C8962E; }
-  .footer { margin-top: 40px; padding-top: 16px; border-top: 2px solid #C8962E; text-align: center; }
-  .footer .brand { font-size: 14px; font-weight: 800; color: #C8962E; letter-spacing: -0.3px; }
-  .footer .tagline { font-size: 10px; color: #999; margin-top: 2px; letter-spacing: 2px; text-transform: uppercase; }
-  .footer .small { font-size: 9px; color: #bbb; margin-top: 8px; }
+  .footer { margin-top: 36px; padding-top: 14px; border-top: 2px solid #C8962E; text-align: center; }
+  .footer img { width: 32px; height: 32px; border-radius: 8px; margin-bottom: 4px; }
+  .footer .brand { font-size: 13px; font-weight: 800; color: #C8962E; }
+  .footer .sub { font-size: 8px; color: #bbb; letter-spacing: 2px; text-transform: uppercase; }
+  .footer .small { font-size: 8px; color: #ccc; margin-top: 6px; }
   </style></head><body>
 
   <div class="header">
+    <img src="https://rentscan.ae/logo.png" alt="RentScan" />
     <div>
-      <div class="logo">RentScan</div>
-      <div class="logo-sub">Rent Safely</div>
+      <div class="brand">RentScan</div>
+      <div class="sub">Rent Safely</div>
     </div>
-    <div style="margin-left:auto;text-align:right">
-      <div style="font-size:18px;font-weight:700">Pickup Dossier</div>
+    <div class="right">
+      <div class="title">Pickup Dossier</div>
       <div class="date">${dossierDate}</div>
     </div>
   </div>
-  <div class="desc">Official record of vehicle condition at the time of pickup.</div>
+  <div class="desc">Official record of vehicle condition at pickup.</div>
 
   <h2>Rental Details</h2>
   <div class="grid">
-  ${[["Company", d.company], ["Car", d.car], ["Plate", d.plate], ["Pickup", d.start], ["Return", d.end], ["Daily rate", d.dailyPrice ? "AED " + d.dailyPrice : "\u2014"], ["Insurance", d.insurance], ["Excess", d.excess ? "AED " + d.excess : "\u2014"], ["Mileage", d.mileage], ["Fuel", d.fuel], ["Deposit", d.deposit ? "AED " + d.deposit : "\u2014"]].map(([l, v]) => `<div class="field"><div class="label">${l}</div><div class="value">${v || "\u2014"}</div></div>`).join("")}
+  ${[["Company", d.company], ["Car", d.car], ["Plate", d.plate], ["Pickup", d.start], ["Return", d.end], ["Daily rate", d.dailyPrice ? "AED " + d.dailyPrice : null], ["Insurance", d.insurance], ["Excess", d.excess ? "AED " + d.excess : null], ["Mileage", d.mileage], ["Fuel", d.fuel], ["Deposit", d.deposit ? "AED " + d.deposit : null]].filter(([l, v]) => v).map(([l, v]) => `<div class="field"><div class="label">${l}</div><div class="value">${v}</div></div>`).join("")}
   </div>
-  ${d.notes ? `<div class="notes-field"><div class="label">Notes</div><div class="value">${d.notes}</div></div>` : ""}
+  ${d.notes ? `<div class="notes"><div class="label">Key Terms</div>${d.notes.includes("|") ? "<ul>" + d.notes.split("|").map(n => n.trim()).filter(n => n).map(n => "<li>" + n + "</li>").join("") + "</ul>" : "<p>" + d.notes + "</p>"}</div>` : ""}
 
   ${contractP.length > 0 ? `<h2>Contract Documents</h2>
-  <div style="font-size:12px;color:#888;margin-bottom:8px">${contractP.length} photo${contractP.length > 1 ? "s" : ""}</div>
-  <div class="photos">${contractP.map(p => `<div class="photo"><img src="${p.data}"/><div class="info"><strong>${p.label}</strong><div class="time">${p.time}</div></div></div>`).join("")}</div>` : ""}
+  <div class="photos">${contractP.map(p => `<div class="photo"><img src="${p.data}"/><div class="cap"><strong>${p.label}</strong>${p.time}</div></div>`).join("")}</div>` : ""}
 
   ${pickupP.length > 0 ? `<h2>Vehicle Condition at Pickup</h2>
-  <div style="font-size:12px;color:#888;margin-bottom:8px">${pickupP.length} timestamped photo${pickupP.length > 1 ? "s" : ""}</div>
-  <div class="photos">${pickupP.map(p => `<div class="photo"><img src="${p.data}"/><div class="info"><strong>${p.label}</strong><div class="time">${p.time}</div></div></div>`).join("")}</div>` : ""}
+  <div class="photos">${pickupP.map(p => `<div class="photo"><img src="${p.data}"/><div class="cap"><strong>${p.label}</strong>${p.time}</div></div>`).join("")}</div>` : ""}
 
   <div class="notice"><strong>Notice to rental company:</strong> This dossier documents the vehicle condition at pickup with timestamped photographs. Any pre-existing damage shown above was present before the rental period began. The renter reserves the right to use this documentation in case of disputed charges.</div>
 
   <div class="footer">
+    <img src="https://rentscan.ae/logo.png" alt="" />
     <div class="brand">RentScan</div>
-    <div class="tagline">Rent Safely</div>
+    <div class="sub">Rent Safely</div>
     <div class="small">Timestamps are based on device time at moment of capture.</div>
   </div>
   </body></html>`
@@ -946,8 +952,7 @@ export default function App() {
               {/* Save as PDF */}
               <button onClick={() => {
                 const url = URL.createObjectURL(window._dossierBlob);
-                const w = window.open(url, "_blank");
-                if (w) w.onload = () => setTimeout(() => w.print(), 500);
+                const a = document.createElement("a"); a.href = url; a.download = "RentScan-Dossier-" + (rental.company || "Rental").replace(/\s+/g, "-") + ".html"; document.body.appendChild(a); a.click(); document.body.removeChild(a); URL.revokeObjectURL(url);
               }} style={{ width: "100%", background: "#0A0E14", border: `1.5px solid ${T.border}`, color: T.sub, borderRadius: "12px", padding: "14px", fontSize: "15px", fontWeight: 600, cursor: "pointer", textAlign: "center" }}>
                 📥 Save as PDF
               </button>
@@ -1198,3 +1203,4 @@ export default function App() {
     </div>
   );
 }
+
