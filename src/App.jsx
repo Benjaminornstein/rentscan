@@ -927,44 +927,6 @@ ${pickupP.length > 0 ? `<h2>Vehicle Condition at Pickup</h2>
           </button>
 
           {dossierSaved && <>
-              <button onClick={async () => {
-                if (!dossierEmail || !window._dossierBlob) return;
-                setDossierSending(true);
-                try {
-                  const dossierHtml = await window._dossierBlob.text();
-                  const base64 = btoa(unescape(encodeURIComponent(dossierHtml)));
-                  const resp = await fetch("/api/email", {
-                    method: "POST",
-                    headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify({
-                      to: dossierEmail,
-                      subject: "Your RentScan Pickup Dossier - " + (rental.company || "Rental"),
-                      html: "<div style=\"font-family:sans-serif;max-width:600px;margin:0 auto;padding:20px\"><h2 style=\"color:#C9A227\">Your RentScan Dossier</h2><p>Your pickup dossier for <strong>" + (rental.company || "your rental") + "</strong> is attached to this email.</p><p>Open the attached HTML file in any browser to view your full dossier with all photos and details.</p><hr style=\"border:none;border-top:1px solid #eee;margin:20px 0\"><p style=\"font-size:12px;color:#999\">RentScan — Rent safely in Dubai.<br>This is an automated email. Do not reply.</p></div>",
-                      attachment: {
-                        content: base64,
-                        filename: "RentScan-Dossier-" + (rental.company || "Rental").replace(/\s+/g, "-") + ".html",
-                      },
-                    }),
-                  });
-                  const data = await resp.json();
-                  if (data.success) {
-                    setDossierSent(true);
-                  } else {
-                    alert("Could not send email: " + (data.error || "Unknown error"));
-                  }
-                } catch (err) {
-                  alert("Could not send email. Check your internet connection.");
-                } finally {
-                  setDossierSending(false);
-                }
-                width: "100%", padding: "14px", borderRadius: "12px", border: "none",
-                marginBottom: "10px",
-              }}>
-              </button>
-            )}
-              <div style={{ padding: "12px", borderRadius: "10px", backgroundColor: "rgba(100,200,100,0.1)", border: "1px solid rgba(100,200,100,0.2)", textAlign: "center", fontSize: "14px", color: "#7cb87c", marginBottom: "10px" }}>
-              </div>
-            )}
             <p style={{ fontSize: "13px", color: T.green, textAlign: "center", marginBottom: "12px", fontWeight: 600 }}>✅ Dossier ready! Now share it:</p>
 
             {/* Send to rental company via Share API or mailto */}
