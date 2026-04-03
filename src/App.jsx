@@ -863,6 +863,7 @@ export default function App() {
             <div style={css.label}>Your email (optional)</div>
             <input value={dossierEmail} onChange={e => setDossierEmail(e.target.value)} placeholder="your@email.com" style={css.input} type="email" />
           </div>
+            <p style={{ fontSize: "10px", color: T.dim, marginTop: "4px" }}>By entering your email you agree to receive product updates, rental tips, and occasional promotional offers. Unsubscribe anytime.</p>
 
           <label style={{ display: "flex", gap: "10px", alignItems: "flex-start", marginBottom: "16px", cursor: "pointer", fontSize: "13px", color: T.sub, lineHeight: 1.5 }}>
             
@@ -1034,7 +1035,7 @@ export default function App() {
             </div>
           ))}
         </div>
-        <p style={{ fontSize: "11px", color: T.dim, textAlign: "center", padding: "16px 0", lineHeight: 1.6 }}>📸 Photos stored locally on your device. Anonymous rental data (company, car, pricing) is automatically collected to improve RentScan for all users.</p>
+        <p style={{ fontSize: "11px", color: T.dim, textAlign: "center", padding: "16px 0", lineHeight: 1.6 }}>📸 Photos are stored locally on your device.</p>
       </>
     );
   };
@@ -1125,6 +1126,7 @@ export default function App() {
       <p>• Contract text or rental quotes you paste into the scanner<br/>
       • Questions you type into the AI assistant<br/>
       • Contact information submitted via "Get Quote" forms (name, phone number)<br/>
+        \u2022 Email address (optional) when generating a pickup dossier<br/>
       • Rental details entered in the "My Rental" dossier</p>
       <p><strong style={{ color: T.text }}>Information collected automatically:</strong></p>
       <p>• <strong style={{ color: T.text }}>Anonymous rental market data:</strong> When you scan a contract or submit rental details, RentScan automatically extracts non-personal market data including company names, vehicle models, daily rates, insurance terms, mileage limits, fuel policies, and fee structures. This data cannot identify you.</p>
@@ -1141,7 +1143,8 @@ export default function App() {
       • <strong style={{ color: T.text }}>Lead generation:</strong> If you click "Get Quote", your contact information may be shared with the selected rental company so they can provide you with a quote<br/>
       • <strong style={{ color: T.text }}>Market intelligence:</strong> Anonymous rental data is aggregated to improve cost estimates, identify pricing patterns, and detect common hidden fees across rental companies in Dubai. This helps all users get more accurate analyses.<br/>
       • <strong style={{ color: T.text }}>Analytics:</strong> Aggregated, anonymous usage data to improve our service<br/>
-      • <strong style={{ color: T.text }}>Communication:</strong> If you contact us, we may use your information to respond</p>
+      • <strong style={{ color: T.text }}>Communication:</strong> If you contact us, we may use your information to respond<br/>
+        \u2022 <strong style={{ color: T.text }}>Product updates & promotions:</strong> If you provide your email, we may send product updates, rental tips, and promotional offers about RentScan or relevant partner services. You can unsubscribe at any time by replying to any email or contacting info@rentscan.ae</p>
 
       <h3 style={{ color: T.text, fontSize: "16px", marginTop: "24px", marginBottom: "8px" }}>3. Third-party data sharing</h3>
       <p>We may share information with:</p>
@@ -1149,7 +1152,8 @@ export default function App() {
       • <strong style={{ color: T.text }}>Rental companies:</strong> Only when you explicitly request a quote by clicking "Get Quote" and submitting your contact information. We never share your data without your action.<br/>
       • <strong style={{ color: T.text }}>Analytics providers:</strong> Anonymous, aggregated usage data only.<br/>
       • <strong style={{ color: T.text }}>Law enforcement:</strong> If required by UAE law or valid legal process.</p>
-      <p>We do <strong style={{ color: T.text }}>not</strong> sell your personal information to third parties.</p>
+      <p>\u2022 <strong style={{ color: T.text }}>Email marketing provider:</strong> Your email address may be shared with our email service provider (MailerSend) solely for the purpose of sending communications you consented to.</p>
+        <p>We do <strong style={{ color: T.text }}>not</strong> sell your personal information to third parties.</p>
 
       <h3 style={{ color: T.text, fontSize: "16px", marginTop: "24px", marginBottom: "8px" }}>4. Data retention</h3>
       <p>• Contract text sent for AI analysis is not permanently stored by RentScan<br/>
