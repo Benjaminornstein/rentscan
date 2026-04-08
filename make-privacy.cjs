@@ -1,0 +1,125 @@
+const fs = require('fs');
+
+// Read App.jsx to extract the EXACT privacy policy text
+let app = fs.readFileSync('src/App.jsx', 'utf8');
+
+// Find privacy policy section
+const privStart = app.indexOf('Privacy Policy describes how RentScan');
+const privEnd = app.indexOf('consent to such transfers.');
+
+if (privStart === -1 || privEnd === -1) {
+  console.log('Could not find privacy policy text in App.jsx');
+  console.log('privStart:', privStart, 'privEnd:', privEnd);
+  process.exit(1);
+}
+
+// Extract the raw section to understand the structure
+const section = app.substring(privStart - 200, privEnd + 200);
+console.log('Found privacy policy section, length:', section.length);
+
+// Create a static HTML page with the same content
+const html = `<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Privacy Policy - RentScan</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { font-family: -apple-system, 'Segoe UI', Roboto, sans-serif; color: #222; max-width: 720px; margin: 0 auto; padding: 40px 24px; line-height: 1.7; background: #fff; }
+    h1 { font-size: 28px; font-weight: 800; margin-bottom: 8px; }
+    h2 { font-size: 18px; font-weight: 700; margin: 32px 0 12px; }
+    h3 { font-size: 15px; font-weight: 700; margin: 24px 0 8px; }
+    p { margin-bottom: 12px; font-size: 14px; color: #444; }
+    .date { font-size: 13px; color: #999; margin-bottom: 24px; }
+    .brand { color: #C8962E; }
+    a { color: #C8962E; }
+    ul { margin: 8px 0 12px 20px; font-size: 14px; color: #444; }
+    li { margin-bottom: 6px; }
+  </style>
+</head>
+<body>
+  <h1><span class="brand">RentScan</span> Privacy Policy</h1>
+  <p class="date">Last updated: April 2026</p>
+
+  <p>This Privacy Policy describes how RentScan (www.rentscan.ae) collects, uses, and protects your information. By using our platform, you consent to the practices described in this policy.</p>
+
+  <h3>1. Information we collect</h3>
+
+  <p><strong>Information you provide:</strong></p>
+  <ul>
+    <li>Contract text or rental quotes you paste into the scanner</li>
+    <li>Questions you type into the AI assistant</li>
+    <li>Contact information submitted via "Get Quote" forms (name, phone number)</li>
+    <li>Email address (optional) when generating a pickup dossier</li>
+    <li>Rental details entered in the "My Rental" dossier</li>
+  </ul>
+
+  <p><strong>Information collected automatically:</strong></p>
+  <ul>
+    <li><strong>Anonymous rental market data:</strong> When you scan a contract or submit rental details, RentScan automatically extracts non-personal market data including company names, vehicle models, daily rates, insurance terms, mileage limits, fuel policies, and fee structures. This data cannot identify you.</li>
+    <li>Basic analytics data (page views, device type, country) via cookies or analytics tools</li>
+    <li>IP address (anonymized)</li>
+    <li>Browser type and operating system</li>
+  </ul>
+
+  <p><strong>Information we do NOT collect:</strong></p>
+  <ul>
+    <li>Photos taken in the "My Rental" dossier — these are stored <strong>only on your device</strong> and are never uploaded to our servers</li>
+    <li>Payment information — we do not process payments</li>
+    <li>Precise GPS location</li>
+  </ul>
+
+  <h3>2. How we use your information</h3>
+  <ul>
+    <li><strong>Contract analysis:</strong> Text you paste is sent to our AI provider (Anthropic) for analysis and is not stored permanently by RentScan</li>
+    <li><strong>Lead generation:</strong> If you click "Get Quote", your contact information may be shared with the selected rental company so they can provide you with a quote</li>
+    <li><strong>Market intelligence:</strong> Anonymous rental data is aggregated to improve cost estimates, identify pricing patterns, and detect common hidden fees across rental companies in Dubai. This helps all users get more accurate analyses.</li>
+    <li><strong>Analytics:</strong> Aggregated, anonymous usage data to improve our service</li>
+    <li><strong>Communication:</strong> If you contact us, we may use your information to respond</li>
+    <li><strong>Product updates &amp; promotions:</strong> If you provide your email, we may send product updates, rental tips, and promotional offers about RentScan or relevant partner services. You can unsubscribe at any time by replying to any email or contacting info@rentscan.ae</li>
+  </ul>
+
+  <h3>3. Third-party data sharing</h3>
+  <p>We may share information with:</p>
+  <ul>
+    <li><strong>Anthropic (AI provider):</strong> Contract text and questions are processed via the Anthropic Claude API. Anthropic's privacy policy governs their handling of this data.</li>
+    <li><strong>Rental companies:</strong> Only when you explicitly request a quote by clicking "Get Quote" and submitting your contact information. We never share your data without your action.</li>
+    <li><strong>Email marketing provider:</strong> Your email address may be shared with our email service provider (MailerSend) solely for the purpose of sending communications you consented to.</li>
+    <li><strong>Analytics providers:</strong> Anonymous, aggregated usage data only.</li>
+    <li><strong>Law enforcement:</strong> If required by UAE law or valid legal process.</li>
+  </ul>
+  <p>We do <strong>not</strong> sell your personal information to third parties.</p>
+
+  <h3>4. Data retention</h3>
+  <p>Contract text submitted for analysis is processed in real-time and not stored permanently. Anonymous market data is retained indefinitely to improve our service. Email addresses are retained until you unsubscribe. You may request deletion of your data at any time by contacting info@rentscan.ae.</p>
+
+  <h3>5. Your rights</h3>
+  <p>Under the UAE Personal Data Protection Law, you have the right to:</p>
+  <ul>
+    <li>Request access to personal data we hold about you</li>
+    <li>Request deletion of your personal data</li>
+    <li>Withdraw consent for data processing</li>
+    <li>File a complaint with the relevant UAE authority</li>
+  </ul>
+  <p>To exercise these rights, contact us at info@rentscan.ae.</p>
+
+  <h3>6. Data security</h3>
+  <p>We implement reasonable technical and organizational measures to protect your information. However, no method of electronic transmission or storage is 100% secure. We cannot guarantee absolute security of your data.</p>
+
+  <h3>7. International data transfers</h3>
+  <p>Your data may be processed outside the UAE (e.g., AI processing via Anthropic's servers). By using RentScan, you consent to such transfers.</p>
+
+  <h3>8. Changes to this policy</h3>
+  <p>We may update this Privacy Policy from time to time. Continued use of RentScan after changes constitutes acceptance of the updated policy.</p>
+
+  <h3>9. Contact</h3>
+  <p>For questions about this Privacy Policy, contact us at <a href="mailto:info@rentscan.ae">info@rentscan.ae</a>.</p>
+
+  <p style="margin-top: 40px; padding-top: 16px; border-top: 2px solid #C8962E; text-align: center; font-size: 12px; color: #999;">© 2026 RentScan · Dubai, UAE</p>
+</body>
+</html>`;
+
+fs.writeFileSync('public/privacy.html', html, 'utf8');
+console.log('Created public/privacy.html');
+console.log('Will be available at: https://rentscan.ae/privacy.html');
