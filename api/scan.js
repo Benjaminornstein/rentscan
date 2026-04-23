@@ -199,7 +199,36 @@ export default async function handler(req, res) {
 
   let { contractText, messages } = req.body;
 
-  // Need either contractText (first message) or messages (conversation)
+  
+    // /terms command: admin data entry
+    if (contractText && contractText.trim().startsWith("/terms ")) {
+      const lines = contractText.trim().split("\n");
+      const firstLine = lines[0].replace("/terms ", "").trim();
+      const parts = firstLine.split(" ");
+      // Extract company name and optional URL
+      let url = null;
+      let companyParts = [];
+      for (const p of parts) {
+        if (p.startsWith("http://") || p.startsWith("https://")) {
+          url = p;
+        } else {
+          companyParts.push(p);
+        }
+      }
+      const company = companyParts.join(" ");
+      const termsText = lines.slice(1).join("\n").trim();
+      
+      if (!company || !termsText) {
+        return res.status(200).json({ response: "Format: /terms CompanyName [optional URL]\n[paste terms text]" });
+      }
+      
+      await storeTerms(company, url, termsText);
+      return res.status(200).json({ 
+        response: "Terms saved for " + company + ". Characters: " + termsText.length + ". Timestamp: " + new Date().toISOString() + (url ? ". Source: " + url : "")
+      });
+    }
+
+    // Need either contractText (first message) or messages (conversation)
   if (!contractText && (!messages || !messages.length)) {
     return res.status(400).json({ error: "No text provided" });
   }
