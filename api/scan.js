@@ -219,13 +219,13 @@ export default async function handler(req, res) {
       const termsText = lines.slice(1).join("\n").trim();
       
       if (!company || !termsText) {
-        return res.status(200).json({ response: "Format: /terms CompanyName [optional URL]\n[paste terms text]" });
+        return res.status(200).json({ answer: "Format: /terms CompanyName [optional URL]\n[paste terms text]" , tips: [] });
       }
       
       await storeTerms(company, url, termsText);
       return res.status(200).json({ 
-        response: "Terms saved for " + company + ". Characters: " + termsText.length + ". Timestamp: " + new Date().toISOString() + (url ? ". Source: " + url : "")
-      });
+        answer: "Terms saved for " + company + ". Characters: " + termsText.length + ". Timestamp: " + new Date().toISOString() + (url ? ". Source: " + url : "")
+      , tips: [] });
     }
 
     // Need either contractText (first message) or messages (conversation)
